@@ -1,0 +1,53 @@
+name: KT
+version: '${project.version}'
+main: com.monkey.kt.KT
+author: MonkeyMoon104
+api-version: '1.17'
+depend:
+  - LuckPerms
+
+commands:
+  killeffect:
+    description: Open the KillEffect GUI
+    aliases: [kt]
+
+permissions:
+  kt.reload:
+    description: Allows reloading the plugin configuration
+    default: op
+
+  kt.fire.use:
+    description: Use the fire kill effect
+    default: op
+
+  kt.lightning.use:
+    description: Use the lightning kill effect
+    default: op
+
+  kt.explosion.use:
+    description: Use the explosion kill effect
+    default: op
+
+  kt.hearts.use:
+    description: Use the hearts kill effect
+    default: op
+
+  kt.notes.use:
+    description: Use the notes kill effect
+    default: op
+
+  kt.cloud.use:
+    description: Use the cloud kill effect
+    default: op
+
+  kt.smoke.use:
+    description: Use the smoke kill effect
+    default: op
+
+  kt.totem.use:
+    description: Use the totem kill effect
+    default: op
+
+  kt.end.use:
+    description: Use the end kill effect
+    default: op

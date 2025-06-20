@@ -1,0 +1,35 @@
+messages:
+  no_permissions: "&cYou don't have permission to use this KillEffect."
+  effect_set: "&aYou have selected the KillEffect: &e%effect%"
+  effect_already_set: "&eYou have already selected this KillEffect!"
+  config_reloaded: "&aConfiguration successfully reloaded!"
+  gui_title: "&6Select your KillEffect"
+
+effects:
+  fire:
+    name: "&cFire"
+    description: "&cBurn &7your enemies with fire"
+  lightning:
+    name: "&eLightning"
+    description: "&bSummon a &elightning bolt &bon your target"
+  explosion:
+    name: "&4Explosion"
+    description: "&4Boom! &7A visual explosion effect"
+  hearts:
+    name: "&dHearts"
+    description: "&dLove hearts &7when you kill"
+  notes:
+    name: "&aNotes"
+    description: "&aMusical effect &ein the rhythm of death"
+  cloud:
+    name: "&fCloud"
+    description: "&fMysterious &7and haunting fog"
+  smoke:
+    name: "&8Smoke"
+    description: "&8Smoke &7and shadows in the air"
+  totem:
+    name: "&6Totem"
+    description: "&6Epic &eparticles &6of the totem"
+  end:
+    name: "&5End"
+    description: "&5Creepy &dEnderman &5effect"
