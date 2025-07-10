@@ -5,6 +5,7 @@ author: MonkeyMoon104
 api-version: '1.20'
 depend:
   - LuckPerms
+  - WorldGuard
 
 commands:
   killeffect:
@@ -58,4 +59,8 @@ permissions:
 
   kt.warden.use:
     description: Use the warden kill effect
+    default: op
+
+  kt.glowmissile.use:
+    description: Use the glowmissile kill effect
     default: op

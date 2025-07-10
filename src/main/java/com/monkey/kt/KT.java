@@ -6,6 +6,7 @@ import com.monkey.kt.storage.DatabaseManager;
 import com.monkey.kt.gui.GUIManager;
 import com.monkey.kt.listener.InventoryClickListener;
 import com.monkey.kt.listener.KillEffectListener;
+import com.monkey.kt.utils.WorldGuardUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class KT extends JavaPlugin {
@@ -20,6 +21,8 @@ public class KT extends JavaPlugin {
 
         databaseManager = new DatabaseManager(this);
         databaseManager.loadDatabase();
+
+        WorldGuardUtils.setup();
 
         guiManager = new GUIManager(this, databaseManager);
         factory = new KillEffectFactory(this);

@@ -33,6 +33,7 @@ public class GUIManager {
         effectIcons.put("end", Material.ENDER_PEARL);
         effectIcons.put("pigstep", Material.PIG_SPAWN_EGG);
         effectIcons.put("warden", Material.WARD_ARMOR_TRIM_SMITHING_TEMPLATE);
+        effectIcons.put("glowmissile", Material.GLOW_INK_SAC);
     }
 
     public GUIManager(KT plugin, DatabaseManager databaseManager) {

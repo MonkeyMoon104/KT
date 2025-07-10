@@ -6,7 +6,7 @@
 
   <groupId>com.monkey</groupId>
   <artifactId>KT</artifactId>
-  <version>2.0</version>
+  <version>2.0.1</version>
   <packaging>jar</packaging>
 
   <name>KT</name>
@@ -52,8 +52,8 @@
                         <goal>proguard</goal>
                     </goals>
                     <configuration>
-                        <injar>KT-1.0-shaded.jar</injar>
-                        <outjar>KT-1.0-obfuscated.jar</outjar>
+                        <injar>KT-${project.version}-shaded.jar</injar>
+                        <outjar>KT-${project.version}-obfuscated.jar</outjar>
                         <options>
                             <option>-dontwarn</option>
                             <option>-dontoptimize</option>
@@ -86,6 +86,10 @@
           <id>sonatype</id>
           <url>https://oss.sonatype.org/content/groups/public/</url>
       </repository>
+      <repository>
+          <id>sk89q-repo</id>
+          <url>https://maven.enginehub.org/repo/</url>
+      </repository>
   </repositories>
 
   <dependencies>
@@ -93,6 +97,12 @@
           <groupId>io.papermc.paper</groupId>
           <artifactId>paper-api</artifactId>
           <version>1.20-R0.1-SNAPSHOT</version>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>com.sk89q.worldguard</groupId>
+          <artifactId>worldguard-bukkit</artifactId>
+          <version>7.0.6</version>
           <scope>provided</scope>
       </dependency>
   </dependencies>

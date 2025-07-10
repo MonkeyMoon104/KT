@@ -39,3 +39,6 @@ effects:
   warden:
     name: "&3Warden"
     description: "&3Warden &eeffect"
+  glowmissile:
+    name: "&bGlowMissile"
+    description: "&bGlow missile &7effect"

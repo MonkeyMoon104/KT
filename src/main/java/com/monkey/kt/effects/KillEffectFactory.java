@@ -2,6 +2,7 @@ package com.monkey.kt.effects;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.list.*;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,9 +26,11 @@ public class KillEffectFactory {
         effects.put("end", new EndEffect(plugin));
         effects.put("pigstep", new PigstepEffect(plugin));
         effects.put("warden", new WardenEffect(plugin));
+        effects.put("glowmissile", new GlowMissileEffect(plugin));
     }
 
     public static KillEffect getEffect(String name) {
         return effects.get(name.toLowerCase());
     }
+
 }
