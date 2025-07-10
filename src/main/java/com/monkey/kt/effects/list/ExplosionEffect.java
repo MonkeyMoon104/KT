@@ -14,7 +14,7 @@ public class ExplosionEffect implements KillEffect {
     @Override
     public void play(Player player, Location loc) {
         loc.getWorld().createExplosion(loc, 0F, false);
-        EffectUtils.playRepeatingParticle(plugin, loc, Particle.EXPLOSION_NORMAL, 50, 1, 1, 1, 0.1, 2L, 5);
+        EffectUtils.playRepeatingParticle(plugin, loc, Particle.EXPLOSION_LARGE, 50, 1, 1, 1, 0.1, 2L, 5);
     }
 }
 

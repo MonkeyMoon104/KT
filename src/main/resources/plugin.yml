@@ -2,7 +2,7 @@ name: KT
 version: '${project.version}'
 main: com.monkey.kt.KT
 author: MonkeyMoon104
-api-version: '1.17'
+api-version: '1.20'
 depend:
   - LuckPerms
 
@@ -50,4 +50,12 @@ permissions:
 
   kt.end.use:
     description: Use the end kill effect
+    default: op
+
+  kt.pigstep.use:
+    description: Use the pigstep kill effect
+    default: op
+
+  kt.warden.use:
+    description: Use the warden kill effect
     default: op

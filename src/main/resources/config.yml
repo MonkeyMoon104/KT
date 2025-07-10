@@ -33,3 +33,9 @@ effects:
   end:
     name: "&5End"
     description: "&5Creepy &dEnderman &5effect"
+  pigstep:
+    name: "&dPigStep"
+    description: "&dPig &bStep &eeffect"
+  warden:
+    name: "&3Warden"
+    description: "&3Warden &eeffect"

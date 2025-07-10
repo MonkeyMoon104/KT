@@ -23,6 +23,8 @@ public class KillEffectFactory {
         effects.put("smoke", new SmokeEffect(plugin));
         effects.put("totem", new TotemEffect(plugin));
         effects.put("end", new EndEffect(plugin));
+        effects.put("pigstep", new PigstepEffect(plugin));
+        effects.put("warden", new WardenEffect(plugin));
     }
 
     public static KillEffect getEffect(String name) {

@@ -31,6 +31,8 @@ public class GUIManager {
         effectIcons.put("smoke", Material.CAMPFIRE);
         effectIcons.put("totem", Material.TOTEM_OF_UNDYING);
         effectIcons.put("end", Material.ENDER_PEARL);
+        effectIcons.put("pigstep", Material.PIG_SPAWN_EGG);
+        effectIcons.put("warden", Material.WARD_ARMOR_TRIM_SMITHING_TEMPLATE);
     }
 
     public GUIManager(KT plugin, DatabaseManager databaseManager) {
@@ -63,8 +65,10 @@ public class GUIManager {
     }
 
     public void openGUI(Player player) {
-        Inventory inv = Bukkit.createInventory(null, 9, ChatColor.translateAlternateColorCodes('&',
+        int size = ((effects.size() - 1) / 9 + 1) * 9;
+        Inventory inv = Bukkit.createInventory(null, size, ChatColor.translateAlternateColorCodes('&',
                 plugin.getConfig().getString("messages.gui_title")));
+
 
         int slot = 0;
         for (ItemStack item : effects.values()) {
