@@ -17,6 +17,14 @@ permissions:
     description: Allows reloading the plugin configuration
     default: op
 
+  kt.set:
+    description: Allows set effect without GUI
+    default: op
+
+  kt.test:
+    description: Allows test the plugin effects
+    default: op
+
   kt.fire.use:
     description: Use the fire kill effect
     default: op

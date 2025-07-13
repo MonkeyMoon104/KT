@@ -4,6 +4,10 @@ messages:
   effect_already_set: "&eYou have already selected this KillEffect!"
   config_reloaded: "&aConfiguration successfully reloaded!"
   gui_title: "&6Select your KillEffect"
+  effect_not_found: "&cKillEffect not found!"
+  miss_usage: "&cUse this command &e/kt reload|set|test"
+  only_players: "&cOnly players can execute this command!"
+  effect_executed: "&aKillEffect executed: &e%effect%"
 
 effects:
   fire:

@@ -1,6 +1,7 @@
 package com.monkey.kt;
 
-import com.monkey.kt.commands.KillEffectCommand;
+import com.monkey.kt.commands.kt.KTCommand;
+import com.monkey.kt.commands.kt.tab.KillEffectTabCompleter;
 import com.monkey.kt.effects.KillEffectFactory;
 import com.monkey.kt.storage.DatabaseManager;
 import com.monkey.kt.gui.GUIManager;
@@ -27,7 +28,8 @@ public class KT extends JavaPlugin {
         guiManager = new GUIManager(this, databaseManager);
         factory = new KillEffectFactory(this);
 
-        getCommand("killeffect").setExecutor(new KillEffectCommand(this, guiManager));
+        getCommand("killeffect").setExecutor(new KTCommand(this, guiManager));
+        getCommand("killeffect").setTabCompleter(new KillEffectTabCompleter(this));
 
         getServer().getPluginManager().registerEvents(new InventoryClickListener(this), this);
         getServer().getPluginManager().registerEvents(new KillEffectListener(), this);

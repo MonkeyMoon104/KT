@@ -90,6 +90,10 @@ public class GUIManager {
         return null;
     }
 
+    public Map<String, ItemStack> getEffects() {
+        return effects;
+    }
+
     private String capitalize(String name) {
         return Character.toUpperCase(name.charAt(0)) + name.substring(1);
     }
