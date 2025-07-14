@@ -23,6 +23,10 @@ public class KillEffectListener implements Listener {
         String effectName = EffectStorage.getEffect(killer);
         if (effectName == null) return;
 
+        if (effectName.equalsIgnoreCase("sniper")) {
+            if (!victim.hasMetadata("kt_last_hit_arrow")) return;
+        }
+
         KillEffect effect = KillEffectFactory.getEffect(effectName);
         if (effect == null) return;
 

@@ -3,6 +3,8 @@ package com.monkey.kt;
 import com.monkey.kt.commands.kt.KTCommand;
 import com.monkey.kt.commands.kt.tab.KillEffectTabCompleter;
 import com.monkey.kt.effects.KillEffectFactory;
+import com.monkey.kt.listener.ArrowDamageTracker;
+import com.monkey.kt.listener.ResourcePackListenerJoin;
 import com.monkey.kt.storage.DatabaseManager;
 import com.monkey.kt.gui.GUIManager;
 import com.monkey.kt.listener.InventoryClickListener;
@@ -20,6 +22,8 @@ public class KT extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
 
+        loadResourcePack();
+
         databaseManager = new DatabaseManager(this);
         databaseManager.loadDatabase();
 
@@ -31,7 +35,9 @@ public class KT extends JavaPlugin {
         getCommand("killeffect").setExecutor(new KTCommand(this, guiManager));
         getCommand("killeffect").setTabCompleter(new KillEffectTabCompleter(this));
 
+        getServer().getPluginManager().registerEvents(new ResourcePackListenerJoin(this), this);
         getServer().getPluginManager().registerEvents(new InventoryClickListener(this), this);
+        getServer().getPluginManager().registerEvents(new ArrowDamageTracker(this), this);
         getServer().getPluginManager().registerEvents(new KillEffectListener(), this);
     }
 
@@ -40,6 +46,24 @@ public class KT extends JavaPlugin {
         databaseManager.closeConnection();
     }
 
+    private void loadResourcePack() {
+        String url = getConfig().getString("resource_pack.url");
+        String sha = getConfig().getString("resource_pack.sha1");
+
+        if (url == null || sha == null) {
+            getLogger().warning("Resource pack URL o SHA1 mancante nel config.yml!");
+            return;
+        }
+
+        if (!sha.matches("^[a-fA-F0-9]{40}$")) {
+            getLogger().warning("SHA1 non valido! Deve essere lungo 40 caratteri hex.");
+            return;
+        }
+
+        getLogger().info("Resource pack configurato: " + url);
+    }
+
+
     public DatabaseManager getDatabaseManager() {
         return databaseManager;
     }
@@ -47,4 +71,5 @@ public class KT extends JavaPlugin {
     public GUIManager getGuiManager() {
         return guiManager;
     }
+
 }

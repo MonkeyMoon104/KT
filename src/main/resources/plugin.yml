@@ -72,3 +72,11 @@ permissions:
   kt.glowmissile.use:
     description: Use the glowmissile kill effect
     default: op
+
+  kt.sniper.use:
+    description: Use the sniper kill effect
+    default: op
+
+  kt.enchantcolumn.use:
+    description: Use the enchantcolumn kill effect
+    default: op

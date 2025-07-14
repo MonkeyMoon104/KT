@@ -1,7 +1,6 @@
 package com.monkey.kt.gui;
 
 import com.monkey.kt.KT;
-import com.monkey.kt.effects.KillEffectFactory;
 import com.monkey.kt.storage.DatabaseManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -34,6 +33,8 @@ public class GUIManager {
         effectIcons.put("pigstep", Material.PIG_SPAWN_EGG);
         effectIcons.put("warden", Material.WARD_ARMOR_TRIM_SMITHING_TEMPLATE);
         effectIcons.put("glowmissile", Material.GLOW_INK_SAC);
+        effectIcons.put("sniper", Material.ARROW);
+        effectIcons.put("enchantcolumn", Material.ENCHANTING_TABLE);
     }
 
     public GUIManager(KT plugin, DatabaseManager databaseManager) {
@@ -45,22 +46,37 @@ public class GUIManager {
             Material material = entry.getValue();
 
             String name = plugin.getConfig().getString("effects." + key + ".name");
-            String description = plugin.getConfig().getString("effects." + key + ".description");
+            Object descObj = plugin.getConfig().get("effects." + key + ".description");
 
             if (name == null) name = capitalize(key);
-            if (description == null) description = key;
 
-            effects.put(key, createEffectItem(material,
+            List<String> lore = new ArrayList<>();
+
+            if (descObj instanceof List) {
+                for (Object line : (List<?>) descObj) {
+                    if (line instanceof String) {
+                        lore.add(ChatColor.translateAlternateColorCodes('&', (String) line));
+                    }
+                }
+            } else if (descObj instanceof String) {
+                lore.add(ChatColor.translateAlternateColorCodes('&', (String) descObj));
+            } else {
+                lore.add(capitalize(key));
+            }
+
+            effects.put(key, createEffectItem(
+                    material,
                     ChatColor.translateAlternateColorCodes('&', name),
-                    ChatColor.translateAlternateColorCodes('&', description)));
+                    lore
+            ));
         }
     }
 
-    private ItemStack createEffectItem(Material material, String name, String description) {
+    private ItemStack createEffectItem(Material material, String name, List<String> lore) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(name);
-        meta.setLore(Collections.singletonList(description));
+        meta.setLore(lore);
         item.setItemMeta(meta);
         return item;
     }
@@ -69,7 +85,6 @@ public class GUIManager {
         int size = ((effects.size() - 1) / 9 + 1) * 9;
         Inventory inv = Bukkit.createInventory(null, size, ChatColor.translateAlternateColorCodes('&',
                 plugin.getConfig().getString("messages.gui_title")));
-
 
         int slot = 0;
         for (ItemStack item : effects.values()) {

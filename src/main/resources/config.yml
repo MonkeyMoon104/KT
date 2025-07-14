@@ -8,6 +8,15 @@ messages:
   miss_usage: "&cUse this command &e/kt reload|set|test"
   only_players: "&cOnly players can execute this command!"
   effect_executed: "&aKillEffect executed: &e%effect%"
+  invalid_potion: "&cInvalid or missing configured potion: no potion applied."
+  potion_set: "&aYou received: &e%potion% %amplifier%"
+
+resource_pack:
+  url: "https://download.mc-packs.net/pack/d5889f788003340479e3f767852eddee152ee544.zip"
+  sha1: "d5889f788003340479e3f767852eddee152ee544"
+  sounds:
+    bow-hit:
+      name: "kt.hs1"
 
 effects:
   fire:
@@ -46,3 +55,17 @@ effects:
   glowmissile:
     name: "&bGlowMissile"
     description: "&bGlow missile &7effect"
+
+  sniper:
+    name: "&cSniper"
+    description:
+      - "&7Long Mortal Shot"
+      - "&8Only kill with bow"
+
+  enchantcolumn:
+    name: "&rEnchant&7Column"
+    description: "&rEnchant&7Column &eExplosion!"
+    effectexplosion:
+      type: REGENERATION
+      amplifier: 2
+      duration: 10
