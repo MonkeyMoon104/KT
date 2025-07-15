@@ -35,6 +35,7 @@ public class GUIManager {
         effectIcons.put("glowmissile", Material.GLOW_INK_SAC);
         effectIcons.put("sniper", Material.ARROW);
         effectIcons.put("enchantcolumn", Material.ENCHANTING_TABLE);
+        effectIcons.put("fireworks", Material.FIREWORK_ROCKET);
     }
 
     public GUIManager(KT plugin, DatabaseManager databaseManager) {

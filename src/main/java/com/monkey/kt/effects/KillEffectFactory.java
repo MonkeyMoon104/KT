@@ -28,6 +28,7 @@ public class KillEffectFactory {
         effects.put("glowmissile", new GlowMissileEffect(plugin));
         effects.put("sniper", new SniperEffect(plugin));
         effects.put("enchantcolumn", new EnchantColumnEffect(plugin));
+        effects.put("fireworks", new FireworksEffect(plugin));
     }
 
     public static KillEffect getEffect(String name) {

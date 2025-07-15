@@ -10,6 +10,8 @@ import com.monkey.kt.gui.GUIManager;
 import com.monkey.kt.listener.InventoryClickListener;
 import com.monkey.kt.listener.KillEffectListener;
 import com.monkey.kt.utils.WorldGuardUtils;
+import com.monkey.kt.utils.listener.CheckUpdate;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class KT extends JavaPlugin {
@@ -20,6 +22,12 @@ public class KT extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        new Metrics(this, 26511);
+
+        int spigotResourceId = 125998;
+        CheckUpdate checkUpdate = new CheckUpdate(this, spigotResourceId);
+        getServer().getPluginManager().registerEvents(checkUpdate, this);
+
         saveDefaultConfig();
 
         loadResourcePack();

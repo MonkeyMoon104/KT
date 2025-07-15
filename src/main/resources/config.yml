@@ -69,3 +69,7 @@ effects:
       type: REGENERATION
       amplifier: 2
       duration: 10
+
+  fireworks:
+    name: "&bFireworks"
+    description: "&cFire &fworks &7and explosions"

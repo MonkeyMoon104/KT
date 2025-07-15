@@ -80,3 +80,7 @@ permissions:
   kt.enchantcolumn.use:
     description: Use the enchantcolumn kill effect
     default: op
+
+  kt.fireworks.use:
+    description: Use the fireworks kill effect
+    default: op
