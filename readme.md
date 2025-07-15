@@ -17,7 +17,7 @@
 
 | Feature                             | Description                                                                 |
 |-------------------------------------|-----------------------------------------------------------------------------|
-| 🎇 15+ Unique Effects               | Fire, Lightning ⚡, Explosion 💥, Hearts 💖, Notes 🎵, Cloud ☁️, Smoke 🌫️, Totem, End, PigStep, Warden, GlowMissile, Sniper, EnchantColumn, Fireworks 🎆 |
+| 🎇 15+ Unique Effects               | Fire 🔥, Lightning ⚡, Explosion 💥, Hearts 💖, Notes 🎵, Cloud ☁️, Smoke 🌫️, Totem 🔮, and Enderman-inspired End effect 👾, PigStep 🐽, Warden 👹, Glow Missile 🚀, Sniper 🔫, EnchantColumn 🪄, Fireworks 🎆 |
 | 🧑‍💼 Permission-Based Access       | Each effect has its own permission node. OPs automatically bypass them.    |
 | 🖱️ Intuitive GUI                   | Use `/kt` or `/killeffect` to easily select effects with a click!          |
 | 🔄 Live Reload                     | Use `/kt reload` to reload the config — no server restart needed!          |
@@ -28,8 +28,70 @@
 
 ## 📸 Some effects demo
 
-<div align="center"> <table> <tr> <td align="center"> 🎆 <strong>Fireworks</strong><br> <a href="https://youtu.be/Dzk_4szGcio"> <img src="https://img.youtube.com/vi/Dzk_4szGcio/hqdefault.jpg" width="250"> </a> </td> <td align="center"> 🎯 <strong>Sniper</strong><br> <a href="https://youtu.be/3Fe-iLyAOwA"> <img src="https://img.youtube.com/vi/3Fe-iLyAOwA/hqdefault.jpg" width="250"> </a> </td> </tr> <tr> <td align="center"> 🔮 <strong>Enchant Column</strong><br> <a href="https://youtu.be/IUMDfLWR7Ro"> <img src="https://img.youtube.com/vi/IUMDfLWR7Ro/hqdefault.jpg" width="250"> </a> </td> <td align="center"> 💡 <strong>GlowMissile</strong><br> <a href="https://youtu.be/kNWW7bRp51Y"> <img src="https://img.youtube.com/vi/kNWW7bRp51Y/hqdefault.jpg" width="250"> </a> </td> </tr> <tr> <td align="center"> 🎵 <strong>Pigstep</strong><br> <a href="https://youtu.be/32uD1ZDl-PE"> <img src="https://img.youtube.com/vi/32uD1ZDl-PE/hqdefault.jpg" width="250"> </a> </td> <td align="center"> 👁️ <strong>Warden</strong><br> <a href="https://youtu.be/-iTAhnakGSc"> <img src="https://img.youtube.com/vi/-iTAhnakGSc/hqdefault.jpg" width="250"> </a> </td> </tr> </table> </div>
----
+<div align="center">
+  <table>
+    <tr>
+      <td align="center">
+        🎆 <strong>Fireworks</strong><br>
+        <a href="https://youtu.be/Dzk_4szGcio">
+          <img src="https://img.youtube.com/vi/Dzk_4szGcio/hqdefault.jpg" width="250">
+        </a><br>
+        <a href="https://youtu.be/Dzk_4szGcio">
+          <img src="https://img.shields.io/badge/-▶%20Watch%20Demo-red?style=for-the-badge&logo=youtube">
+        </a>
+      </td>
+      <td align="center">
+        🔫 <strong>Sniper</strong><br>
+        <a href="https://youtu.be/3Fe-iLyAOwA">
+          <img src="https://img.youtube.com/vi/3Fe-iLyAOwA/hqdefault.jpg" width="250">
+        </a><br>
+        <a href="https://youtu.be/3Fe-iLyAOwA">
+          <img src="https://img.shields.io/badge/-▶%20Watch%20Demo-red?style=for-the-badge&logo=youtube">
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        🪄 <strong>Enchant Column</strong><br>
+        <a href="https://youtu.be/IUMDfLWR7Ro">
+          <img src="https://img.youtube.com/vi/IUMDfLWR7Ro/hqdefault.jpg" width="250">
+        </a><br>
+        <a href="https://youtu.be/IUMDfLWR7Ro">
+          <img src="https://img.shields.io/badge/-▶%20Watch%20Demo-red?style=for-the-badge&logo=youtube">
+        </a>
+      </td>
+      <td align="center">
+        🚀 <strong>GlowMissile</strong><br>
+        <a href="https://youtu.be/kNWW7bRp51Y">
+          <img src="https://img.youtube.com/vi/kNWW7bRp51Y/hqdefault.jpg" width="250">
+        </a><br>
+        <a href="https://youtu.be/kNWW7bRp51Y">
+          <img src="https://img.shields.io/badge/-▶%20Watch%20Demo-red?style=for-the-badge&logo=youtube">
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        🐽 <strong>Pigstep</strong><br>
+        <a href="https://youtu.be/32uD1ZDl-PE">
+          <img src="https://img.youtube.com/vi/32uD1ZDl-PE/hqdefault.jpg" width="250">
+        </a><br>
+        <a href="https://youtu.be/32uD1ZDl-PE">
+          <img src="https://img.shields.io/badge/-▶%20Watch%20Demo-red?style=for-the-badge&logo=youtube">
+        </a>
+      </td>
+      <td align="center">
+        👹 <strong>Warden</strong><br>
+        <a href="https://youtu.be/-iTAhnakGSc">
+          <img src="https://img.youtube.com/vi/-iTAhnakGSc/hqdefault.jpg" width="250">
+        </a><br>
+        <a href="https://youtu.be/-iTAhnakGSc">
+          <img src="https://img.shields.io/badge/-▶%20Watch%20Demo-red?style=for-the-badge&logo=youtube">
+        </a>
+      </td>
+    </tr>
+  </table>
+</div>
 
 ## 🚀 Getting Started
 
@@ -46,26 +108,26 @@
 
 ### 🔐 Permissions Overview
 
-| Node                        | Description                                   |
-|----------------------------|-----------------------------------------------|
-| `kt.reload`                | Reload the configuration                      |
-| `kt.set`                   | Set an effect manually                        |
-| `kt.test`                  | Test effects                                  |
-| `kt.fire.use`              | Use the **Fire** effect 🔥                   |
-| `kt.lightning.use`         | Use the **Lightning** effect ⚡              |
-| `kt.explosion.use`         | Use the **Explosion** effect 💥              |
-| `kt.hearts.use`            | Use the **Hearts** effect 💖                 |
-| `kt.notes.use`             | Use the **Notes** effect 🎵                  |
-| `kt.cloud.use`             | Use the **Cloud** effect ☁️                 |
-| `kt.smoke.use`             | Use the **Smoke** effect 🌫️                |
-| `kt.totem.use`             | Use the **Totem** effect                     |
-| `kt.end.use`               | Use the **End** effect (Enderman style)      |
-| `kt.pigstep.use`           | Use the **PigStep** effect                   |
-| `kt.warden.use`            | Use the **Warden** effect                    |
-| `kt.glowmissile.use`       | Use the **GlowMissile** effect               |
-| `kt.sniper.use`            | Use the **Sniper** effect                    |
-| `kt.enchantcolumn.use`     | Use the **EnchantColumn** effect             |
-| `kt.fireworks.use`         | Use the **Fireworks** effect 🎆             |
+| Node                        | Description                                |
+|----------------------------|--------------------------------------------|
+| `kt.reload`                | Reload the configuration                   |
+| `kt.set`                   | Set an effect manually                     |
+| `kt.test`                  | Test effects                               |
+| `kt.fire.use`              | Use the **Fire** effect 🔥                 |
+| `kt.lightning.use`         | Use the **Lightning** effect ⚡             |
+| `kt.explosion.use`         | Use the **Explosion** effect 💥            |
+| `kt.hearts.use`            | Use the **Hearts** effect 💖               |
+| `kt.notes.use`             | Use the **Notes** effect 🎵                |
+| `kt.cloud.use`             | Use the **Cloud** effect ☁️                |
+| `kt.smoke.use`             | Use the **Smoke** effect 🌫️               |
+| `kt.totem.use`             | Use the **Totem** effect 🔮                |
+| `kt.end.use`               | Use the **End** effect (Enderman style) 👾 |
+| `kt.pigstep.use`           | Use the **PigStep** effect 🐽             |
+| `kt.warden.use`            | Use the **Warden** effect 👹                |
+| `kt.glowmissile.use`       | Use the **GlowMissile** effect 🚀           |
+| `kt.sniper.use`            | Use the **Sniper** effect 🔫                |
+| `kt.enchantcolumn.use`     | Use the **EnchantColumn** effect 🪄          |
+| `kt.fireworks.use`         | Use the **Fireworks** effect 🎆            |
 
 ---
 
