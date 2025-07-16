@@ -1,7 +1,7 @@
 
 # 🔥 KillEffect Plugin
 
-[![Version](https://img.shields.io/badge/version-2.1.4-blue?style=for-the-badge)](https://github.com/MonkeyMoon104/KT)
+[![Version](https://img.shields.io/badge/version-2.1.7-blue?style=for-the-badge)](https://github.com/MonkeyMoon104/KT)
 [![SpigotMC](https://img.shields.io/badge/SpigotMC-Plugin-orange?style=for-the-badge&logo=spigotmc)](https://www.spigotmc.org/resources/1-17-1-21-killeffects.125998/)
 [![Download JAR](https://img.shields.io/badge/Download-JAR-brightgreen?style=for-the-badge&logo=java)](https://www.spigotmc.org/resources/1-17-1-21-killeffects.125998/download?version=598469)
 [![Download ZIP](https://img.shields.io/badge/Download-ZIP-blueviolet?style=for-the-badge&logo=github)](https://github.com/MonkeyMoon104/KT/archive/refs/heads/master.zip)
@@ -9,7 +9,7 @@
 ---
 
 > **Make every kill unforgettable!**  
-> `KillEffect` is the ultimate Minecraft plugin for PvP servers, introducing over **15 unique and spectacular kill effects** that transform ordinary kills into epic moments. With full permission control, a sleek GUI, and a customizable config system, this plugin brings style, functionality, and performance together — all in one package.
+> `KillEffect` is the ultimate Minecraft plugin for PvP servers, introducing over **15 unique and spectacular kill effects** that transform ordinary kills player/mobs into epic moments. With full permission control, a sleek GUI, and a customizable config system, this plugin brings style, functionality, and performance together — all in one package.
 
 ---
 

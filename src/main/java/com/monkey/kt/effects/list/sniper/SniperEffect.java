@@ -1,4 +1,4 @@
-package com.monkey.kt.effects.list;
+package com.monkey.kt.effects.list.sniper;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.KillEffect;

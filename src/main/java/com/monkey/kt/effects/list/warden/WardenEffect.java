@@ -1,4 +1,4 @@
-package com.monkey.kt.effects.list;
+package com.monkey.kt.effects.list.warden;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.KillEffect;

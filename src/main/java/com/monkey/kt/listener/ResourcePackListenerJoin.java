@@ -5,8 +5,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.util.Base64;
-
 public class ResourcePackListenerJoin implements Listener {
 
     private final KT plugin;

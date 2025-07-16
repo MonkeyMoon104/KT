@@ -17,14 +17,12 @@ public class CheckUpdate implements Listener {
 
     private final Plugin plugin;
     private final int resourceId;
-    private String latestVersion;
-    private boolean updateAvailable;
+    private String latestVersion = "";
+    private boolean updateAvailable = false;
 
     public CheckUpdate(Plugin plugin, int resourceId) {
         this.plugin = plugin;
         this.resourceId = resourceId;
-        this.latestVersion = "";
-        this.updateAvailable = false;
 
         new BukkitRunnable() {
             @Override
@@ -47,19 +45,54 @@ public class CheckUpdate implements Listener {
             reader.close();
 
             this.latestVersion = latestVersion;
-
             String currentVersion = plugin.getDescription().getVersion();
 
-            updateAvailable = !currentVersion.equalsIgnoreCase(latestVersion);
+            Bukkit.getLogger().info("[KT UpdateChecker] Current version: " + currentVersion);
+            Bukkit.getLogger().info("[KT UpdateChecker] Latest version: " + latestVersion);
+
+            int currentVerInt = parseVersion(currentVersion);
+            int latestVerInt = parseVersion(latestVersion);
+
+            updateAvailable = latestVerInt > currentVerInt;
 
             if (updateAvailable) {
                 Bukkit.getLogger().info("[KT UpdateChecker] New version available: " + latestVersion + " (current version: " + currentVersion + ")");
             } else {
-                Bukkit.getLogger().info("[KT UpdateChecker] Plugin update to last version");
+                Bukkit.getLogger().info("[KT UpdateChecker] Plugin is up to date.");
             }
 
         } catch (Exception e) {
-            Bukkit.getLogger().warning("[KT UpdateChecker] Error while check updates: " + e.getMessage());
+            Bukkit.getLogger().warning("[KT UpdateChecker] Error while checking updates: " + e.getMessage());
+        }
+    }
+
+    private int parseVersion(String version) {
+        if (version == null) return 0;
+        version = version.toLowerCase().startsWith("v") ? version.substring(1) : version;
+        String[] parts = version.split("\\.");
+        StringBuilder builder = new StringBuilder();
+
+        for (String part : parts) {
+            builder.append(String.format("%02d", parseIntSafe(part)));
+        }
+
+        while (builder.length() < 6) {
+            builder.append("00");
+        }
+
+        try {
+            return Integer.parseInt(builder.toString());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+
+    private int parseIntSafe(String str) {
+        try {
+            return Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+            return 0;
         }
     }
 

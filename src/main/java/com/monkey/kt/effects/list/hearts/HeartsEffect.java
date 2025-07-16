@@ -1,4 +1,4 @@
-package com.monkey.kt.effects.list;
+package com.monkey.kt.effects.list.hearts;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.KillEffect;
@@ -8,14 +8,14 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-public class NotesEffect implements KillEffect {
+public class HeartsEffect implements KillEffect {
     private final KT plugin;
-    public NotesEffect(KT plugin) { this.plugin = plugin; }
+    public HeartsEffect(KT plugin) { this.plugin = plugin; }
 
     @Override
     public void play(Player player, Location loc) {
-        loc.getWorld().playSound(loc, Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
-        EffectUtils.playRepeatingParticle(plugin, loc, Particle.NOTE, 40, 1.5, 1.5, 1.5, 1, 2L, 8);
+        loc.getWorld().playSound(loc, Sound.ENTITY_VILLAGER_CELEBRATE, 2, 1);
+        EffectUtils.playRepeatingParticle(plugin, loc, Particle.HEART, 20, 1, 1.5, 1, 0.1, 2L, 8);
     }
 }
 
