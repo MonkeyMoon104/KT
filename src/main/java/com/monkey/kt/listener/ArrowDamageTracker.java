@@ -24,8 +24,12 @@ public class ArrowDamageTracker implements Listener {
         Entity victim = event.getEntity();
         Entity damager = event.getDamager();
 
-        if (!(victim instanceof LivingEntity entityVictim)) return;
-        if (!(damager instanceof Arrow arrow)) return;
+        if (!(victim instanceof LivingEntity)) return;
+        LivingEntity entityVictim = (LivingEntity) victim;
+
+        if (!(damager instanceof Arrow)) return;
+        Arrow arrow = (Arrow) damager;
+
         if (!(arrow.getShooter() instanceof Player)) return;
 
         entityVictim.setMetadata("kt_last_hit_arrow", new FixedMetadataValue(plugin, true));

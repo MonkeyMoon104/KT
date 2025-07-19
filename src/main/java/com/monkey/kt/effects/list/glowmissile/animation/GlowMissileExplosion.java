@@ -7,6 +7,7 @@ import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class GlowMissileExplosion {
+    private enum Phase { SHRINK_SPHERE, EXPAND_RINGS, DONE }
 
     public static void start(KT plugin, Location center) {
         World world = center.getWorld();
@@ -22,8 +23,6 @@ public class GlowMissileExplosion {
             double ring2Radius = 0;
             final double maxRingRadius = 15;
             final double ringExpandStep = 0.5;
-
-            enum Phase { SHRINK_SPHERE, EXPAND_RINGS, DONE }
             Phase phase = Phase.SHRINK_SPHERE;
 
             boolean sphereStarted = false;

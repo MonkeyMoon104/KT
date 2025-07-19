@@ -24,7 +24,9 @@ public class InventoryClickListener implements Listener {
         if (event.getView().getTitle().equals(guiTitle)) {
             event.setCancelled(true);
 
-            if (!(event.getWhoClicked() instanceof Player player)) return;
+            if (!(event.getWhoClicked() instanceof Player)) return;
+            Player player = (Player) event.getWhoClicked();
+
 
             ItemStack clicked = event.getCurrentItem();
             if (clicked == null || !clicked.hasItemMeta()) return;

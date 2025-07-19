@@ -2,10 +2,14 @@ name: KT
 version: '${project.version}'
 main: com.monkey.kt.KT
 author: MonkeyMoon104
-api-version: '1.20'
+api-version: '1.13'
 depend:
   - LuckPerms
   - WorldGuard
+softdepend:
+  - ViaVersion
+  - ViaRewind
+  - ViaBackwards
 
 commands:
   killeffect:

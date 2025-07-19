@@ -11,6 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class WardenEffect implements KillEffect {
@@ -148,7 +149,7 @@ public class WardenEffect implements KillEffect {
         int steps = 35;
         double radiusIncrement = (maxRadius - splashRadius) / steps;
 
-        List<Vector> directions = List.of(
+        List<Vector> directions = Arrays.asList(
                 new Vector(-1, 0, -1).normalize(),
                 new Vector(1, 0, -1).normalize(),
                 new Vector(-1, 0, 1).normalize(),

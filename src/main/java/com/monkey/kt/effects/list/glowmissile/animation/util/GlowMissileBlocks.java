@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class GlowMissileBlocks {
@@ -20,7 +21,7 @@ public class GlowMissileBlocks {
         missileBlocks.add(base);
         missileBlocks.add(top);
 
-        for (Vector offset : List.of(
+        for (Vector offset : Arrays.asList(
                 new Vector(1, 0, 0),
                 new Vector(-1, 0, 0),
                 new Vector(0, 0, 1),

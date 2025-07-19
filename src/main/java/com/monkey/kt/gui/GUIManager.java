@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class GUIManager {
 
@@ -19,32 +20,53 @@ public class GUIManager {
 
     private final Map<String, ItemStack> effects = new LinkedHashMap<>();
 
-    private static final Map<String, Material> effectIcons = new LinkedHashMap<>();
+    private static final Map<String, String> effectIconNames = new LinkedHashMap<>();
     static {
-        effectIcons.put("fire", Material.BLAZE_POWDER);
-        effectIcons.put("lightning", Material.LIGHTNING_ROD);
-        effectIcons.put("explosion", Material.TNT);
-        effectIcons.put("hearts", Material.RED_DYE);
-        effectIcons.put("notes", Material.NOTE_BLOCK);
-        effectIcons.put("cloud", Material.COBWEB);
-        effectIcons.put("smoke", Material.CAMPFIRE);
-        effectIcons.put("totem", Material.TOTEM_OF_UNDYING);
-        effectIcons.put("end", Material.ENDER_PEARL);
-        effectIcons.put("pigstep", Material.PIG_SPAWN_EGG);
-        effectIcons.put("warden", Material.WARD_ARMOR_TRIM_SMITHING_TEMPLATE);
-        effectIcons.put("glowmissile", Material.GLOW_INK_SAC);
-        effectIcons.put("sniper", Material.ARROW);
-        effectIcons.put("enchantcolumn", Material.ENCHANTING_TABLE);
-        effectIcons.put("fireworks", Material.FIREWORK_ROCKET);
+        effectIconNames.put("fire", "BLAZE_POWDER");
+        effectIconNames.put("lightning", "LIGHTNING_ROD");
+        effectIconNames.put("explosion", "TNT");
+        effectIconNames.put("hearts", "RED_DYE");
+        effectIconNames.put("notes", "NOTE_BLOCK");
+        effectIconNames.put("cloud", "COBWEB");
+        effectIconNames.put("smoke", "CAMPFIRE");
+        effectIconNames.put("totem", "TOTEM_OF_UNDYING");
+        effectIconNames.put("end", "ENDER_PEARL");
+        effectIconNames.put("pigstep", "PIG_SPAWN_EGG");
+        effectIconNames.put("warden", "WARD_ARMOR_TRIM_SMITHING_TEMPLATE");
+        effectIconNames.put("glowmissile", "GLOW_INK_SAC");
+        effectIconNames.put("sniper", "ARROW");
+        effectIconNames.put("enchantcolumn", "ENCHANTING_TABLE");
+        effectIconNames.put("fireworks", "FIREWORK_ROCKET");
     }
 
     public GUIManager(KT plugin, DatabaseManager databaseManager) {
         this.plugin = plugin;
         this.databaseManager = databaseManager;
 
-        for (Map.Entry<String, Material> entry : effectIcons.entrySet()) {
+        List<Material> fallbackMaterials = Arrays.asList(
+                Material.STONE,
+                Material.DIRT,
+                Material.GRASS_BLOCK,
+                Material.OAK_PLANKS,
+                Material.COBBLESTONE,
+                Material.SAND,
+                Material.GLASS,
+                Material.IRON_INGOT,
+                Material.GOLD_INGOT,
+                Material.DIAMOND,
+                Material.COAL
+        );
+
+        for (Map.Entry<String, String> entry : effectIconNames.entrySet()) {
             String key = entry.getKey();
-            Material material = entry.getValue();
+            String matName = entry.getValue();
+
+            Material material = Material.matchMaterial(matName);
+            if (material == null) {
+                int randomIndex = ThreadLocalRandom.current().nextInt(fallbackMaterials.size());
+                material = fallbackMaterials.get(randomIndex);
+                Bukkit.getLogger().warning("[MobAttack] Material for effect '" + key + "' not found, using random fallback: " + material.name());
+            }
 
             String name = plugin.getConfig().getString("effects." + key + ".name");
             Object descObj = plugin.getConfig().get("effects." + key + ".description");
