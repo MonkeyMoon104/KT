@@ -20,49 +20,74 @@ resource_pack:
 
 effects:
   fire:
+    enabled: true
     name: "&cFire"
     description: "&cBurn &7your enemies with fire"
+
   lightning:
+    enabled: true
     name: "&eLightning"
     description: "&bSummon a &elightning bolt &bon your target"
+
   explosion:
+    enabled: true
     name: "&4Explosion"
     description: "&4Boom! &7A visual explosion effect"
+
   hearts:
+    enabled: true
     name: "&dHearts"
     description: "&dLove hearts &7when you kill"
+
   notes:
+    enabled: true
     name: "&aNotes"
     description: "&aMusical effect &ein the rhythm of death"
+
   cloud:
+    enabled: true
     name: "&fCloud"
     description: "&fMysterious &7and haunting fog"
+
   smoke:
+    enabled: true
     name: "&8Smoke"
     description: "&8Smoke &7and shadows in the air"
+
   totem:
+    enabled: true
     name: "&6Totem"
     description: "&6Epic &eparticles &6of the totem"
+
   end:
+    enabled: true
     name: "&5End"
     description: "&5Creepy &dEnderman &5effect"
+
   pigstep:
+    enabled: true
     name: "&dPigStep"
     description: "&dPig &bStep &eeffect"
+
   warden:
+    enabled: true
     name: "&3Warden"
     description: "&3Warden &eeffect"
+
   glowmissile:
+    enabled: true
     name: "&bGlowMissile"
     description: "&bGlow missile &7effect"
 
   sniper:
+    enabled: true
     name: "&cSniper"
     description:
       - "&7Long Mortal Shot"
       - "&8Only kill with bow"
 
   enchantcolumn:
+    enabled: true
     name: "&rEnchant&7Column"
     description: "&rEnchant&7Column &eExplosion!"
     effectexplosion:
@@ -71,5 +96,7 @@ effects:
       duration: 10
 
   fireworks:
+    enabled: true
     name: "&bFireworks"
     description: "&cFire &fworks &7and explosions"
+

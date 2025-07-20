@@ -3,6 +3,7 @@ package com.monkey.kt;
 import com.monkey.kt.commands.kt.KTCommand;
 import com.monkey.kt.commands.kt.tab.KillEffectTabCompleter;
 import com.monkey.kt.effects.KillEffectFactory;
+import com.monkey.kt.effects.register.EffectRegistry;
 import com.monkey.kt.listener.ArrowDamageTracker;
 import com.monkey.kt.listener.ResourcePackListenerJoin;
 import com.monkey.kt.storage.DatabaseManager;
@@ -19,6 +20,7 @@ public class KT extends JavaPlugin {
     private DatabaseManager databaseManager;
     private GUIManager guiManager;
     private KillEffectFactory factory;
+    private EffectRegistry effectRegistry;
 
     @Override
     public void onEnable() {
@@ -38,7 +40,8 @@ public class KT extends JavaPlugin {
         WorldGuardUtils.setup();
 
         guiManager = new GUIManager(this, databaseManager);
-        factory = new KillEffectFactory(this);
+        effectRegistry = new EffectRegistry(this);
+        effectRegistry.loadEffects();
 
         getCommand("killeffect").setExecutor(new KTCommand(this, guiManager));
         getCommand("killeffect").setTabCompleter(new KillEffectTabCompleter(this));
@@ -78,6 +81,10 @@ public class KT extends JavaPlugin {
 
     public GUIManager getGuiManager() {
         return guiManager;
+    }
+
+    public EffectRegistry getEffectRegistry() {
+        return effectRegistry;
     }
 
 }

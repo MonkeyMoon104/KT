@@ -22,21 +22,21 @@ public class GUIManager {
 
     private static final Map<String, String> effectIconNames = new LinkedHashMap<>();
     static {
-        effectIconNames.put("fire", "BLAZE_POWDER");
-        effectIconNames.put("lightning", "LIGHTNING_ROD");
-        effectIconNames.put("explosion", "TNT");
-        effectIconNames.put("hearts", "RED_DYE");
-        effectIconNames.put("notes", "NOTE_BLOCK");
         effectIconNames.put("cloud", "COBWEB");
-        effectIconNames.put("smoke", "CAMPFIRE");
-        effectIconNames.put("totem", "TOTEM_OF_UNDYING");
-        effectIconNames.put("end", "ENDER_PEARL");
-        effectIconNames.put("pigstep", "PIG_SPAWN_EGG");
-        effectIconNames.put("warden", "WARD_ARMOR_TRIM_SMITHING_TEMPLATE");
-        effectIconNames.put("glowmissile", "GLOW_INK_SAC");
-        effectIconNames.put("sniper", "ARROW");
         effectIconNames.put("enchantcolumn", "ENCHANTING_TABLE");
+        effectIconNames.put("end", "ENDER_PEARL");
+        effectIconNames.put("explosion", "TNT");
+        effectIconNames.put("fire", "BLAZE_POWDER");
         effectIconNames.put("fireworks", "FIREWORK_ROCKET");
+        effectIconNames.put("glowmissile", "GLOW_INK_SAC");
+        effectIconNames.put("hearts", "RED_DYE");
+        effectIconNames.put("lightning", "LIGHTNING_ROD");
+        effectIconNames.put("notes", "NOTE_BLOCK");
+        effectIconNames.put("pigstep", "PIG_SPAWN_EGG");
+        effectIconNames.put("smoke", "CAMPFIRE");
+        effectIconNames.put("sniper", "ARROW");
+        effectIconNames.put("totem", "TOTEM_OF_UNDYING");
+        effectIconNames.put("warden", "WARD_ARMOR_TRIM_SMITHING_TEMPLATE");
     }
 
     public GUIManager(KT plugin, DatabaseManager databaseManager) {
@@ -57,9 +57,8 @@ public class GUIManager {
                 Material.COAL
         );
 
-        for (Map.Entry<String, String> entry : effectIconNames.entrySet()) {
-            String key = entry.getKey();
-            String matName = entry.getValue();
+        effectIconNames.keySet().stream().sorted().forEach(key -> {
+            String matName = effectIconNames.get(key);
 
             Material material = Material.matchMaterial(matName);
             if (material == null) {
@@ -92,7 +91,7 @@ public class GUIManager {
                     ChatColor.translateAlternateColorCodes('&', name),
                     lore
             ));
-        }
+        });
     }
 
     private ItemStack createEffectItem(Material material, String name, List<String> lore) {
@@ -126,6 +125,36 @@ public class GUIManager {
             }
         }
         return null;
+    }
+
+    public void reloadGUI(Set<String> enabledEffects) {
+        effects.clear();
+
+        enabledEffects.stream().sorted().forEach(key -> {
+            String matName = effectIconNames.getOrDefault(key, "STONE");
+            Material material = Material.matchMaterial(matName);
+            if (material == null) material = Material.STONE;
+
+            String name = plugin.getConfig().getString("effects." + key + ".name");
+            Object descObj = plugin.getConfig().get("effects." + key + ".description");
+
+            if (name == null) name = capitalize(key);
+            List<String> lore = new ArrayList<>();
+
+            if (descObj instanceof List) {
+                for (Object line : (List<?>) descObj) {
+                    if (line instanceof String) {
+                        lore.add(ChatColor.translateAlternateColorCodes('&', (String) line));
+                    }
+                }
+            } else if (descObj instanceof String) {
+                lore.add(ChatColor.translateAlternateColorCodes('&', (String) descObj));
+            }
+
+            effects.put(key, createEffectItem(material,
+                    ChatColor.translateAlternateColorCodes('&', name),
+                    lore));
+        });
     }
 
     public Map<String, ItemStack> getEffects() {

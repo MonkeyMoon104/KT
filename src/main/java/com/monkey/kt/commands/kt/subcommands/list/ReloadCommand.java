@@ -29,6 +29,7 @@ public class ReloadCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         plugin.reloadConfig();
+        plugin.getEffectRegistry().loadEffects();
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.config_reloaded")));
     }
 }
