@@ -1,7 +1,7 @@
 
 # 🔥 KillEffect Plugin
 
-[![Version](https://img.shields.io/badge/version-2.1.8-blue?style=for-the-badge)](https://github.com/MonkeyMoon104/KT)
+[![Version](https://img.shields.io/badge/version-2.2.0-blue?style=for-the-badge)](https://github.com/MonkeyMoon104/KT)
 [![SpigotMC](https://img.shields.io/badge/SpigotMC-KT-orange?style=for-the-badge&logo=spigotmc)](https://www.spigotmc.org/resources/1-17-1-21-killeffects.125998/)
 [![Download JAR](https://img.shields.io/badge/Download-JAR-brightgreen?style=for-the-badge&logo=java)](https://www.spigotmc.org/resources/1-17-1-21-killeffects.125998/download?version=598469)
 [![Download ZIP](https://img.shields.io/badge/Download-ZIP-blueviolet?style=for-the-badge&logo=github)](https://github.com/MonkeyMoon104/KT/archive/refs/heads/master.zip)
