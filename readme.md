@@ -9,20 +9,20 @@
 ---
 
 > **Make every kill unforgettable!**  
-> `KillEffect` is the ultimate Minecraft plugin for PvP servers, introducing over **15 unique and spectacular kill effects** that transform ordinary kills player/mobs into epic moments. With full permission control, a sleek GUI, and a customizable config system, this plugin brings style, functionality, and performance together — all in one package.
+> `KillEffect` is the ultimate Minecraft plugin for PvP servers, introducing over **15+ unique and spectacular kill effects** that transform ordinary kills player/mobs into epic moments. With full permission control, a sleek GUI, and a customizable config system, this plugin brings style, functionality, and performance together all in one package.
 
 ---
 
 ## ✨ Features
 
-| Feature                             | Description                                                                 |
-|-------------------------------------|-----------------------------------------------------------------------------|
-| 🎇 15+ Unique Effects               | Fire 🔥, Lightning ⚡, Explosion 💥, Hearts 💖, Notes 🎵, Cloud ☁️, Smoke 🌫️, Totem 🔮, and Enderman-inspired End effect 👾, PigStep 🐽, Warden 👹, Glow Missile 🚀, Sniper 🔫, EnchantColumn 🪄, Fireworks 🎆 |
-| 🧑‍💼 Permission-Based Access       | Each effect has its own permission node. OPs automatically bypass them.    |
-| 🖱️ Intuitive GUI                   | Use `/kt` or `/killeffect` to easily select effects with a click!          |
-| 🔄 Live Reload                     | Use `/kt reload` to reload the config — no server restart needed!          |
-| ⚙️ Fully Configurable              | Edit messages, effect names, descriptions, and more in `config.yml`.       |
-| 🗃️ Local Storage (SQLite)         | Lightweight, no external database needed. Fast and reliable.               |
+| Feature                             | Description                                                                                                                                                                                                               |
+|-------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 🎇 15+ Unique Effects               | Fire 🔥, Lightning ⚡, Explosion 💥, Hearts 💖, Notes 🎵, Cloud ☁️, Smoke 🌫️, Totem 🔮, and Enderman-inspired End effect 👾, PigStep 🐽, Warden 👹, Glow Missile 🚀, Sniper 🔫, EnchantColumn 🪄, Fireworks 🎆, Wither 💀 |
+| 🧑‍💼 Permission-Based Access       | Each effect has its own permission node. OPs automatically bypass them.                                                                                                                                                   |
+| 🖱️ Intuitive GUI                   | Use `/kt` or `/killeffect` to easily select effects with a click!                                                                                                                                                         |
+| 🔄 Live Reload                     | Use `/kt reload` to reload the config — no server restart needed!                                                                                                                                                         |
+| ⚙️ Fully Configurable              | Edit messages, effect names, descriptions, and more in `config.yml`.                                                                                                                                                      |
+| 🗃️ Local Storage (SQLite)         | Lightweight, no external database needed. Fast and reliable.                                                                                                                                                              |
 
 ---
 
@@ -108,26 +108,27 @@
 
 ### 🔐 Permissions Overview
 
-| Node                        | Description                                |
-|----------------------------|--------------------------------------------|
-| `kt.reload`                | Reload the configuration                   |
-| `kt.set`                   | Set an effect manually                     |
-| `kt.test`                  | Test effects                               |
-| `kt.fire.use`              | Use the **Fire** effect 🔥                 |
-| `kt.lightning.use`         | Use the **Lightning** effect ⚡             |
-| `kt.explosion.use`         | Use the **Explosion** effect 💥            |
-| `kt.hearts.use`            | Use the **Hearts** effect 💖               |
-| `kt.notes.use`             | Use the **Notes** effect 🎵                |
-| `kt.cloud.use`             | Use the **Cloud** effect ☁️                |
-| `kt.smoke.use`             | Use the **Smoke** effect 🌫️               |
-| `kt.totem.use`             | Use the **Totem** effect 🔮                |
-| `kt.end.use`               | Use the **End** effect (Enderman style) 👾 |
-| `kt.pigstep.use`           | Use the **PigStep** effect 🐽             |
-| `kt.warden.use`            | Use the **Warden** effect 👹                |
-| `kt.glowmissile.use`       | Use the **GlowMissile** effect 🚀           |
-| `kt.sniper.use`            | Use the **Sniper** effect 🔫                |
-| `kt.enchantcolumn.use`     | Use the **EnchantColumn** effect 🪄          |
-| `kt.fireworks.use`         | Use the **Fireworks** effect 🎆            |
+| Node                   | Description                                |
+|------------------------|--------------------------------------------|
+| `kt.reload`            | Reload the configuration                   |
+| `kt.set`               | Set an effect manually                     |
+| `kt.test`              | Test effects                               |
+| `kt.fire.use`          | Use the **Fire** effect 🔥                 |
+| `kt.lightning.use`     | Use the **Lightning** effect ⚡             |
+| `kt.explosion.use`     | Use the **Explosion** effect 💥            |
+| `kt.hearts.use`        | Use the **Hearts** effect 💖               |
+| `kt.notes.use`         | Use the **Notes** effect 🎵                |
+| `kt.cloud.use`         | Use the **Cloud** effect ☁️                |
+| `kt.smoke.use`         | Use the **Smoke** effect 🌫️               |
+| `kt.totem.use`         | Use the **Totem** effect 🔮                |
+| `kt.end.use`           | Use the **End** effect (Enderman style) 👾 |
+| `kt.pigstep.use`       | Use the **PigStep** effect 🐽              |
+| `kt.warden.use`        | Use the **Warden** effect 👹               |
+| `kt.glowmissile.use`   | Use the **GlowMissile** effect 🚀          |
+| `kt.sniper.use`        | Use the **Sniper** effect 🔫               |
+| `kt.enchantcolumn.use` | Use the **EnchantColumn** effect 🪄        |
+| `kt.fireworks.use`     | Use the **Fireworks** effect 🎆            |
+| `kt.wither.use`        | Use the **Wither** effect 💀               |
 
 ---
 
@@ -221,6 +222,11 @@ effects:
   fireworks:
     name: "&bFireworks"
     description: "&cFire &fworks &7and explosions"
+
+  wither:
+    enabled: true
+    name: "&0Wither"
+    description: "&0Wither &8and &fflash"
 
 ````
 

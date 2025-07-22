@@ -100,3 +100,8 @@ effects:
     name: "&bFireworks"
     description: "&cFire &fworks &7and explosions"
 
+  wither:
+    enabled: true
+    name: "&0Wither"
+    description: "&0Wither &8and &fflash"
+

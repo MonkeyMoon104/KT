@@ -62,7 +62,7 @@ public class WardenEffect implements KillEffect {
                         if (finishedCount[0] >= points) {
                             Location center = getAverageLocation(impactLocations);
                             spawnStaticSplashRing(center, world);
-                            spawnExpandingRing(center, world);
+                            spawnExpandingRing(center, world, killer);
                         }
 
                         return;
@@ -142,7 +142,7 @@ public class WardenEffect implements KillEffect {
         }
     }
 
-    private void spawnExpandingRing(Location center, World world) {
+    private void spawnExpandingRing(Location center, World world, Player killer) {
         int ringPoints = 64;
         double splashRadius = 2.2;
         double maxRadius = 6.0;
@@ -160,19 +160,21 @@ public class WardenEffect implements KillEffect {
 
         for (Vector dir : directions) {
             Location spawnLoc = center.clone();
-            Warden warden = (Warden) world.spawnEntity(spawnLoc, EntityType.WARDEN);
+            Warden warden = (Warden) world.spawn(spawnLoc, Warden.class, entity -> {
+                entity.setMetadata("kt_bypass_spawn", new FixedMetadataValue(plugin, true));
 
-            warden.setAI(false);
-            warden.setSilent(true);
-            warden.setInvulnerable(true);
-            warden.setAware(false);
-            warden.setPersistent(false);
-            warden.setCanPickupItems(false);
-            warden.setRemoveWhenFarAway(true);
-            warden.setCollidable(false);
-            warden.setGravity(false);
+                entity.setAI(false);
+                entity.setSilent(true);
+                entity.setInvulnerable(true);
+                entity.setAware(false);
+                entity.setPersistent(false);
+                entity.setCanPickupItems(false);
+                entity.setRemoveWhenFarAway(true);
+                entity.setCollidable(false);
+                entity.setGravity(false);
 
-            warden.setMetadata("kt_direction", new FixedMetadataValue(plugin, dir.clone()));
+                entity.setMetadata("kt_direction", new FixedMetadataValue(plugin, dir.clone()));
+            });
 
             wardens.add(warden);
         }
@@ -220,6 +222,8 @@ public class WardenEffect implements KillEffect {
                     Location newLoc = center.clone().add(dir.clone().multiply(currentRadius));
                     newLoc.setY(center.getY());
 
+                    orientLocationTowardsPlayer(newLoc, killer);
+
                     warden.teleport(newLoc);
                     wardenPositions.add(newLoc);
 
@@ -230,6 +234,17 @@ public class WardenEffect implements KillEffect {
                 currentStep++;
             }
         }.runTaskTimer(plugin, 0L, 2L);
+    }
+
+    private void orientLocationTowardsPlayer(Location from, Player player) {
+        Location to = player.getEyeLocation();
+
+        Vector direction = to.toVector().subtract(from.toVector()).normalize();
+        float yaw = (float) Math.toDegrees(Math.atan2(-direction.getX(), direction.getZ()));
+        float pitch = (float) Math.toDegrees(Math.asin(-direction.getY()));
+
+        from.setYaw(yaw);
+        from.setPitch(pitch);
     }
 
     private void drawParticleLine(World world, Location start, Location end, Particle particle, double step) {

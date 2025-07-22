@@ -4,12 +4,9 @@ import com.monkey.kt.commands.kt.KTCommand;
 import com.monkey.kt.commands.kt.tab.KillEffectTabCompleter;
 import com.monkey.kt.effects.KillEffectFactory;
 import com.monkey.kt.effects.register.EffectRegistry;
-import com.monkey.kt.listener.ArrowDamageTracker;
-import com.monkey.kt.listener.ResourcePackListenerJoin;
+import com.monkey.kt.listener.*;
 import com.monkey.kt.storage.DatabaseManager;
 import com.monkey.kt.gui.GUIManager;
-import com.monkey.kt.listener.InventoryClickListener;
-import com.monkey.kt.listener.KillEffectListener;
 import com.monkey.kt.utils.WorldGuardUtils;
 import com.monkey.kt.utils.listener.CheckUpdate;
 import org.bstats.bukkit.Metrics;
@@ -50,6 +47,9 @@ public class KT extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new InventoryClickListener(this), this);
         getServer().getPluginManager().registerEvents(new ArrowDamageTracker(this), this);
         getServer().getPluginManager().registerEvents(new KillEffectListener(), this);
+        getServer().getPluginManager().registerEvents(new WitherSkullProtectionListener(), this);
+        getServer().getPluginManager().registerEvents(new EntityByPassSpawn(), this);
+
     }
 
     @Override

@@ -37,6 +37,7 @@ public class GUIManager {
         effectIconNames.put("sniper", "ARROW");
         effectIconNames.put("totem", "TOTEM_OF_UNDYING");
         effectIconNames.put("warden", "WARD_ARMOR_TRIM_SMITHING_TEMPLATE");
+        effectIconNames.put("wither", "WITHER_SKELETON_SKULL");
     }
 
     public GUIManager(KT plugin, DatabaseManager databaseManager) {

@@ -88,3 +88,7 @@ permissions:
   kt.fireworks.use:
     description: Use the fireworks kill effect
     default: op
+
+  kt.wither.use:
+    description: Use the wither kill effect
+    default: op

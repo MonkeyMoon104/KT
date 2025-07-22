@@ -3,11 +3,6 @@ package com.monkey.kt.effects.list.fireworks;
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.KillEffect;
 import com.monkey.kt.utils.WorldGuardUtils;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldguard.protection.flags.Flags;
-
-import com.sk89q.worldguard.protection.regions.RegionContainer;
-import com.sk89q.worldguard.protection.regions.RegionQuery;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Firework;
@@ -76,7 +71,7 @@ public class FireworksEffect implements KillEffect {
             Material original = platform.getType();
             originalBlocks.put(platformLoc, original);
 
-            runWithWorldGuardBypass(platformLoc, () -> platform.setType(Material.GLOWSTONE));
+            WorldGuardUtils.runWithWorldGuardBypass(platformLoc, () -> platform.setType(Material.GLOWSTONE));
 
             BukkitRunnable whiteParticlesTask = new BukkitRunnable() {
                 @Override
@@ -119,7 +114,7 @@ public class FireworksEffect implements KillEffect {
                         @Override
                         public void run() {
                             Material oldType = originalBlocks.getOrDefault(platformLoc, Material.AIR);
-                            runWithWorldGuardBypass(platformLoc, () -> platform.setType(oldType));
+                            WorldGuardUtils.runWithWorldGuardBypass(platformLoc, () -> platform.setType(oldType));
                             world.playSound(launchLoc, Sound.BLOCK_FIRE_EXTINGUISH, 0.5f, 1.0f);
 
                         }
@@ -232,24 +227,5 @@ public class FireworksEffect implements KillEffect {
                 Color.FUCHSIA, Color.WHITE, Color.PURPLE
         };
         return colors[new Random().nextInt(colors.length)];
-    }
-
-    private void runWithWorldGuardBypass(Location location, Runnable task) {
-        if (WorldGuardUtils.isAvailable()) {
-            try {
-                com.sk89q.worldedit.util.Location weLoc = BukkitAdapter.adapt(location);
-                RegionContainer container = WorldGuardUtils.getWorldGuard().getPlatform().getRegionContainer();
-                RegionQuery query = container.createQuery();
-                if (query.testState(weLoc, null, Flags.BUILD)) {
-                    task.run();
-                } else {
-                    task.run();
-                }
-            } catch (Exception e) {
-                task.run();
-            }
-        } else {
-            task.run();
-        }
     }
 }
