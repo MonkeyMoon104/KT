@@ -21,6 +21,6 @@ public class PigstepEffect implements KillEffect {
         if (world == null) return;
 
         new PigstepFlameTask(plugin, loc).runTaskTimer(plugin, 0L, 2L);
-        new PigstepPigSpawner(plugin, killer, loc).runTaskLater(plugin, 25L);
+        new PigstepPigSpawner(plugin, killer, loc).runTask(plugin);
     }
 }

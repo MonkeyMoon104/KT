@@ -27,14 +27,16 @@ public class PigstepPigSpawner extends BukkitRunnable {
     public void run() {
         if (loc.getWorld() == null) return;
 
-        Pig pig = (Pig) loc.getWorld().spawnEntity(loc, EntityType.PIG);
-        pig.setMetadata("kt_pigstep", new FixedMetadataValue(plugin, true));
-        pig.setAI(true);
-        pig.setInvulnerable(true);
-        pig.setCollidable(false);
-        pig.setSilent(true);
-        pig.setFallDistance(0);
-        pig.setVelocity(new Vector(0, 1.2, 0));
+        Pig pig = (Pig) loc.getWorld().spawn(loc, Pig.class, entity -> {
+            entity.setMetadata("kt_pigstep", new FixedMetadataValue(plugin, true));
+            entity.setMetadata("kt_bypass_spawn", new FixedMetadataValue(plugin, true));
+            entity.setAI(true);
+            entity.setInvulnerable(true);
+            entity.setCollidable(false);
+            entity.setSilent(true);
+            entity.setFallDistance(0);
+            entity.setVelocity(new Vector(0, 1.2, 0));
+        });
 
         killer.playSound(
                 killer.getLocation(),
