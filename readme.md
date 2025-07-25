@@ -113,6 +113,11 @@
 | `kt.reload`            | Reload the configuration                   |
 | `kt.set`               | Set an effect manually                     |
 | `kt.test`              | Test effects                               |
+| `kt.killcoins.add`     | Add killcoins                              |
+| `kt.killcoins.take`    | Take killcoins                             |
+| `kt.killcoins.set`     | Set killcoins                              |
+| `kt.killcoins.reset`   | Reset killcoins                            |
+| `kt.killcoins.bal`     | Show killcoins                             |
 | `kt.fire.use`          | Use the **Fire** effect 🔥                 |
 | `kt.lightning.use`     | Use the **Lightning** effect ⚡             |
 | `kt.explosion.use`     | Use the **Explosion** effect 💥            |
@@ -129,6 +134,43 @@
 | `kt.enchantcolumn.use` | Use the **EnchantColumn** effect 🪄        |
 | `kt.fireworks.use`     | Use the **Fireworks** effect 🎆            |
 | `kt.wither.use`        | Use the **Wither** effect 💀               |
+
+---
+Here’s the **Economy System** section translated into English and ready for your `README.md`:
+
+---
+
+## 💰 Economy System
+
+KillEffect includes an optional economy system called **KillCoinsEco**.  
+When a player kills another player, they can earn a configurable reward in virtual coins, which can be used to unlock kill effects.
+
+### ✨ Key Features:
+- **Kill Rewards**: Each kill grants a configurable amount of coins.
+- **Effect Purchases**: Players can buy effects with the coins they earn, if they don't have direct permissions.
+- **OP Bypass**: Operators automatically bypass purchase checks.
+- **Fully Configurable**: All messages and reward values can be customized in `config.yml`.
+
+### ⚙️ Example Configuration
+```yaml
+economy:
+  enabled: true #If disabled check the permission for the effects
+  starting-balance: 10 #After reset the user coins
+  reward:
+    kill: 5
+  currency:
+    singular: "KillCoin"
+    plural: "KillCoins"
+    symbol: "KC"
+````
+
+---
+
+### 🔧 How It Works:
+
+* Each time a player kills another, they receive a kill reward message (defined in `messages.kill_reward`).
+* If the economy is enabled, commands like `/kt set <effect>` will check whether the player has **purchased** the effect, as well as permissions.
+* OP players bypass all purchase checks and can set any effect.
 
 ---
 
@@ -148,6 +190,7 @@ You have full control over:
 
 ```yaml
 messages:
+  commands_no_perm: "&cYou don't have permission to use this command."
   no_permissions: "&cYou don't have permission to use this KillEffect."
   effect_set: "&aYou have selected the KillEffect: &e%effect%"
   effect_already_set: "&eYou have already selected this KillEffect!"
@@ -159,6 +202,41 @@ messages:
   effect_executed: "&aKillEffect executed: &e%effect%"
   invalid_potion: "&cInvalid or missing configured potion: no potion applied."
   potion_set: "&aYou received: &e%potion% %amplifier%"
+  not_enough_coins: "&cYou don't have enough KillCoins to buy this effect."
+  purchase_failed: "&cAn error occurred while purchasing the effect."
+  purchase_success: "&aYou successfully purchased the effect &e%effect%&a!"
+  already_bought: "&aAlready purchased"
+  price_format: "&6Price: &e%price% %currency%"
+  killcoins_only_players: "&cOnly players can use /kt killcoins bal without specifying a player."
+  killcoins_balance_self: "&aYour KillCoins balance is: &e%balance%%currency%"
+  killcoins_balance_other: "&aThe KillCoins balance of &e%player% &ais: &e%balance%%currency%"
+  killcoins_balance_usage: "&cUsage: /kt killcoins bal [player]"
+  killcoins_reset: "&aThe balance of &e%player% &ahas been reset to &e%balance%%currency%"
+  killcoins_reset_usage: "&cUsage: /kt killcoins reset <player>"
+  killcoins_invalid_amount: "&cInvalid amount: &e%amount%"
+  killcoins_add: "&aYou added &e%amount%%currency% &ato &e%player%"
+  killcoins_take: "&aYou removed &e%amount%%currency% &afrom &e%player%"
+  killcoins_take_not_enough: "&c%player% does not have enough %currency%"
+  killcoins_set: "&aThe balance of &e%player% &ahas been set to &e%amount%%currency%"
+  kill_reward: "&a+%amount% %currency% &7(Kill reward)"
+  killcoins_usage: |
+    &eCorrect usage:
+    &e /kt killcoins add <player> <amount>
+    &e /kt killcoins take <player> <amount>
+    &e /kt killcoins set <player> <amount>
+    &e /kt killcoins reset <player>
+    &e /kt killcoins bal [player]
+
+
+economy:
+  enabled: true #If disabled check the permission for the effects
+  starting-balance: 10 #After reset the user coins
+  reward:
+    kill: 5
+  currency:
+    singular: "KillCoin"
+    plural: "KillCoins"
+    symbol: "KC"
 
 resource_pack:
   url: "https://download.mc-packs.net/pack/d5889f788003340479e3f767852eddee152ee544.zip"
@@ -169,64 +247,106 @@ resource_pack:
 
 effects:
   fire:
+    enabled: true
     name: "&cFire"
     description: "&cBurn &7your enemies with fire"
+    price: 1500
+
   lightning:
+    enabled: true
     name: "&eLightning"
     description: "&bSummon a &elightning bolt &bon your target"
+    price: 2500
+
   explosion:
+    enabled: true
     name: "&4Explosion"
     description: "&4Boom! &7A visual explosion effect"
+    price: 3000
+
   hearts:
+    enabled: true
     name: "&dHearts"
     description: "&dLove hearts &7when you kill"
+    price: 2000
+
   notes:
+    enabled: true
     name: "&aNotes"
     description: "&aMusical effect &ein the rhythm of death"
+    price: 1800
+
   cloud:
+    enabled: true
     name: "&fCloud"
     description: "&fMysterious &7and haunting fog"
+    price: 2200
+
   smoke:
+    enabled: true
     name: "&8Smoke"
     description: "&8Smoke &7and shadows in the air"
+    price: 2100
+
   totem:
+    enabled: true
     name: "&6Totem"
     description: "&6Epic &eparticles &6of the totem"
+    price: 4000
+
   end:
+    enabled: true
     name: "&5End"
     description: "&5Creepy &dEnderman &5effect"
+    price: 3500
+
   pigstep:
+    enabled: true
     name: "&dPigStep"
     description: "&dPig &bStep &eeffect"
+    price: 2750
+
   warden:
+    enabled: true
     name: "&3Warden"
     description: "&3Warden &eeffect"
+    price: 7045
+
   glowmissile:
+    enabled: true
     name: "&bGlowMissile"
     description: "&bGlow missile &7effect"
+    price: 5300
 
   sniper:
+    enabled: true
     name: "&cSniper"
     description:
       - "&7Long Mortal Shot"
       - "&8Only kill with bow"
+    price: 4250
 
   enchantcolumn:
+    enabled: true
     name: "&rEnchant&7Column"
     description: "&rEnchant&7Column &eExplosion!"
+    price: 6000
     effectexplosion:
       type: REGENERATION
       amplifier: 2
       duration: 10
 
   fireworks:
+    enabled: true
     name: "&bFireworks"
     description: "&cFire &fworks &7and explosions"
+    price: 6345
 
   wither:
     enabled: true
     name: "&0Wither"
     description: "&0Wither &8and &fflash"
+    price: 10500
 
 ````
 
