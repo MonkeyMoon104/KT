@@ -1,7 +1,12 @@
 package com.monkey.kt.listener;
 
 import com.monkey.kt.KT;
+import com.monkey.kt.economy.KillCoinsEco;
 import com.monkey.kt.storage.EffectStorage;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.user.User;
+import net.luckperms.api.node.types.PermissionNode;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,43 +17,93 @@ import org.bukkit.inventory.ItemStack;
 public class InventoryClickListener implements Listener {
 
     private final KT plugin;
+    private final KillCoinsEco economy;
+    private final LuckPerms luckPerms;
 
-    public InventoryClickListener(KT plugin) {
+    public InventoryClickListener(KT plugin, KillCoinsEco killCoinsEco) {
         this.plugin = plugin;
+        this.economy = killCoinsEco;
+        this.luckPerms = LuckPermsProvider.get();
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        String guiTitle = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.gui_title"));
+        String guiTitle = ChatColor.translateAlternateColorCodes('&',
+                plugin.getConfig().getString("messages.gui_title"));
 
-        if (event.getView().getTitle().equals(guiTitle)) {
-            event.setCancelled(true);
+        if (!event.getView().getTitle().equals(guiTitle)) return;
 
-            if (!(event.getWhoClicked() instanceof Player)) return;
-            Player player = (Player) event.getWhoClicked();
+        event.setCancelled(true);
 
+        if (!(event.getWhoClicked() instanceof Player)) return;
+        Player player = (Player) event.getWhoClicked();
 
-            ItemStack clicked = event.getCurrentItem();
-            if (clicked == null || !clicked.hasItemMeta()) return;
+        ItemStack clicked = event.getCurrentItem();
+        if (clicked == null || !clicked.hasItemMeta()) return;
 
-            String effect = plugin.getGuiManager().getEffectByItem(clicked);
-            if (effect == null) return;
+        String effect = plugin.getGuiManager().getEffectByItem(clicked);
+        if (effect == null) return;
 
-            if (!player.hasPermission("kt." + effect + ".use")) {
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.no_permissions")));
+        String perm = "kt." + effect + ".use";
+
+        if (economy.isEnabled()) {
+            if (!economy.hasBoughtEffect(player, effect)) {
+                double price = economy.getEffectPrice(effect);
+                if (!economy.has(player, price)) {
+                    player.sendMessage(color(plugin.getConfig().getString("messages.not_enough_coins")));
+                    return;
+                }
+                if (!economy.tryBuyEffect(player, effect)) {
+                    player.sendMessage(color(plugin.getConfig().getString("messages.purchase_failed")));
+                    return;
+                }
+
+                giveLuckPermsPermission(player, perm);
+
+                player.sendMessage(color(plugin.getConfig().getString("messages.purchase_success")
+                        .replace("%effect%", effect)));
+            }
+        } else {
+            if (!player.hasPermission(perm)) {
+                player.sendMessage(color(plugin.getConfig().getString("messages.no_permissions")));
                 return;
             }
-
-            String current = EffectStorage.getEffect(player);
-            if (effect.equalsIgnoreCase(current)) {
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.effect_already_set")));
-                return;
-            }
-
-            EffectStorage.setEffect(player, effect);
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.effect_set").replace("%effect%", effect)));
-
-            player.closeInventory();
         }
+
+        if (!player.hasPermission(perm)) {
+            if (!economy.isEnabled() || !economy.hasBoughtEffect(player, effect)) {
+                player.sendMessage(color(plugin.getConfig().getString("messages.no_permissions")));
+                return;
+            }
+        }
+
+        String current = EffectStorage.getEffect(player);
+        if (effect.equalsIgnoreCase(current)) {
+            player.sendMessage(color(plugin.getConfig().getString("messages.effect_already_set")));
+            return;
+        }
+
+        EffectStorage.setEffect(player, effect);
+        player.sendMessage(color(plugin.getConfig().getString("messages.effect_set")
+                .replace("%effect%", effect)));
+
+        player.closeInventory();
+    }
+
+    private void giveLuckPermsPermission(Player player, String perm) {
+        User user = luckPerms.getUserManager().getUser(player.getUniqueId());
+        if (user != null) {
+            user.data().add(PermissionNode.builder(perm).build());
+            luckPerms.getUserManager().saveUser(user);
+        } else {
+            luckPerms.getUserManager().loadUser(player.getUniqueId()).thenAccept(loadedUser -> {
+                loadedUser.data().add(PermissionNode.builder(perm).build());
+                luckPerms.getUserManager().saveUser(loadedUser);
+            });
+        }
+    }
+
+    private String color(String s) {
+        return ChatColor.translateAlternateColorCodes('&', s);
     }
 }

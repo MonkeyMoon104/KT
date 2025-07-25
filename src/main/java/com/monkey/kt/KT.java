@@ -1,7 +1,11 @@
 package com.monkey.kt;
 
 import com.monkey.kt.commands.kt.KTCommand;
+import com.monkey.kt.commands.kt.subcommands.list.KillCoinsCommand;
 import com.monkey.kt.commands.kt.tab.KillEffectTabCompleter;
+import com.monkey.kt.economy.KillCoinsEco;
+import com.monkey.kt.economy.storage.KillCoinsDatabaseManager;
+import com.monkey.kt.economy.storage.KillCoinsStorage;
 import com.monkey.kt.effects.KillEffectFactory;
 import com.monkey.kt.effects.register.EffectRegistry;
 import com.monkey.kt.listener.*;
@@ -18,6 +22,8 @@ public class KT extends JavaPlugin {
     private GUIManager guiManager;
     private KillEffectFactory factory;
     private EffectRegistry effectRegistry;
+    private KillCoinsDatabaseManager coinsDbManager;
+    private KillCoinsEco killCoinsEco;
 
     @Override
     public void onEnable() {
@@ -34,27 +40,36 @@ public class KT extends JavaPlugin {
         databaseManager = new DatabaseManager(this);
         databaseManager.loadDatabase();
 
+        coinsDbManager = new KillCoinsDatabaseManager(this);
+        coinsDbManager.loadDatabase();
+
+        KillCoinsStorage storage = new KillCoinsStorage();
+        killCoinsEco = new KillCoinsEco(this, storage);
+
         WorldGuardUtils.setup();
 
-        guiManager = new GUIManager(this, databaseManager);
+        guiManager = new GUIManager(this, databaseManager, killCoinsEco);
         effectRegistry = new EffectRegistry(this);
         effectRegistry.loadEffects();
 
-        getCommand("killeffect").setExecutor(new KTCommand(this, guiManager));
-        getCommand("killeffect").setTabCompleter(new KillEffectTabCompleter(this));
+        getCommand("killeffect").setExecutor(new KTCommand(this, guiManager, killCoinsEco));
+        KillCoinsCommand killCoinsCmd = new KillCoinsCommand(this, killCoinsEco);
+        getCommand("killeffect").setTabCompleter(new KillEffectTabCompleter(this, killCoinsCmd));
 
         getServer().getPluginManager().registerEvents(new ResourcePackListenerJoin(this), this);
-        getServer().getPluginManager().registerEvents(new InventoryClickListener(this), this);
+        getServer().getPluginManager().registerEvents(new InventoryClickListener(this, killCoinsEco), this);
         getServer().getPluginManager().registerEvents(new ArrowDamageTracker(this), this);
         getServer().getPluginManager().registerEvents(new KillEffectListener(), this);
         getServer().getPluginManager().registerEvents(new WitherSkullProtectionListener(), this);
         getServer().getPluginManager().registerEvents(new EntityByPassSpawn(), this);
+        getServer().getPluginManager().registerEvents(new KillRewardListener(this, killCoinsEco), this);
 
     }
 
     @Override
     public void onDisable() {
         databaseManager.closeConnection();
+        if (coinsDbManager != null) coinsDbManager.close();
     }
 
     private void loadResourcePack() {
@@ -85,6 +100,9 @@ public class KT extends JavaPlugin {
 
     public EffectRegistry getEffectRegistry() {
         return effectRegistry;
+    }
+    public KillCoinsEco getKillCoinsEco() {
+        return killCoinsEco;
     }
 
 }

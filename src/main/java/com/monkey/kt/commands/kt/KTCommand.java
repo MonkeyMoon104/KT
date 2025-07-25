@@ -3,6 +3,7 @@ package com.monkey.kt.commands.kt;
 import com.monkey.kt.KT;
 import com.monkey.kt.commands.kt.manager.KTCManager;
 import com.monkey.kt.commands.kt.subcommands.inter.SubCommand;
+import com.monkey.kt.economy.KillCoinsEco;
 import com.monkey.kt.gui.GUIManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -16,9 +17,9 @@ public class KTCommand implements CommandExecutor {
     private final GUIManager guiManager;
     private final KT plugin;
 
-    public KTCommand(KT plugin, GUIManager guiManager) {
+    public KTCommand(KT plugin, GUIManager guiManager, KillCoinsEco killCoinsEco) {
         this.plugin = plugin;
-        this.manager = new KTCManager(plugin, guiManager);
+        this.manager = new KTCManager(plugin, guiManager, killCoinsEco);
         this.guiManager = guiManager;
     }
 
@@ -38,7 +39,7 @@ public class KTCommand implements CommandExecutor {
         SubCommand sub = manager.getSubCommand(args[0]);
         if (sub != null) {
             if (sub.getPermission() != null && !sender.hasPermission(sub.getPermission())) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.no_permissions")));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.commands_no_perm")));
                 return true;
             }
             sub.execute(sender, args);

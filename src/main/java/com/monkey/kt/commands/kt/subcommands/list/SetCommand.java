@@ -27,31 +27,46 @@ public class SetCommand implements SubCommand {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player )) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.only_players")));
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    plugin.getConfig().getString("messages.only_players")));
             return;
         }
         Player player = (Player) sender;
 
         if (args.length < 2) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.miss_usage")));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    plugin.getConfig().getString("messages.miss_usage")));
             return;
         }
 
         String effect = args[1].toLowerCase();
         if (!plugin.getGuiManager().getEffects().containsKey(effect)) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.effect_not_found")));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    plugin.getConfig().getString("messages.effect_not_found")));
+            return;
+        }
+
+        boolean hasPermission = player.hasPermission("kt." + effect + ".use");
+        boolean hasBought = plugin.getKillCoinsEco().hasBoughtEffect(player, effect);
+        boolean ecoEnabled = plugin.getKillCoinsEco().isEnabled();
+
+        if (!player.isOp() && !hasPermission && (!ecoEnabled || !hasBought)) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    plugin.getConfig().getString("messages.no_permissions")));
             return;
         }
 
         String current = EffectStorage.getEffect(player);
         if (effect.equalsIgnoreCase(current)) {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.effect_already_set")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    plugin.getConfig().getString("messages.effect_already_set")));
             return;
         }
 
         EffectStorage.setEffect(player, effect);
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.effect_set"))
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                        plugin.getConfig().getString("messages.effect_set"))
                 .replace("%effect%", effect));
     }
 }

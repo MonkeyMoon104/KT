@@ -17,6 +17,22 @@ commands:
     aliases: [kt]
 
 permissions:
+  kt.killcoins.add:
+    description: Allows use of /kt killcoins add
+    default: op
+  kt.killcoins.take:
+    description: Allows use of /kt killcoins take
+    default: op
+  kt.killcoins.set:
+    description: Allows use of /kt killcoins set
+    default: op
+  kt.killcoins.reset:
+    description: Allows use of /kt killcoins reset
+    default: op
+  kt.killcoins.bal:
+    description: Allows use of /kt killcoins bal
+    default: true
+
   kt.reload:
     description: Allows reloading the plugin configuration
     default: op

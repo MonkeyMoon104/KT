@@ -1,6 +1,7 @@
 package com.monkey.kt.gui;
 
 import com.monkey.kt.KT;
+import com.monkey.kt.economy.KillCoinsEco;
 import com.monkey.kt.storage.DatabaseManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,6 +20,7 @@ public class GUIManager {
     private final DatabaseManager databaseManager;
 
     private final Map<String, ItemStack> effects = new LinkedHashMap<>();
+    private final KillCoinsEco economy;
 
     private static final Map<String, String> effectIconNames = new LinkedHashMap<>();
     static {
@@ -40,42 +42,36 @@ public class GUIManager {
         effectIconNames.put("wither", "WITHER_SKELETON_SKULL");
     }
 
-    public GUIManager(KT plugin, DatabaseManager databaseManager) {
+    public GUIManager(KT plugin, DatabaseManager databaseManager, KillCoinsEco economy) {
         this.plugin = plugin;
         this.databaseManager = databaseManager;
+        this.economy = economy;
 
         List<Material> fallbackMaterials = Arrays.asList(
-                Material.STONE,
-                Material.DIRT,
-                Material.GRASS_BLOCK,
-                Material.OAK_PLANKS,
-                Material.COBBLESTONE,
-                Material.SAND,
-                Material.GLASS,
-                Material.IRON_INGOT,
-                Material.GOLD_INGOT,
-                Material.DIAMOND,
-                Material.COAL
+                Material.STONE, Material.DIRT, Material.GRASS_BLOCK,
+                Material.OAK_PLANKS, Material.COBBLESTONE, Material.SAND,
+                Material.GLASS, Material.IRON_INGOT, Material.GOLD_INGOT,
+                Material.DIAMOND, Material.COAL
         );
 
-        effectIconNames.keySet().stream().sorted().forEach(key -> {
+        List<String> keys = new ArrayList<>(effectIconNames.keySet());
+        Collections.sort(keys);
+        for (String key : keys) {
             String matName = effectIconNames.get(key);
-
             Material material = Material.matchMaterial(matName);
             if (material == null) {
-                int randomIndex = ThreadLocalRandom.current().nextInt(fallbackMaterials.size());
-                material = fallbackMaterials.get(randomIndex);
-                Bukkit.getLogger().warning("[MobAttack] Material for effect '" + key + "' not found, using random fallback: " + material.name());
+                int idx = ThreadLocalRandom.current().nextInt(fallbackMaterials.size());
+                material = fallbackMaterials.get(idx);
+                Bukkit.getLogger().warning("[KT] Material for effect '" + key +
+                        "' not found, using fallback: " + material.name());
             }
 
             String name = plugin.getConfig().getString("effects." + key + ".name");
-            Object descObj = plugin.getConfig().get("effects." + key + ".description");
-
             if (name == null) name = capitalize(key);
 
+            Object descObj = plugin.getConfig().get("effects." + key + ".description");
             List<String> lore = new ArrayList<>();
-
-            if (descObj instanceof List) {
+            if (descObj instanceof List<?>) {
                 for (Object line : (List<?>) descObj) {
                     if (line instanceof String) {
                         lore.add(ChatColor.translateAlternateColorCodes('&', (String) line));
@@ -92,7 +88,7 @@ public class GUIManager {
                     ChatColor.translateAlternateColorCodes('&', name),
                     lore
             ));
-        });
+        }
     }
 
     private ItemStack createEffectItem(Material material, String name, List<String> lore) {
@@ -105,23 +101,50 @@ public class GUIManager {
     }
 
     public void openGUI(Player player) {
+        boolean ecoEnabled = economy.isEnabled();
+        String title = ChatColor.translateAlternateColorCodes('&',
+                plugin.getConfig().getString("messages.gui_title"));
         int size = ((effects.size() - 1) / 9 + 1) * 9;
-        Inventory inv = Bukkit.createInventory(null, size, ChatColor.translateAlternateColorCodes('&',
-                plugin.getConfig().getString("messages.gui_title")));
+        Inventory inv = Bukkit.createInventory(null, size, title);
+
+        String alreadyBoughtMsg = plugin.getConfig().getString("messages.already_bought");
+        String priceFormat     = plugin.getConfig().getString("messages.price_format");
+        String currencySym     = economy.currencySymbol();
 
         int slot = 0;
-        for (ItemStack item : effects.values()) {
+        for (Map.Entry<String, ItemStack> entry : effects.entrySet()) {
+            String key      = entry.getKey();
+            ItemStack item  = entry.getValue().clone();
+
+            List<String> lore = new ArrayList<>(item.getItemMeta().getLore());
+            if (ecoEnabled) {
+                if (economy.hasBoughtEffect(player, key)) {
+                    lore.add(ChatColor.translateAlternateColorCodes('&', alreadyBoughtMsg));
+                } else {
+                    double price = economy.getEffectPrice(key);
+                    String line = priceFormat
+                            .replace("%price%", String.valueOf((int) price))
+                            .replace("%currency%", currencySym);
+                    lore.add(ChatColor.translateAlternateColorCodes('&', line));
+                }
+            }
+
+            ItemMeta meta = item.getItemMeta();
+            meta.setLore(lore);
+            item.setItemMeta(meta);
+
             inv.setItem(slot++, item);
         }
 
         player.openInventory(inv);
     }
 
-    public String getEffectByItem(ItemStack item) {
-        if (item == null || !item.hasItemMeta()) return null;
-
+    public String getEffectByItem(ItemStack clicked) {
+        if (clicked == null || !clicked.hasItemMeta()) return null;
+        String name = clicked.getItemMeta().getDisplayName();
         for (Map.Entry<String, ItemStack> entry : effects.entrySet()) {
-            if (item.isSimilar(entry.getValue())) {
+            ItemMeta meta = entry.getValue().getItemMeta();
+            if (meta != null && name.equals(meta.getDisplayName())) {
                 return entry.getKey();
             }
         }
@@ -130,19 +153,20 @@ public class GUIManager {
 
     public void reloadGUI(Set<String> enabledEffects) {
         effects.clear();
-
-        enabledEffects.stream().sorted().forEach(key -> {
-            String matName = effectIconNames.getOrDefault(key, "STONE");
-            Material material = Material.matchMaterial(matName);
+        List<String> keys = new ArrayList<>(enabledEffects);
+        Collections.sort(keys);
+        for (String key : keys) {
+            Material material = Material.matchMaterial(
+                    effectIconNames.getOrDefault(key, "STONE")
+            );
             if (material == null) material = Material.STONE;
 
             String name = plugin.getConfig().getString("effects." + key + ".name");
-            Object descObj = plugin.getConfig().get("effects." + key + ".description");
-
             if (name == null) name = capitalize(key);
-            List<String> lore = new ArrayList<>();
 
-            if (descObj instanceof List) {
+            Object descObj = plugin.getConfig().get("effects." + key + ".description");
+            List<String> lore = new ArrayList<>();
+            if (descObj instanceof List<?>) {
                 for (Object line : (List<?>) descObj) {
                     if (line instanceof String) {
                         lore.add(ChatColor.translateAlternateColorCodes('&', (String) line));
@@ -150,12 +174,16 @@ public class GUIManager {
                 }
             } else if (descObj instanceof String) {
                 lore.add(ChatColor.translateAlternateColorCodes('&', (String) descObj));
+            } else {
+                lore.add(capitalize(key));
             }
 
-            effects.put(key, createEffectItem(material,
+            effects.put(key, createEffectItem(
+                    material,
                     ChatColor.translateAlternateColorCodes('&', name),
-                    lore));
-        });
+                    lore
+            ));
+        }
     }
 
     public Map<String, ItemStack> getEffects() {
@@ -163,6 +191,7 @@ public class GUIManager {
     }
 
     private String capitalize(String name) {
+        if (name == null || name.isEmpty()) return name;
         return Character.toUpperCase(name.charAt(0)) + name.substring(1);
     }
 }
