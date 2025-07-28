@@ -3,6 +3,7 @@ package com.monkey.kt;
 import com.monkey.kt.commands.kt.KTCommand;
 import com.monkey.kt.commands.kt.subcommands.list.KillCoinsCommand;
 import com.monkey.kt.commands.kt.tab.KillEffectTabCompleter;
+import com.monkey.kt.config.ConfigService;
 import com.monkey.kt.economy.KillCoinsEco;
 import com.monkey.kt.economy.storage.KillCoinsDatabaseManager;
 import com.monkey.kt.economy.storage.KillCoinsStorage;
@@ -34,6 +35,8 @@ public class KT extends JavaPlugin {
         getServer().getPluginManager().registerEvents(checkUpdate, this);
 
         saveDefaultConfig();
+
+        new ConfigService(this).updateAndReload();
 
         loadResourcePack();
 

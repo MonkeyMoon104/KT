@@ -1,3 +1,5 @@
+config-version: "2.2.6"
+
 messages:
   commands_no_perm: "&cYou don't have permission to use this command."
   no_permissions: "&cYou don't have permission to use this KillEffect."
@@ -28,13 +30,7 @@ messages:
   killcoins_take_not_enough: "&c%player% does not have enough %currency%"
   killcoins_set: "&aThe balance of &e%player% &ahas been set to &e%amount%%currency%"
   kill_reward: "&a+%amount% %currency% &7(Kill reward)"
-  killcoins_usage: |
-    &eCorrect usage:
-    &e /kt killcoins add <player> <amount>
-    &e /kt killcoins take <player> <amount>
-    &e /kt killcoins set <player> <amount>
-    &e /kt killcoins reset <player>
-    &e /kt killcoins bal [player]
+  killcoins_usage: "&eCorrect usage:\n&e /kt killcoins add <player> <amount>\n&e /kt killcoins take <player> <amount>\n&e /kt killcoins set <player> <amount>\n&e /kt killcoins reset <player>\n&e /kt killcoins bal [player]\n"
 
 
 economy:
@@ -156,5 +152,3 @@ effects:
     name: "&0Wither"
     description: "&0Wither &8and &fflash"
     price: 10500
-
-
