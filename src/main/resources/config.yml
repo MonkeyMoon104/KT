@@ -31,7 +31,24 @@ messages:
   killcoins_set: "&aThe balance of &e%player% &ahas been set to &e%amount%%currency%"
   kill_reward: "&a+%amount% %currency% &7(Kill reward)"
   killcoins_usage: "&eCorrect usage:\n&e /kt killcoins add <player> <amount>\n&e /kt killcoins take <player> <amount>\n&e /kt killcoins set <player> <amount>\n&e /kt killcoins reset <player>\n&e /kt killcoins bal [player]\n"
+  cooldown_active: "&cWait %delay% seconds before using your KillEffect again!"
+  on_command_cooldown: "&cPlease wait %seconds%s before using this command again."
 
+management-structure:
+  test_command:
+    cooldown:
+      enabled: true
+      delay: 10 #In seconds
+  players:
+    enabled: true #For disable/active killeffect for players
+    cooldown:
+      enabled: false
+      delay: 5 #In seconds
+  mobs:
+    enabled: true #For disable/active killeffect for mobs
+    cooldown:
+      enabled: true
+      delay: 20 #In seconds
 
 economy:
   enabled: true #If disabled check the permission for the effects

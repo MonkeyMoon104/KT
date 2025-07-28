@@ -17,6 +17,9 @@ commands:
     aliases: [kt]
 
 permissions:
+  kt.admin.bypass:
+    description: Allows players to bypass colodwns and effects disabled
+    default: op
   kt.killcoins.add:
     description: Allows use of /kt killcoins add
     default: op
