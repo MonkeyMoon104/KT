@@ -1,4 +1,4 @@
-config-version: "2.2.6"
+config-version: "2.2.8"
 
 messages:
   commands_no_perm: "&cYou don't have permission to use this command."
@@ -33,6 +33,9 @@ messages:
   killcoins_usage: "&eCorrect usage:\n&e /kt killcoins add <player> <amount>\n&e /kt killcoins take <player> <amount>\n&e /kt killcoins set <player> <amount>\n&e /kt killcoins reset <player>\n&e /kt killcoins bal [player]\n"
   cooldown_active: "&cWait %delay% seconds before using your KillEffect again!"
   on_command_cooldown: "&cPlease wait %seconds%s before using this command again."
+
+auto-update:
+  enabled: true
 
 management-structure:
   test_command:

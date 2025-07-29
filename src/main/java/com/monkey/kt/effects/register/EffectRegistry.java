@@ -49,4 +49,9 @@ public class EffectRegistry {
 
         plugin.getGuiManager().reloadGUI(enabledEffects);
     }
+
+    public int getLoadedEffectsCount() {
+        return KillEffectFactory.getRegisteredEffects().size();
+    }
+
 }

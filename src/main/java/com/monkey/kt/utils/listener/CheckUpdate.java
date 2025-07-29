@@ -1,5 +1,6 @@
 package com.monkey.kt.utils.listener;
 
+import com.monkey.kt.utils.update.GitHubUpdater;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -57,6 +58,12 @@ public class CheckUpdate implements Listener {
 
             if (updateAvailable) {
                 Bukkit.getLogger().info("[KT UpdateChecker] New version available: " + latestVersion + " (current version: " + currentVersion + ")");
+
+                if (plugin.getConfig().getBoolean("auto-update.enabled", true)) {
+                    Bukkit.getLogger().info("[KT UpdateChecker] Checking GitHub for updates...");
+                    new GitHubUpdater(plugin).checkAndUpdate();
+                }
+
             } else {
                 Bukkit.getLogger().info("[KT UpdateChecker] Plugin is up to date.");
             }
@@ -86,7 +93,6 @@ public class CheckUpdate implements Listener {
             return 0;
         }
     }
-
 
     private int parseIntSafe(String str) {
         try {

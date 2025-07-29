@@ -13,6 +13,7 @@ import com.monkey.kt.effects.register.EffectRegistry;
 import com.monkey.kt.listener.*;
 import com.monkey.kt.storage.DatabaseManager;
 import com.monkey.kt.gui.GUIManager;
+import com.monkey.kt.utils.KTStatusLogger;
 import com.monkey.kt.utils.WorldGuardUtils;
 import com.monkey.kt.utils.listener.CheckUpdate;
 import org.bstats.bukkit.Metrics;
@@ -27,6 +28,7 @@ public class KT extends JavaPlugin {
     private KillCoinsDatabaseManager coinsDbManager;
     private KillCoinsEco killCoinsEco;
     private CooldownManager cooldownManager;
+    private KTStatusLogger statusLogger;
 
     @Override
     public void onEnable() {
@@ -56,6 +58,9 @@ public class KT extends JavaPlugin {
         guiManager = new GUIManager(this, databaseManager, killCoinsEco);
         effectRegistry = new EffectRegistry(this);
         effectRegistry.loadEffects();
+
+        statusLogger = new KTStatusLogger(this, 26511);
+        statusLogger.logEnable();
 
         getCommand("killeffect").setExecutor(new KTCommand(this, guiManager, killCoinsEco));
         KillCoinsCommand killCoinsCmd = new KillCoinsCommand(this, killCoinsEco);

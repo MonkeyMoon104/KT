@@ -37,4 +37,9 @@ public class DatabaseManager {
             e.printStackTrace();
         }
     }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
 }
