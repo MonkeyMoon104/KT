@@ -111,3 +111,15 @@ permissions:
   kt.wither.use:
     description: Use the wither kill effect
     default: op
+
+  kt.stellarcollapse.use:
+    description: Use the stellar collapse kill effect
+    default: op
+
+  kt.dimensionalrift.use:
+    description: Use the dimensional rift kill effect
+    default: op
+
+  kt.cryocore.use:
+    description: Use the cryo core kill effect
+    default: op

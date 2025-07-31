@@ -40,6 +40,9 @@ public class GUIManager {
         effectIconNames.put("totem", "TOTEM_OF_UNDYING");
         effectIconNames.put("warden", "WARD_ARMOR_TRIM_SMITHING_TEMPLATE");
         effectIconNames.put("wither", "WITHER_SKELETON_SKULL");
+        effectIconNames.put("stellarcollapse", "NETHER_STAR");
+        effectIconNames.put("dimensionalrift", "CRYING_OBSIDIAN");
+        effectIconNames.put("cryocore", "SNOW");
     }
 
     public GUIManager(KT plugin, DatabaseManager databaseManager, KillCoinsEco economy) {

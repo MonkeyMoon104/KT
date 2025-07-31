@@ -1,4 +1,4 @@
-config-version: "2.2.8"
+config-version: "2.2.9"
 
 messages:
   commands_no_perm: "&cYou don't have permission to use this command."
@@ -172,3 +172,21 @@ effects:
     name: "&0Wither"
     description: "&0Wither &8and &fflash"
     price: 10500
+
+  stellarcollapse:
+    enabled: true
+    name: "&eStellar Collapse"
+    description: "&cmini-supernova &ecollapse"
+    price: 7000
+
+  dimensionalrift:
+    enabled: true
+    name: "&dDimensional &bRift"
+    description: "&4Glitched &ddimensional brift"
+    price: 8250
+
+  cryocore:
+    enabled: true
+    name: "&bCryo &9Core"
+    description: "&9Cryo snow &bcore"
+    price: 6250
