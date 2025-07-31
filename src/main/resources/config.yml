@@ -1,4 +1,4 @@
-config-version: "2.2.9"
+config-version: "2.3.0"
 
 messages:
   commands_no_perm: "&cYou don't have permission to use this command."
@@ -165,6 +165,7 @@ effects:
     enabled: true
     name: "&bFireworks"
     description: "&cFire &fworks &7and explosions"
+    structure: true
     price: 6345
 
   wither:
@@ -189,4 +190,5 @@ effects:
     enabled: true
     name: "&bCryo &9Core"
     description: "&9Cryo snow &bcore"
+    structure: true
     price: 6250

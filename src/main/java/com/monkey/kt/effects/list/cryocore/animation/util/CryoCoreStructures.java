@@ -1,5 +1,6 @@
 package com.monkey.kt.effects.list.cryocore.animation.util;
 
+import com.monkey.kt.utils.SensitiveBlockUtils;
 import com.monkey.kt.utils.WorldGuardUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -15,7 +16,8 @@ public class CryoCoreStructures {
         public final Set<Location> iceSpikeBlocks = new HashSet<>();
     }
 
-    public static void randomlyPlaceSnowBlocks(Location center, int radius, BlockStateHolder holder, int batch) {
+    public static void randomlyPlaceSnowBlocks(Location center, int radius, BlockStateHolder holder, int batch, boolean allowStructure) {
+        if (!allowStructure) return;
         World world = center.getWorld();
         if (world == null) return;
 
@@ -31,8 +33,12 @@ public class CryoCoreStructures {
                 if (random.nextDouble() > 0.65) {
                     int surfaceY = world.getHighestBlockYAt(center.getBlockX() + x, center.getBlockZ() + z);
                     Location surfaceLoc = new Location(world, center.getX() + x, surfaceY, center.getZ() + z);
-
                     Block targetBlock = surfaceLoc.getBlock();
+                    Block above = surfaceLoc.clone().add(0, 1, 0).getBlock();
+
+                    if (SensitiveBlockUtils.isSensitive(targetBlock) || SensitiveBlockUtils.isSensitive(above)) {
+                        continue;
+                    }
 
                     if (!holder.originalBlocks.containsKey(targetBlock.getLocation())) {
                         holder.originalBlocks.put(targetBlock.getLocation(), targetBlock.getType());
@@ -69,7 +75,8 @@ public class CryoCoreStructures {
         }
     }
 
-    public static void spawnLargeIceSpikesBorder(Plugin plugin, Location center, int radius, BlockStateHolder holder) {
+    public static void spawnLargeIceSpikesBorder(Plugin plugin, Location center, int radius, BlockStateHolder holder, boolean allowStructure) {
+        if (!allowStructure) return;
         World world = center.getWorld();
         if (world == null) return;
 
@@ -91,6 +98,11 @@ public class CryoCoreStructures {
                             double inclineZ = baseZ * inclinationFactor * y / height;
                             Location spikeLoc = base.clone().add(inclineX, y, inclineZ);
                             Block block = spikeLoc.getBlock();
+
+                            Block above = block.getLocation().clone().add(0, 1, 0).getBlock();
+                            if (SensitiveBlockUtils.isSensitive(block) || SensitiveBlockUtils.isSensitive(above)) {
+                                continue;
+                            }
 
                             if (block.getType().isAir() || block.getType() == Material.SNOW || block.getType() == Material.SNOW_BLOCK) {
                                 block.setType(Material.PACKED_ICE);

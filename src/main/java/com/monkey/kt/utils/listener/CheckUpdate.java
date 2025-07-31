@@ -31,9 +31,22 @@ public class CheckUpdate implements Listener {
                 checkForUpdates();
             }
         }.runTaskAsynchronously(plugin);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Bukkit.getLogger().info("[KT UpdateChecker] Automatic check run every hour...");
+                        checkForUpdates();
+                    }
+                }.runTaskTimerAsynchronously(plugin, 0L, 20L * 3600);
+            }
+        }.runTaskLater(plugin, 20L * 3600);
     }
 
-    private void checkForUpdates() {
+    public void checkForUpdates() {
         try {
             URL url = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceId);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();

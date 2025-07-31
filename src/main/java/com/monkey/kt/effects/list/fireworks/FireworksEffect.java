@@ -2,9 +2,11 @@ package com.monkey.kt.effects.list.fireworks;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.KillEffect;
+import com.monkey.kt.utils.SensitiveBlockUtils;
 import com.monkey.kt.utils.WorldGuardUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -25,6 +27,8 @@ public class FireworksEffect implements KillEffect {
     public void play(Player killer, Location target) {
         World world = target.getWorld();
         if (world == null) return;
+
+        boolean allowStructure = plugin.getConfig().getBoolean("effects.fireworks.structure", true);
 
         Location center = target.clone().add(0, 0.5, 0);
         List<Location> launchPoints = generateLaunchPoints(center, 16);
@@ -71,7 +75,15 @@ public class FireworksEffect implements KillEffect {
             Material original = platform.getType();
             originalBlocks.put(platformLoc, original);
 
-            WorldGuardUtils.runWithWorldGuardBypass(platformLoc, () -> platform.setType(Material.GLOWSTONE));
+            Block blockAbove = platform.getRelative(BlockFace.UP);
+
+            if (allowStructure
+                    && !SensitiveBlockUtils.isSensitive(platform)
+                    && !SensitiveBlockUtils.isSensitive(blockAbove)) {
+
+                WorldGuardUtils.runWithWorldGuardBypass(platformLoc, () -> platform.setType(Material.GLOWSTONE));
+            }
+
 
             BukkitRunnable whiteParticlesTask = new BukkitRunnable() {
                 @Override
