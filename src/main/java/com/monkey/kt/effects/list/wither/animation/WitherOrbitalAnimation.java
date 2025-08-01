@@ -2,7 +2,6 @@ package com.monkey.kt.effects.list.wither.animation;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.list.wither.animation.util.WitherParticles;
-import com.monkey.kt.utils.WorldGuardUtils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wither;
@@ -40,7 +39,7 @@ public class WitherOrbitalAnimation {
                     wither1.remove();
                     wither2.remove();
                     cancel();
-                    WitherParticles.spawnFinalImplosion(plugin, center);
+                    WitherParticles.spawnFinalImplosion(plugin, center, killer);
                     world.playSound(center, Sound.AMBIENT_CAVE, 3.0f, 0.4f);
                     return;
                 }

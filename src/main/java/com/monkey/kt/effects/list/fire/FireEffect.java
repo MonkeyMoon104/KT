@@ -3,6 +3,8 @@ package com.monkey.kt.effects.list.fire;
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.KillEffect;
 import com.monkey.kt.effects.util.EffectUtils;
+import com.monkey.kt.utils.damage.DamageConfig;
+import com.monkey.kt.utils.damage.DamageUtils;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -13,9 +15,14 @@ public class FireEffect implements KillEffect {
     public FireEffect(KT plugin) { this.plugin = plugin; }
 
     @Override
-    public void play(Player player, Location loc) {
+    public void play(Player killer, Location loc) {
         loc.getWorld().playSound(loc, Sound.ITEM_FIRECHARGE_USE, 2, 1);
         EffectUtils.playRepeatingParticle(plugin, loc, Particle.FLAME, 100, 1.5, 2, 1.5, 0.05, 2L, 10);
+        DamageConfig damageConfig = DamageUtils.getDamageConfig("fire", plugin);
+
+        if (damageConfig.isEnabled()) {
+            DamageUtils.applyDamageAround(killer, loc, damageConfig.getRadius(), damageConfig.getValue());
+        }
     }
 }
 

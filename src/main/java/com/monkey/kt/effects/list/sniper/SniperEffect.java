@@ -2,6 +2,8 @@ package com.monkey.kt.effects.list.sniper;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.KillEffect;
+import com.monkey.kt.utils.damage.DamageConfig;
+import com.monkey.kt.utils.damage.DamageUtils;
 import org.bukkit.*;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -27,6 +29,12 @@ public class SniperEffect implements KillEffect {
         String soundName = plugin.getConfig().getString("resource_pack.sounds.bow-hit.name");
         if (soundName != null) {
             world.playSound(target, soundName, SoundCategory.PLAYERS, 1.0f, 1.0f);
+        }
+
+        DamageConfig damageConfig = DamageUtils.getDamageConfig("sniper", plugin);
+
+        if (damageConfig.isEnabled()) {
+            DamageUtils.applyDamageAround(killer, target, damageConfig.getRadius(), damageConfig.getValue());
         }
 
         new BukkitRunnable() {

@@ -71,4 +71,14 @@ public class KillEffectListener implements Listener {
             event.setCancelled(true);
         }
     }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (event.getCause() == EntityDamageEvent.DamageCause.FALL &&
+                event.getEntity().hasMetadata("no_fall_damage")) {
+
+            event.setCancelled(true);
+            event.getEntity().removeMetadata("no_fall_damage", plugin);
+        }
+    }
 }

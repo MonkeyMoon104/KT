@@ -16,6 +16,6 @@ public class StellarCollapseEffect implements KillEffect {
     @Override
     public void play(Player killer, Location loc) {
         if (loc.getWorld() == null) return;
-        StellarCollapseLauncher.launch(plugin, loc.clone().add(0.5, 1, 0.5));
+        StellarCollapseLauncher.launch(plugin, loc.clone().add(0.5, 1, 0.5), killer);
     }
 }

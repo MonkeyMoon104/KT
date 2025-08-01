@@ -2,8 +2,11 @@ package com.monkey.kt.effects.list.fireworks;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.KillEffect;
+import com.monkey.kt.storage.TempBlockStorage;
 import com.monkey.kt.utils.SensitiveBlockUtils;
 import com.monkey.kt.utils.WorldGuardUtils;
+import com.monkey.kt.utils.damage.DamageConfig;
+import com.monkey.kt.utils.damage.DamageUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -82,6 +85,8 @@ public class FireworksEffect implements KillEffect {
                     && !SensitiveBlockUtils.isSensitive(blockAbove)) {
 
                 WorldGuardUtils.runWithWorldGuardBypass(platformLoc, () -> platform.setType(Material.GLOWSTONE));
+                TempBlockStorage.saveTempBlock(platformLoc, original);
+                TempBlockStorage.flush();
             }
 
 
@@ -127,10 +132,13 @@ public class FireworksEffect implements KillEffect {
                         public void run() {
                             Material oldType = originalBlocks.getOrDefault(platformLoc, Material.AIR);
                             WorldGuardUtils.runWithWorldGuardBypass(platformLoc, () -> platform.setType(oldType));
+                            TempBlockStorage.removeTempBlock(platformLoc);
+                            TempBlockStorage.flush();
                             world.playSound(launchLoc, Sound.BLOCK_FIRE_EXTINGUISH, 0.5f, 1.0f);
 
                         }
                     }.runTaskLater(plugin, 5L);
+
 
                     finishedPlatforms[0]++;
                     if (finishedPlatforms[0] >= totalPlatforms) {
@@ -203,6 +211,12 @@ public class FireworksEffect implements KillEffect {
                                 world.playSound(center, Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 8.0f, 0.6f);
                                 world.playSound(center, Sound.ENTITY_GENERIC_EXPLODE, 6.0f, 0.5f);
                                 world.playSound(center, Sound.ITEM_TOTEM_USE, 10.0f, 0.7f);
+
+                                DamageConfig damageConfig = DamageUtils.getDamageConfig("fireworks", plugin);
+
+                                if (damageConfig.isEnabled()) {
+                                    DamageUtils.applyDamageAround(killer, center, damageConfig.getRadius(), damageConfig.getValue());
+                                }
 
                             }
                         }.runTaskLater(plugin, 10L);

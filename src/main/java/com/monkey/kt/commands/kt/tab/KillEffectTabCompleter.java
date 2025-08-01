@@ -8,7 +8,6 @@ import org.bukkit.command.TabCompleter;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +37,7 @@ public class KillEffectTabCompleter implements TabCompleter {
         }
 
         if (args.length == 2 && (args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("test"))) {
-            return plugin.getGuiManager().getEffects().keySet().stream()
+            List<String> effects = plugin.getGuiManager().getEffects().keySet().stream()
                     .filter(effect -> {
                         if (!(sender instanceof org.bukkit.entity.Player)) return true;
                         org.bukkit.entity.Player player = (org.bukkit.entity.Player) sender;
@@ -51,6 +50,11 @@ public class KillEffectTabCompleter implements TabCompleter {
 
                         return hasPermission || (ecoEnabled && hasBought);
                     })
+                    .collect(Collectors.toList());
+
+            effects.add("none");
+
+            return effects.stream()
                     .filter(effect -> effect.toLowerCase().startsWith(args[1].toLowerCase()))
                     .sorted(String::compareToIgnoreCase)
                     .collect(Collectors.toList());

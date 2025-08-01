@@ -1,5 +1,6 @@
 package com.monkey.kt.effects.list.cryocore.animation.util;
 
+import com.monkey.kt.storage.TempBlockStorage;
 import com.monkey.kt.utils.SensitiveBlockUtils;
 import com.monkey.kt.utils.WorldGuardUtils;
 import org.bukkit.*;
@@ -41,16 +42,24 @@ public class CryoCoreStructures {
                     }
 
                     if (!holder.originalBlocks.containsKey(targetBlock.getLocation())) {
-                        holder.originalBlocks.put(targetBlock.getLocation(), targetBlock.getType());
+                        Material originalMat = targetBlock.getType();
+                        Location loc = targetBlock.getLocation();
 
-                        WorldGuardUtils.runWithWorldGuardBypass(targetBlock.getLocation(), () -> {
+                        holder.originalBlocks.put(loc, originalMat);
+
+                        WorldGuardUtils.runWithWorldGuardBypass(loc, () -> {
                             targetBlock.setType(Material.SNOW_BLOCK);
                         });
+
+                        TempBlockStorage.saveTempBlock(loc, originalMat);
+
                         placed++;
                     }
+
                 }
             }
         }
+        TempBlockStorage.flush();
     }
 
     public static void restoreGround(BlockStateHolder holder) {
@@ -64,6 +73,8 @@ public class CryoCoreStructures {
                     block.setType(originalMat);
                 }
             });
+
+            TempBlockStorage.removeTempBlock(loc);
         }
 
         for (Location loc : holder.iceSpikeBlocks) {
@@ -72,7 +83,11 @@ public class CryoCoreStructures {
                     loc.getBlock().setType(Material.AIR);
                 }
             });
+
+            TempBlockStorage.removeTempBlock(loc);
         }
+
+        TempBlockStorage.flush();
     }
 
     public static void spawnLargeIceSpikesBorder(Plugin plugin, Location center, int radius, BlockStateHolder holder, boolean allowStructure) {
@@ -105,12 +120,16 @@ public class CryoCoreStructures {
                             }
 
                             if (block.getType().isAir() || block.getType() == Material.SNOW || block.getType() == Material.SNOW_BLOCK) {
+                                Material originalMat = block.getType();
                                 block.setType(Material.PACKED_ICE);
                                 holder.iceSpikeBlocks.add(spikeLoc.getBlock().getLocation());
+
+                                TempBlockStorage.saveTempBlock(spikeLoc, originalMat);
                             }
                         }
                     });
                 }
+                TempBlockStorage.flush();
             }
         }.runTask(plugin);
     }

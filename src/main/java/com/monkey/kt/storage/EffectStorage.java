@@ -33,7 +33,7 @@ public class EffectStorage {
     }
 
     public static String getEffect(Player player) {
-        return playerEffects.get(player.getUniqueId());
+        return playerEffects.getOrDefault(player.getUniqueId(), null);
     }
 
     public static void setEffect(Player player, String effect) {
@@ -46,6 +46,19 @@ public class EffectStorage {
                 "INSERT INTO killeffects (uuid, effect) VALUES (?, ?) ON CONFLICT(uuid) DO UPDATE SET effect = excluded.effect")) {
             ps.setString(1, uuid.toString());
             ps.setString(2, effect);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void removeEffect(Player player) {
+        UUID uuid = player.getUniqueId();
+        playerEffects.remove(uuid);
+
+        try (PreparedStatement ps = connection.prepareStatement(
+                "DELETE FROM killeffects WHERE uuid = ?")) {
+            ps.setString(1, uuid.toString());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

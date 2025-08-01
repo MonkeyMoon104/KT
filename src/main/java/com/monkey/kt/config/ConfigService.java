@@ -2,7 +2,6 @@ package com.monkey.kt.config;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.config.backup.BackupUtil;
-import org.yaml.snakeyaml.Yaml;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

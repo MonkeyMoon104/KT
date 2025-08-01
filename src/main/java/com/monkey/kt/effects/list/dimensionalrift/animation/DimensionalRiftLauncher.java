@@ -2,14 +2,17 @@ package com.monkey.kt.effects.list.dimensionalrift.animation;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.list.dimensionalrift.animation.util.RiftParticles;
+import com.monkey.kt.utils.damage.DamageConfig;
+import com.monkey.kt.utils.damage.DamageUtils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class DimensionalRiftLauncher {
 
-    public static void launch(KT plugin, Location center) {
+    public static void launch(KT plugin, Location center, Player killer) {
         World world = center.getWorld();
         if (world == null) return;
 
@@ -47,6 +50,14 @@ public class DimensionalRiftLauncher {
                         world.playSound(center, Sound.BLOCK_ANVIL_PLACE, volume * 0.5f, pitch * 1.3f);
                     }
                 } else if (tick < 190) {
+
+                    if (tick == 150) {
+                        DamageConfig damageConfig = DamageUtils.getDamageConfig("dimensionalrift", plugin);
+
+                        if (damageConfig.isEnabled()) {
+                            DamageUtils.applyDamageAround(killer, center, damageConfig.getRadius(), damageConfig.getValue());
+                        }
+                    }
 
                     if (tick == 160) {
                         world.playSound(center, Sound.ENTITY_ENDER_DRAGON_DEATH, 7.5f, 4.5f);

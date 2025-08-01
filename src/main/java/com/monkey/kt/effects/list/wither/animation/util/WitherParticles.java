@@ -1,15 +1,13 @@
 package com.monkey.kt.effects.list.wither.animation.util;
 
 import com.monkey.kt.KT;
-import com.monkey.kt.utils.WorldGuardUtils;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldguard.protection.flags.Flags;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
-import com.sk89q.worldguard.protection.regions.RegionQuery;
+import com.monkey.kt.utils.damage.DamageConfig;
+import com.monkey.kt.utils.damage.DamageUtils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.WitherSkull;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -49,9 +47,15 @@ public class WitherParticles {
         }
     }
 
-    public static void launchBurstSkulls(KT plugin, Location center) {
+    public static void launchBurstSkulls(KT plugin, Location center, Player killer) {
         World world = center.getWorld();
         if (world == null) return;
+
+        DamageConfig damageConfig = DamageUtils.getDamageConfig("wither", plugin);
+
+        if (damageConfig.isEnabled()) {
+            DamageUtils.applyDamageAround(killer, center, damageConfig.getRadius(), damageConfig.getValue());
+        }
 
         for (int i = 0; i < 8; i++) {
             double angle = Math.toRadians(i * 45);
@@ -84,7 +88,7 @@ public class WitherParticles {
         }
     }
 
-    public static void spawnFinalImplosion(KT plugin, Location center) {
+    public static void spawnFinalImplosion(KT plugin, Location center, Player killer) {
         World world = center.getWorld();
         if (world == null) return;
 
@@ -97,7 +101,7 @@ public class WitherParticles {
                     world.spawnParticle(Particle.FIREWORKS_SPARK, center, 20, 0.5, 0.5, 0.5, 0.1);
                     world.spawnParticle(Particle.END_ROD, center, 40, 0.7, 0.7, 0.7, 0.01);
                     world.playSound(center, org.bukkit.Sound.ENTITY_GENERIC_EXPLODE, 3f, 0.5f);
-                    launchBurstSkulls(plugin, center);
+                    launchBurstSkulls(plugin, center, killer);
                     cancel();
                     return;
                 }

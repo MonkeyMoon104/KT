@@ -41,11 +41,19 @@ public class SetCommand implements SubCommand {
         }
 
         String effect = args[1].toLowerCase();
+        if (effect.equalsIgnoreCase("none")) {
+            EffectStorage.removeEffect(player);
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    plugin.getConfig().getString("messages.effect_removed")));
+            return;
+        }
+
         if (!plugin.getGuiManager().getEffects().containsKey(effect)) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
                     plugin.getConfig().getString("messages.effect_not_found")));
             return;
         }
+
 
         boolean hasPermission = player.hasPermission("kt." + effect + ".use");
         boolean hasBought = plugin.getKillCoinsEco().hasBoughtEffect(player, effect);

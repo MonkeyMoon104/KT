@@ -24,7 +24,7 @@ public class ResourcePackListenerJoin implements Listener {
         try {
             shaBytes = hexToBytes(sha);
         } catch (IllegalArgumentException e) {
-            plugin.getLogger().warning("SHA1 malformato!");
+            plugin.getLogger().warning("SHA1 malformed!");
             return;
         }
 

@@ -14,6 +14,15 @@ public class SQLTableInitializer {
     public void createTables() {
         try (Statement stmt = connection.createStatement()) {
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS killeffects (uuid TEXT PRIMARY KEY, effect TEXT)");
+
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS temp_blocks (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "world TEXT NOT NULL," +
+                    "x INTEGER NOT NULL," +
+                    "y INTEGER NOT NULL," +
+                    "z INTEGER NOT NULL," +
+                    "material TEXT NOT NULL" +
+                    ")");
         } catch (Exception e) {
             e.printStackTrace();
         }

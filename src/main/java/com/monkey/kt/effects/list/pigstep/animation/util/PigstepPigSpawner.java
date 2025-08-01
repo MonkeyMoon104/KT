@@ -2,12 +2,13 @@ package com.monkey.kt.effects.list.pigstep.animation.util;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.list.pigstep.animation.PigstepFollowTask;
+import com.monkey.kt.utils.damage.DamageConfig;
+import com.monkey.kt.utils.damage.DamageUtils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -47,5 +48,11 @@ public class PigstepPigSpawner extends BukkitRunnable {
         );
 
         new PigstepFollowTask(plugin, pig, killer).runTaskTimer(plugin, 10L, 2L);
+
+        DamageConfig damageConfig = DamageUtils.getDamageConfig("pigstep", plugin);
+
+        if (damageConfig.isEnabled()) {
+            DamageUtils.applyDamageAround(killer, loc, damageConfig.getRadius(), damageConfig.getValue());
+        }
     }
 }

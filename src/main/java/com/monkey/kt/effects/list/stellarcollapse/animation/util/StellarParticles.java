@@ -1,7 +1,10 @@
 package com.monkey.kt.effects.list.stellarcollapse.animation.util;
 
 import com.monkey.kt.KT;
+import com.monkey.kt.utils.damage.DamageConfig;
+import com.monkey.kt.utils.damage.DamageUtils;
 import org.bukkit.*;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class StellarParticles {
@@ -19,9 +22,15 @@ public class StellarParticles {
         }
     }
 
-    public static void spawnCollapseImplosion(KT plugin, Location center) {
+    public static void spawnCollapseImplosion(KT plugin, Location center, Player killer) {
         World world = center.getWorld();
         if (world == null) return;
+
+        DamageConfig damageConfig = DamageUtils.getDamageConfig("stellarcollapse", plugin);
+
+        if (damageConfig.isEnabled()) {
+            DamageUtils.applyDamageAround(killer, center, damageConfig.getRadius(), damageConfig.getValue());
+        }
 
         new BukkitRunnable() {
             int step = 0;

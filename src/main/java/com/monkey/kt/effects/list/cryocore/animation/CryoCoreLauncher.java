@@ -6,11 +6,12 @@ import com.monkey.kt.effects.list.cryocore.animation.util.CryoCoreStructures;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class CryoCoreLauncher {
 
-    public static void launch(KT plugin, Location center) {
+    public static void launch(KT plugin, Location center, Player killer) {
         World world = center.getWorld();
         if (world == null) return;
 
@@ -25,7 +26,7 @@ public class CryoCoreLauncher {
             @Override
             public void run() {
                 if (tick <= 30) {
-                    CryoCoreParticles.spawnIceExplosion(world, center, tick, spikeRadius - 1);
+                    CryoCoreParticles.spawnIceExplosion(world, center, tick, spikeRadius - 1, plugin, killer);
                     if (tick % 3 == 0) {
                         CryoCoreStructures.randomlyPlaceSnowBlocks(center, 15, stateHolder, tick / 3, allowStructure);
                     }

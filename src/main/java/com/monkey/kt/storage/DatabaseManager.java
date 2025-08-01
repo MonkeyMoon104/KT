@@ -21,6 +21,7 @@ public class DatabaseManager {
 
             new SQLTableInitializer(connection).createTables();
             EffectStorage.init(connection);
+            TempBlockStorage.init(connection, plugin);
 
         } catch (Exception e) {
             e.printStackTrace();

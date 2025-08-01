@@ -1,8 +1,12 @@
 package com.monkey.kt.effects.list.glowmissile.animation.util;
 
+import com.monkey.kt.utils.damage.DamageConfig;
+import com.monkey.kt.utils.damage.DamageUtils;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 public class GlowMissileParticles {
 
@@ -21,6 +25,7 @@ public class GlowMissileParticles {
     }
 
     public static void spawnGlowRing(World world, Location center, double radius, int points, double yOffset) {
+
         for (int i = 0; i < points; i++) {
             double angle = 2 * Math.PI * i / points;
             double x = radius * Math.cos(angle);

@@ -16,6 +16,6 @@ public class CryoCoreEffect implements KillEffect {
     @Override
     public void play(Player killer, Location loc) {
         if (loc.getWorld() == null) return;
-        CryoCoreLauncher.launch(plugin, loc.clone().add(0.5, 0, 0.5));
+        CryoCoreLauncher.launch(plugin, loc.clone().add(0.5, 0, 0.5), killer);
     }
 }

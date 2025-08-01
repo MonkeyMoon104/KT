@@ -1,14 +1,23 @@
 package com.monkey.kt.effects.list.cryocore.animation.util;
 
 import com.monkey.kt.KT;
+import com.monkey.kt.utils.damage.DamageConfig;
+import com.monkey.kt.utils.damage.DamageUtils;
 import org.bukkit.*;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class CryoCoreParticles {
 
-    public static void spawnIceExplosion(World world, Location center, int tick, int spiker) {
+    public static void spawnIceExplosion(World world, Location center, int tick, int spiker, Plugin plugin, Player killer) {
+
+        DamageConfig damageConfig = DamageUtils.getDamageConfig("cryocore", plugin);
+
+        if (damageConfig.isEnabled()) {
+            DamageUtils.applyDamageAround(killer, center, damageConfig.getRadius(), damageConfig.getValue());
+        }
+
         int points = 60;
         double progress = Math.min(tick / 30.0, 1.0);
 

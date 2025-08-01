@@ -17,6 +17,6 @@ public class GlowMissileEffect implements KillEffect {
     public void play(Player killer, Location loc) {
         if (loc.getWorld() == null) return;
 
-        GlowMissileLauncher.launch(plugin, loc.getBlock().getLocation().add(0.5, 1, 0.5));
+        GlowMissileLauncher.launch(plugin, loc.getBlock().getLocation().add(0.5, 1, 0.5), killer);
     }
 }

@@ -2,8 +2,11 @@ package com.monkey.kt.effects.list.enchantcolumn.animation;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.list.enchantcolumn.animation.util.ParticleArm;
+import com.monkey.kt.utils.damage.DamageConfig;
+import com.monkey.kt.utils.damage.DamageUtils;
 import org.bukkit.*;
 import org.bukkit.entity.*;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.*;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -32,6 +35,7 @@ public class FinalEffect {
     }
 
     public void apply() {
+
         double radius = 3.0;
         Collection<Entity> nearby = world.getNearbyEntities(center, radius, radius, radius);
 
@@ -54,6 +58,13 @@ public class FinalEffect {
     }
 
     private void triggerExplosion() {
+
+        DamageConfig damageConfig = DamageUtils.getDamageConfig("enchantcolumn", plugin);
+
+        if (damageConfig.isEnabled()) {
+            DamageUtils.applyDamageAround(killer, center, damageConfig.getRadius(), damageConfig.getValue());
+        }
+
         world.playSound(center, Sound.ENTITY_GENERIC_EXPLODE, 3.0f, 0.8f);
 
         int arms = 150, duration = 40;
@@ -71,6 +82,7 @@ public class FinalEffect {
             Vector knockback = entity.getLocation().toVector().subtract(center.toVector())
                     .normalize().multiply(2.5).setY(1.0);
             entity.setVelocity(knockback);
+            entity.setMetadata("no_fall_damage", new FixedMetadataValue(plugin, true));
         }
 
         new BukkitRunnable() {

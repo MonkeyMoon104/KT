@@ -2,8 +2,9 @@ package com.monkey.kt.effects.list.warden;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.KillEffect;
+import com.monkey.kt.utils.damage.DamageConfig;
+import com.monkey.kt.utils.damage.DamageUtils;
 import org.bukkit.*;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Warden;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -31,6 +32,12 @@ public class WardenEffect implements KillEffect {
         Location soundLoc = loc.clone().add(0, 1, 0);
 
         killer.playSound(soundLoc, Sound.ENTITY_WARDEN_EMERGE, 2.0f, 1.0f);
+
+        DamageConfig damageConfig = DamageUtils.getDamageConfig("warden", plugin);
+
+        if (damageConfig.isEnabled()) {
+            DamageUtils.applyDamageAround(killer, loc, damageConfig.getRadius(), damageConfig.getValue());
+        }
 
         final double radius = 1.5;
         final int points = 36;

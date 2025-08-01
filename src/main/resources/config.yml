@@ -1,4 +1,4 @@
-config-version: "2.3.0"
+config-version: "2.3.1"
 
 messages:
   commands_no_perm: "&cYou don't have permission to use this command."
@@ -33,6 +33,8 @@ messages:
   killcoins_usage: "&eCorrect usage:\n&e /kt killcoins add <player> <amount>\n&e /kt killcoins take <player> <amount>\n&e /kt killcoins set <player> <amount>\n&e /kt killcoins reset <player>\n&e /kt killcoins bal [player]\n"
   cooldown_active: "&cWait %delay% seconds before using your KillEffect again!"
   on_command_cooldown: "&cPlease wait %seconds%s before using this command again."
+  effect_removed: "&aYou deactivated the current Kill Effect."
+  effect_none_selected: "&7No effect is currently selected."
 
 auto-update:
   enabled: true
@@ -64,11 +66,20 @@ economy:
     symbol: "KC"
 
 resource_pack:
+  message-warn: "-> Temporary off <-"
   url: "https://download.mc-packs.net/pack/d5889f788003340479e3f767852eddee152ee544.zip"
   sha1: "d5889f788003340479e3f767852eddee152ee544"
   sounds:
     bow-hit:
       name: "kt.hs1"
+
+gui:
+  none: "&7None"
+  buttons:
+    close: "&c✖ Close"
+    current_effect: "&eCurrent Effect: %effect%"
+    disable: "&4➤ Disable Effect"
+
 
 effects:
   fire:
@@ -76,72 +87,120 @@ effects:
     name: "&cFire"
     description: "&cBurn &7your enemies with fire"
     price: 1500
+    damage:
+      enabled: true
+      value: 2
+      radius: 3
 
   lightning:
     enabled: true
     name: "&eLightning"
     description: "&bSummon a &elightning bolt &bon your target"
     price: 2500
+    damage:
+      enabled: true
+      value: 5
+      radius: 4
 
   explosion:
     enabled: true
     name: "&4Explosion"
     description: "&4Boom! &7A visual explosion effect"
     price: 3000
+    damage:
+      enabled: true
+      value: 5
+      radius: 5
 
   hearts:
     enabled: true
     name: "&dHearts"
     description: "&dLove hearts &7when you kill"
     price: 2000
+    damage:
+      enabled: false
+      value: 0
+      radius: 0
 
   notes:
     enabled: true
     name: "&aNotes"
     description: "&aMusical effect &ein the rhythm of death"
     price: 1800
+    damage:
+      enabled: false
+      value: 0
+      radius: 0
 
   cloud:
     enabled: true
     name: "&fCloud"
     description: "&fMysterious &7and haunting fog"
     price: 2200
+    damage:
+      enabled: true
+      value: 1
+      radius: 3
 
   smoke:
     enabled: true
     name: "&8Smoke"
     description: "&8Smoke &7and shadows in the air"
     price: 2100
+    damage:
+      enabled: true
+      value: 2
+      radius: 3
 
   totem:
     enabled: true
     name: "&6Totem"
     description: "&6Epic &eparticles &6of the totem"
     price: 4000
+    damage:
+      enabled: true
+      value: 4
+      radius: 5
 
   end:
     enabled: true
     name: "&5End"
     description: "&5Creepy &dEnderman &5effect"
     price: 3500
+    damage:
+      enabled: true
+      value: 4
+      radius: 6
 
   pigstep:
     enabled: true
     name: "&dPigStep"
     description: "&dPig &bStep &eeffect"
     price: 2750
+    damage:
+      enabled: false
+      value: 0
+      radius: 0
 
   warden:
     enabled: true
     name: "&3Warden"
     description: "&3Warden &eeffect"
     price: 7045
+    damage:
+      enabled: true
+      value: 7
+      radius: 6
 
   glowmissile:
     enabled: true
     name: "&bGlowMissile"
     description: "&bGlow missile &7effect"
     price: 5300
+    damage:
+      enabled: true
+      value: 8
+      radius: 5
 
   sniper:
     enabled: true
@@ -150,6 +209,10 @@ effects:
       - "&7Long Mortal Shot"
       - "&8Only kill with bow"
     price: 4250
+    damage:
+      enabled: true
+      value: 5
+      radius: 8
 
   enchantcolumn:
     enabled: true
@@ -160,6 +223,10 @@ effects:
       type: REGENERATION
       amplifier: 2
       duration: 10
+    damage:
+      enabled: true
+      value: 10
+      radius: 10
 
   fireworks:
     enabled: true
@@ -167,24 +234,40 @@ effects:
     description: "&cFire &fworks &7and explosions"
     structure: true
     price: 6345
+    damage:
+      enabled: true
+      value: 6
+      radius: 9
 
   wither:
     enabled: true
     name: "&0Wither"
     description: "&0Wither &8and &fflash"
     price: 10500
+    damage:
+      enabled: true
+      value: 7
+      radius: 4
 
   stellarcollapse:
     enabled: true
     name: "&eStellar Collapse"
     description: "&cmini-supernova &ecollapse"
     price: 7000
+    damage:
+      enabled: true
+      value: 2
+      radius: 3
 
   dimensionalrift:
     enabled: true
     name: "&dDimensional &bRift"
     description: "&4Glitched &ddimensional brift"
     price: 8250
+    damage:
+      enabled: true
+      value: 6
+      radius: 7
 
   cryocore:
     enabled: true
@@ -192,3 +275,7 @@ effects:
     description: "&9Cryo snow &bcore"
     structure: true
     price: 6250
+    damage:
+      enabled: true
+      value: 1
+      radius: 16

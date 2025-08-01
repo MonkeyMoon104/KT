@@ -41,6 +41,36 @@ public class InventoryClickListener implements Listener {
         ItemStack clicked = event.getCurrentItem();
         if (clicked == null || !clicked.hasItemMeta()) return;
 
+        String displayName = ChatColor.stripColor(clicked.getItemMeta().getDisplayName());
+
+        String closeName = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',
+                plugin.getConfig().getString("gui.buttons.close", "&c✖ Close")));
+        if (displayName.equalsIgnoreCase(closeName)) {
+            player.closeInventory();
+            return;
+        }
+
+        String disableName = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',
+                plugin.getConfig().getString("gui.buttons.disable", "&4➤ Disable Effect")));
+        if (displayName.equalsIgnoreCase(disableName)) {
+            String current = EffectStorage.getEffect(player);
+            if (current == null) {
+                player.sendMessage(color(plugin.getConfig().getString("messages.effect_none_selected")));
+                return;
+            }
+            EffectStorage.removeEffect(player);
+            player.sendMessage(color(plugin.getConfig().getString("messages.effect_removed")));
+            player.closeInventory();
+            return;
+        }
+
+        String currentRaw = plugin.getConfig().getString("gui.buttons.current_effect", "&eCurrent Effect: %effect%");
+        String currentEffectPrefix = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',
+                currentRaw.split("%effect%")[0]));
+        if (displayName.startsWith(currentEffectPrefix)) {
+            return;
+        }
+
         String effect = plugin.getGuiManager().getEffectByItem(clicked);
         if (effect == null) return;
 
