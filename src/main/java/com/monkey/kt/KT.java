@@ -99,6 +99,11 @@ public class KT extends JavaPlugin {
     }
 
     private void loadResourcePack() {
+        if (!getConfig().getBoolean("resource_pack.settings.enabled", true)) {
+            getLogger().warning("ResourcePack deactivated in config");
+            return;
+        }
+
         String url = getConfig().getString("resource_pack.settings.url");
         String sha = getConfig().getString("resource_pack.settings.sha1");
 

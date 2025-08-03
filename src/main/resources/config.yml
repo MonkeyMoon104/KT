@@ -1,4 +1,4 @@
-config-version: "2.3.3"
+config-version: "2.3.4"
 
 messages:
   commands_no_perm: "&cYou don't have permission to use this command."
@@ -70,6 +70,7 @@ resource_pack:
     url: "url update, move it to settings to enable it ---> https://download.mc-packs.net/pack/d2435c3e646fabd12461269d5138cc17e9f964ed.zip <--- url update, move it to settings to enable it"
     sha1: "sha1 update, move it to settings to enable it ---> d2435c3e646fabd12461269d5138cc17e9f964ed <--- sha1 update, move it to settings to enable it"
   settings:
+    enabled: true
     url: "https://download.mc-packs.net/pack/d5889f788003340479e3f767852eddee152ee544.zip"
     sha1: "d5889f788003340479e3f767852eddee152ee544"
     uuid: "1d216c05-b1c2-48ee-aff5-4a6c823b463a"

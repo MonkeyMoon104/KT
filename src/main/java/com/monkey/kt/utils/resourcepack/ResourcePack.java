@@ -14,6 +14,8 @@ public class ResourcePack {
     }
 
     public void sendPackToPlayer(Player player) {
+        if (!plugin.getConfig().getBoolean("resource_pack.settings.enabled", true)) return;
+
         String url = plugin.getConfig().getString("resource_pack.settings.url");
         String sha = plugin.getConfig().getString("resource_pack.settings.sha1");
 
@@ -39,7 +41,26 @@ public class ResourcePack {
                 (prompt != null && !prompt.isEmpty()) ? prompt : null,
                 required
         );
+
     }
+
+    public void removePackFromPlayer(Player player) {
+        String uuidStr = plugin.getConfig().getString("resource_pack.settings.uuid");
+
+        if (uuidStr == null || uuidStr.isEmpty()) return;
+
+        try {
+            UUID uuid = UUID.fromString(uuidStr);
+
+            player.removeResourcePack(uuid);
+
+        } catch (IllegalArgumentException e) {
+            plugin.getLogger().warning("Invalid UUID in config.yml: " + uuidStr);
+        } catch (NoSuchMethodError e) {
+            plugin.getLogger().warning("removeResourcePack is not supported on this server version.");
+        }
+    }
+
 
     private byte[] hexToBytes(String hex) {
         if (hex.length() != 40) throw new IllegalArgumentException("SHA1 must be 40 characters long");

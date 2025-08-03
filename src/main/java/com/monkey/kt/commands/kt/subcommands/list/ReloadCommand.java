@@ -33,7 +33,11 @@ public class ReloadCommand implements SubCommand {
         plugin.reloadConfig();
         plugin.getEffectRegistry().loadEffects();
         for (Player player : Bukkit.getOnlinePlayers()) {
-            plugin.getResourcePack().sendPackToPlayer(player);
+            if (plugin.getConfig().getBoolean("resource_pack.settings.enabled", true)) {
+                plugin.getResourcePack().sendPackToPlayer(player);
+            } else {
+                plugin.getResourcePack().removePackFromPlayer(player);
+            }
         }
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.config_reloaded")));
     }

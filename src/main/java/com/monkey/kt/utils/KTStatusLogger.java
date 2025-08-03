@@ -78,12 +78,15 @@ public class KTStatusLogger {
         }
 
         String resourcePackUrl = null;
+        boolean hasResourcePack = false;
+
         try {
+            boolean enabled = plugin.getConfig().getBoolean("resource_pack.settings.enabled", true);
             resourcePackUrl = plugin.getConfig().getString("resource_pack.settings.url");
+            hasResourcePack = enabled && resourcePackUrl != null && !resourcePackUrl.isEmpty();
         } catch (Exception e) {
-            resourcePackUrl = null;
+            hasResourcePack = false;
         }
-        boolean hasResourcePack = (resourcePackUrl != null && !resourcePackUrl.isEmpty());
 
         logger.info(DARK_GRAY + "╔" + repeat("═", WIDTH) + "╗" + RESET);
         logger.info(DARK_GRAY + "║" + repeat(" ", (WIDTH - 23) / 2) + ORANGE + "KT Plugin Loaded" + DARK_GRAY + repeat(" ", WIDTH - ((WIDTH - 23) / 2) - 23) + "║" + RESET);
