@@ -1,9 +1,14 @@
 package com.monkey.kt.listener;
 
 import com.monkey.kt.KT;
+import com.monkey.kt.utils.resourcepack.ResourcePack;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+
+import java.util.Objects;
+import java.util.UUID;
 
 public class ResourcePackListenerJoin implements Listener {
 
@@ -15,29 +20,6 @@ public class ResourcePackListenerJoin implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        String url = plugin.getConfig().getString("resource_pack.url");
-        String sha = plugin.getConfig().getString("resource_pack.sha1");
-
-        if (url == null || sha == null) return;
-
-        byte[] shaBytes;
-        try {
-            shaBytes = hexToBytes(sha);
-        } catch (IllegalArgumentException e) {
-            plugin.getLogger().warning("SHA1 malformed!");
-            return;
-        }
-
-        event.getPlayer().setResourcePack(url, shaBytes);
-    }
-
-    private byte[] hexToBytes(String hex) {
-        if (hex.length() != 40) throw new IllegalArgumentException("SHA1 length must be 40");
-
-        byte[] bytes = new byte[20];
-        for (int i = 0; i < 20; i++) {
-            bytes[i] = (byte) Integer.parseInt(hex.substring(2 * i, 2 * i + 2), 16);
-        }
-        return bytes;
+        plugin.getResourcePack().sendPackToPlayer(event.getPlayer());
     }
 }

@@ -25,5 +25,6 @@ public class EffectIconMap {
         ICONS.put("stellarcollapse", "NETHER_STAR");
         ICONS.put("dimensionalrift", "CRYING_OBSIDIAN");
         ICONS.put("cryocore", "SNOW");
+        ICONS.put("aurafarming", "AMETHYST_CLUSTER");
     }
 }

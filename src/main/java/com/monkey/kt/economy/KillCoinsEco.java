@@ -81,4 +81,8 @@ public class KillCoinsEco {
         storage.createIfNotExists(player.getUniqueId(),
                 plugin.getConfig().getDouble("economy.starting-balance", 0D));
     }
+
+    public KillCoinsStorage getStorage() {
+        return storage;
+    }
 }

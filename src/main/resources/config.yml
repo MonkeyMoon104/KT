@@ -1,4 +1,4 @@
-config-version: "2.3.1"
+config-version: "2.3.3"
 
 messages:
   commands_no_perm: "&cYou don't have permission to use this command."
@@ -66,12 +66,20 @@ economy:
     symbol: "KC"
 
 resource_pack:
-  message-warn: "-> Temporary off <-"
-  url: "https://download.mc-packs.net/pack/d5889f788003340479e3f767852eddee152ee544.zip"
-  sha1: "d5889f788003340479e3f767852eddee152ee544"
+  updates:
+    url: "url update, move it to settings to enable it ---> https://download.mc-packs.net/pack/d2435c3e646fabd12461269d5138cc17e9f964ed.zip <--- url update, move it to settings to enable it"
+    sha1: "sha1 update, move it to settings to enable it ---> d2435c3e646fabd12461269d5138cc17e9f964ed <--- sha1 update, move it to settings to enable it"
+  settings:
+    url: "https://download.mc-packs.net/pack/d5889f788003340479e3f767852eddee152ee544.zip"
+    sha1: "d5889f788003340479e3f767852eddee152ee544"
+    uuid: "1d216c05-b1c2-48ee-aff5-4a6c823b463a"
+    required: true
+    prompt: "This resource pack is required to play."
   sounds:
     bow-hit:
       name: "kt.hs1"
+    aura-farm:
+      name: "kt.aurab"
 
 gui:
   none: "&7None"
@@ -279,3 +287,27 @@ effects:
       enabled: true
       value: 1
       radius: 16
+
+  aurafarming:
+    enabled: true
+    name: "&5Aura Farming"
+    description: "&5Aura Farming &8- &dDestroy players by destroying their aura"
+    price: 25000
+    aura-settings:
+      boost-perks:
+        damage:
+          amplifier: 2
+          duration: 20
+        potion:
+          type: REGENERATION
+          amplifier: 2
+          duration: 10
+        damage-message: "&b☄ You received a damage boost for {duration}s!"
+        potion-message: "&d✨ You received {potion} {amplifier} for {duration}s!"
+    damage:
+      enabled: true
+      value: 10
+      radius: 20
+    push-settings:
+      enabled: true
+      damage-per-seconds: 2

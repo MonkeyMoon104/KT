@@ -71,7 +71,7 @@ public class SensitiveBlockUtils {
             Material.TALL_SEAGRASS,
             Material.SEA_PICKLE,
 
-            Material.GRASS,
+            Material.GRASS_BLOCK,
             Material.FERN,
             Material.DEAD_BUSH,
             Material.LARGE_FERN,

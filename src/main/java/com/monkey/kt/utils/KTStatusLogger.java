@@ -79,7 +79,7 @@ public class KTStatusLogger {
 
         String resourcePackUrl = null;
         try {
-            resourcePackUrl = plugin.getConfig().getString("resource_pack.url");
+            resourcePackUrl = plugin.getConfig().getString("resource_pack.settings.url");
         } catch (Exception e) {
             resourcePackUrl = null;
         }

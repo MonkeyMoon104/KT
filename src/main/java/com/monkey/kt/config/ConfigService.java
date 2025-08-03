@@ -106,8 +106,12 @@ public class ConfigService {
                 }
                 currentPath = pathBuilder.toString();
 
-                Object value = userConfig.get(currentPath);
-                if (currentPath.equals(versionKey)) {
+                Object value;
+                if (
+                        currentPath.equals(versionKey) ||
+                        currentPath.equals("resource_pack.updates.url") ||
+                        currentPath.equals("resource_pack.updates.sha1")
+                ) {
                     value = defaultConfig.get(currentPath);
                 } else {
                     value = userConfig.get(currentPath);

@@ -10,6 +10,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 
@@ -81,4 +82,14 @@ public class KillEffectListener implements Listener {
             event.getEntity().removeMetadata("no_fall_damage", plugin);
         }
     }
+
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player)) return;
+
+        Player damager = (Player) event.getDamager();
+        int boost = plugin.getAuraBoostManager().getDamageAmplifier(damager);
+        event.setDamage(event.getDamage() * boost);
+    }
+
 }
