@@ -35,9 +35,11 @@ public class KT extends JavaPlugin {
     private KTStatusLogger statusLogger;
     private AuraBoostManager auraBoostManager;
     private ResourcePack resourcePack;
+    private KT instance;
 
     @Override
     public void onEnable() {
+        instance = this;
         new Metrics(this, 26511);
 
         int spigotResourceId = 125998;

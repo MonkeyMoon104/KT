@@ -49,6 +49,14 @@ permissions:
     description: Allows test the plugin effects
     default: op
 
+  kt.admin.suggestion:
+    description: Allows player send suggestion directly to plugin owner
+    default: op
+
+  kt.user.review:
+    description: Allows player send review directly to plugin owner
+    default: true
+
   kt.fire.use:
     description: Use the fire kill effect
     default: op

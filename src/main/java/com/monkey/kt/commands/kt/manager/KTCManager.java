@@ -1,9 +1,6 @@
 package com.monkey.kt.commands.kt.manager;
 
-import com.monkey.kt.commands.kt.subcommands.list.KillCoinsCommand;
-import com.monkey.kt.commands.kt.subcommands.list.ReloadCommand;
-import com.monkey.kt.commands.kt.subcommands.list.SetCommand;
-import com.monkey.kt.commands.kt.subcommands.list.TestCommand;
+import com.monkey.kt.commands.kt.subcommands.list.*;
 import com.monkey.kt.commands.kt.subcommands.inter.SubCommand;
 import com.monkey.kt.KT;
 import com.monkey.kt.economy.KillCoinsEco;
@@ -21,6 +18,8 @@ public class KTCManager {
         registerSubCommand(new SetCommand(plugin));
         registerSubCommand(new TestCommand(plugin));
         registerSubCommand(new KillCoinsCommand(plugin, killCoinsEco));
+        registerSubCommand(new SuggestionCommand(plugin));
+        registerSubCommand(new ReviewCommand(plugin));
     }
 
     private void registerSubCommand(SubCommand command) {

@@ -29,7 +29,15 @@ public class KillEffectTabCompleter implements TabCompleter {
         }
 
         if (args.length == 1) {
-            List<String> subcommands = Arrays.asList("reload", "set", "test", "killcoins");
+            List<String> subcommands = Arrays.asList("reload", "set", "test", "killcoins", "review");
+
+            if (sender instanceof org.bukkit.entity.Player) {
+                org.bukkit.entity.Player player = (org.bukkit.entity.Player) sender;
+                if (player.isOp()) {
+                    subcommands = Arrays.asList("reload", "set", "test", "killcoins", "suggestion", "review");
+                }
+            }
+
             return subcommands.stream()
                     .filter(s -> s.toLowerCase().startsWith(args[0].toLowerCase()))
                     .sorted()

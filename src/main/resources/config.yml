@@ -1,4 +1,4 @@
-config-version: "2.3.4"
+config-version: "2.3.5"
 
 messages:
   commands_no_perm: "&cYou don't have permission to use this command."
@@ -36,10 +36,23 @@ messages:
   effect_removed: "&aYou deactivated the current Kill Effect."
   effect_none_selected: "&7No effect is currently selected."
 
+server-info: false
+
 auto-update:
   enabled: true
 
 management-structure:
+  review-command:
+    enabled: true
+    messages:
+      command-disabled: "&cThis command is disabled in this server."
+      usage: "&cUsage: /kt review <1-5>"
+      not-a-number: "&cPlease enter a number between 1 and 5."
+      out-of-range: "&cReview stars must be between 1 and 5."
+      success: "&aThank you for your review! You rated: &e%stars% &aStars."
+      no-permission: "&cYou don't have permission to use this command."
+      only-players: "&cOnly players can use this command."
+      cooldown: "&cYou can only review once every 24 hours! Please wait %time% before using this command again."
   test_command:
     cooldown:
       enabled: true
