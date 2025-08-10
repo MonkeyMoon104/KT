@@ -15,7 +15,7 @@ public class CryoCoreLauncher {
         World world = center.getWorld();
         if (world == null) return;
 
-        CryoCoreStructures.BlockStateHolder stateHolder = new CryoCoreStructures.BlockStateHolder();
+        CryoCoreStructures.BlockStateHolder stateHolder = CryoCoreStructures.getGlobalHolder();
         int spikeRadius = 16;
 
         boolean allowStructure = plugin.getConfig().getBoolean("effects.cryocore.structure", true);

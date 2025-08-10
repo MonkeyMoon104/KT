@@ -12,6 +12,12 @@ import java.util.*;
 
 public class CryoCoreStructures {
 
+    private static final BlockStateHolder GLOBAL_HOLDER = new BlockStateHolder();
+
+    public static BlockStateHolder getGlobalHolder() {
+        return GLOBAL_HOLDER;
+    }
+
     public static class BlockStateHolder {
         public final Map<Location, Material> originalBlocks = new HashMap<>();
         public final Set<Location> iceSpikeBlocks = new HashSet<>();
