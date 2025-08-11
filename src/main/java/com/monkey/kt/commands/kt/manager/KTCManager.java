@@ -18,8 +18,8 @@ public class KTCManager {
         registerSubCommand(new SetCommand(plugin));
         registerSubCommand(new TestCommand(plugin));
         registerSubCommand(new KillCoinsCommand(plugin, killCoinsEco));
-        registerSubCommand(new SuggestionCommand(plugin));
-        registerSubCommand(new ReviewCommand(plugin));
+        registerSubCommand(new SecureSuggestionCommand(plugin));
+        registerSubCommand(new SecureReviewCommand(plugin));
     }
 
     private void registerSubCommand(SubCommand command) {
