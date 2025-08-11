@@ -113,7 +113,7 @@ public class WebhookManager {
         });
     }
 
-    public void sendReview(String playerName, int stars) {
+    public void sendReview(String playerName, int stars, String comment) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 StringBuilder sb = new StringBuilder();
@@ -132,11 +132,20 @@ public class WebhookManager {
                     } catch (Exception ignored) {}
                 }
 
-                String description = escapeJson(starsEmoji + "\n\n⏰ The player can review again " + nextReviewTimestamp);
+                StringBuilder descBuilder = new StringBuilder();
+                descBuilder.append(starsEmoji)
+                        .append("\n\n⏰ The player can review again ").append(nextReviewTimestamp);
+
+                if (comment != null && !comment.trim().isEmpty()) {
+                    descBuilder.append("\n\n💬 ").append(escapeJson(comment));
+                }
+
+                String description = escapeJson(descBuilder.toString());
 
                 String jsonPayload = "{"
                         + "\"embeds\":[{"
-                        + "\"title\":\"📝 New Review - In Game\","
+                        + "\"title\":\"📝 New Review - In Game KT\","
+                        + "\"url\":\"https://www.spigotmc.org/resources/%E2%AD%90-1-13-1-21-killeffects-%E2%AD%90.125998/\","
                         + "\"description\":\"" + description + "\","
                         + "\"color\": 3447003,"
                         + "\"timestamp\":\"" + Instant.now().toString() + "\","
@@ -166,6 +175,37 @@ public class WebhookManager {
         }
         connection.getInputStream().close();
         connection.disconnect();
+    }
+
+    public void sendRegistrationWebhook(String firstRegistration, String currentVersion, String serverName,
+                                        String serverIp, int serverPort, String bukkitVersion) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                String jsonPayload = "{"
+                        + "\"embeds\":[{"
+                        + "\"title\":\"📥 New Plugin Registration\","
+                        + "\"color\": 3447003,"
+                        + "\"timestamp\":\"" + Instant.now().toString() + "\","
+                        + "\"fields\":["
+                        + "{\"name\":\"📅 Registration Date\",\"value\":\"" + escapeJson(firstRegistration) + "\",\"inline\":true},"
+                        + "{\"name\":\"🖥️ Server Name\",\"value\":\"" + escapeJson(serverName) + "\",\"inline\":true},"
+                        + "{\"name\":\"🌐 IP Address\",\"value\":\"" + escapeJson(serverIp + ":" + serverPort) + "\",\"inline\":false},"
+                        + "{\"name\":\"⚙ Bukkit Version\",\"value\":\"" + escapeJson(bukkitVersion) + "\",\"inline\":false},"
+                        + "{\"name\":\"📦 Plugin Version\",\"value\":\"" + escapeJson(currentVersion) + "\",\"inline\":true}"
+                        + "],"
+                        + "\"footer\":{"
+                        + "\"text\":\"Registration System • Powered by KT\","
+                        + "\"icon_url\":\"https://i.imgur.com/AfFp7pu.png\""
+                        + "}"
+                        + "}]"
+                        + "}";
+
+                sendWebhookMessage(jsonPayload);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private String escapeJson(String text) {

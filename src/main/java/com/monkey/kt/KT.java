@@ -19,6 +19,7 @@ import com.monkey.kt.storage.TempBlockStorage;
 import com.monkey.kt.utils.KTStatusLogger;
 import com.monkey.kt.utils.WorldGuardUtils;
 import com.monkey.kt.utils.listener.CheckUpdate;
+import com.monkey.kt.utils.registration.RegistrationManager;
 import com.monkey.kt.utils.resourcepack.ResourcePack;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -90,7 +91,8 @@ public class KT extends JavaPlugin {
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new KTPlaceholder(getAuraBoostManager(), this).register();
         }
-
+        RegistrationManager registrationManager = new RegistrationManager(this);
+        registrationManager.setup();
     }
 
     @Override
