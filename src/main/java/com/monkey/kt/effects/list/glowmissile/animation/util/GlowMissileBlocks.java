@@ -4,6 +4,7 @@ import com.monkey.kt.storage.TempBlockStorage;
 import com.monkey.kt.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 import java.util.Arrays;
@@ -23,19 +24,19 @@ public class GlowMissileBlocks {
     }
 
     public static void placeMissileBlocks(Location base, Location top, List<Location> missileBlocks) {
-        WorldGuardUtils.runWithWorldGuardBypass(base, () -> {
-            Material originalBase = base.getBlock().getType();
-            base.getBlock().setType(Material.IRON_BLOCK);
-            TempBlockStorage.saveTempBlock(base, originalBase);
-            missileBlocks.add(base);
-        });
+        base = findAirAbove(base);
+        top = base.clone().add(0, 1, 0);
 
-        WorldGuardUtils.runWithWorldGuardBypass(top, () -> {
-            Material originalTop = top.getBlock().getType();
-            top.getBlock().setType(Material.IRON_BLOCK);
-            TempBlockStorage.saveTempBlock(top, originalTop);
-            missileBlocks.add(top);
-        });
+        for (Location loc : Arrays.asList(base, top)) {
+            WorldGuardUtils.runWithWorldGuardBypass(loc, () -> {
+                if (loc.getBlock().getType() == Material.AIR) {
+                    Material original = loc.getBlock().getType();
+                    loc.getBlock().setType(Material.IRON_BLOCK);
+                    TempBlockStorage.saveTempBlock(loc, original);
+                    missileBlocks.add(loc);
+                }
+            });
+        }
 
         for (Vector offset : Arrays.asList(
                 new Vector(1, 0, 0),
@@ -44,13 +45,29 @@ public class GlowMissileBlocks {
                 new Vector(0, 0, -1)
         )) {
             Location fenceLoc = base.clone().add(offset);
+            fenceLoc = findAirAbove(fenceLoc);
+            Location finalFenceLoc = fenceLoc;
             WorldGuardUtils.runWithWorldGuardBypass(fenceLoc, () -> {
-                Material originalFence = fenceLoc.getBlock().getType();
-                fenceLoc.getBlock().setType(Material.NETHER_BRICK_FENCE);
-                TempBlockStorage.saveTempBlock(fenceLoc, originalFence);
-                missileBlocks.add(fenceLoc);
+                if (finalFenceLoc.getBlock().getType() == Material.AIR) {
+                    Material originalFence = finalFenceLoc.getBlock().getType();
+                    finalFenceLoc.getBlock().setType(Material.NETHER_BRICK_FENCE);
+                    TempBlockStorage.saveTempBlock(finalFenceLoc, originalFence);
+                    missileBlocks.add(finalFenceLoc);
+                }
             });
         }
         TempBlockStorage.flush();
+    }
+
+    private static Location findAirAbove(Location loc) {
+        Location temp = loc.clone();
+        World world = loc.getWorld();
+        if (world == null) return loc;
+
+        while (temp.getBlock().getType() != Material.AIR) {
+            temp.add(0, 1, 0);
+            if (temp.getY() > world.getMaxHeight()) break;
+        }
+        return temp;
     }
 }
