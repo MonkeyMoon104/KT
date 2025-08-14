@@ -83,7 +83,7 @@ public class KT extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new InventoryClickListener(this, killCoinsEco), this);
         getServer().getPluginManager().registerEvents(new ArrowDamageTracker(this), this);
         getServer().getPluginManager().registerEvents(new KillEffectListener(this), this);
-        getServer().getPluginManager().registerEvents(new WitherSkullProtectionListener(), this);
+        getServer().getPluginManager().registerEvents(new ProjectileProtListener(), this);
         getServer().getPluginManager().registerEvents(new EntityByPassSpawn(), this);
         getServer().getPluginManager().registerEvents(new KillRewardListener(this, killCoinsEco), this);
 
