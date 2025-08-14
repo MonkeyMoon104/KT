@@ -1,4 +1,4 @@
-config-version: "2.3.6"
+config-version: "2.3.8"
 
 messages:
   commands_no_perm: "&cYou don't have permission to use this command."
@@ -95,11 +95,18 @@ gui:
 
 
 effects:
-  fire:
+  firephoenix:
     enabled: true
-    name: "&cFire"
-    description: "&cBurn &7your enemies with fire"
+    name: "&cFirePhoenix"
+    description: "&cBurn &7your enemies with &6firephoenix"
     price: 1500
+    projectiles:
+      enabled: true
+      settings:
+        damage: true
+        rage: 200
+        delay: 3
+        value: 4
     damage:
       enabled: true
       value: 2
