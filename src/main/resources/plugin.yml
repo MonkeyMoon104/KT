@@ -57,7 +57,7 @@ permissions:
     description: Allows player send review directly to plugin owner
     default: true
 
-  kt.fire.use:
+  kt.firephoenix.use:
     description: Use the fire kill effect
     default: op
 

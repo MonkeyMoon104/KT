@@ -10,7 +10,7 @@ public class EffectIconMap {
         ICONS.put("enchantcolumn", "ENCHANTING_TABLE");
         ICONS.put("end", "ENDER_PEARL");
         ICONS.put("explosion", "TNT");
-        ICONS.put("fire", "BLAZE_POWDER");
+        ICONS.put("firephoenix", "BLAZE_POWDER");
         ICONS.put("fireworks", "FIREWORK_ROCKET");
         ICONS.put("glowmissile", "GLOW_INK_SAC");
         ICONS.put("hearts", "RED_DYE");
