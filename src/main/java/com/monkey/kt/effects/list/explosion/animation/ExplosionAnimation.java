@@ -9,7 +9,7 @@ public class ExplosionAnimation {
 
     public static void launchExplosionTNT(KT plugin, Location center, Player killer) {
         for (int i = 0; i < 6; i++) {
-            ExplosionUtils.launchCosmeticTNT(plugin, center, i);
+            ExplosionUtils.launchCosmeticTNT(plugin, center, killer);
         }
     }
 }

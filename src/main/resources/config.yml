@@ -1,4 +1,4 @@
-config-version: "2.3.8"
+config-version: "2.3.9"
 
 messages:
   commands_no_perm: "&cYou don't have permission to use this command."
@@ -127,6 +127,11 @@ effects:
     name: "&4Explosion"
     description: "&4Boom! &7A visual explosion effect"
     price: 3000
+    projectiles:
+      damage: true
+      settings:
+        rage: 5
+        value: 4
     damage:
       enabled: true
       value: 5
@@ -326,7 +331,7 @@ effects:
 
   mace:
     enabled: true
-    name: "&cMa&ece"
+    name: "&cMa&6ce"
     description: "&5Destroy your enemy with &bMACE"
     price: 11250
     damage:

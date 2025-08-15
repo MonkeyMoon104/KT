@@ -1,11 +1,10 @@
 package com.monkey.kt.effects.list.explosion.animation.util;
 
 import com.monkey.kt.KT;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -17,7 +16,7 @@ public class ExplosionUtils {
 
     private static final Random random = new Random();
 
-    public static void launchCosmeticTNT(final KT plugin, final Location center, int index) {
+    public static void launchCosmeticTNT(final KT plugin, final Location center, Player killer) {
         final World world = center.getWorld();
         if (world == null) return;
 
@@ -27,6 +26,16 @@ public class ExplosionUtils {
         tnt.setSilent(true);
         tnt.setYield(0f);
         tnt.setMetadata("kt_explosion_tnt", new FixedMetadataValue(plugin, true));
+
+        boolean damageEnabled = plugin.getConfig().getBoolean("effects.explosion.projectiles.damage", true);
+        int rage = plugin.getConfig().getInt("effects.explosion.projectiles.settings.rage", 5);
+        double value = plugin.getConfig().getDouble("effects.explosion.projectiles.settings.value", 2);
+
+        tnt.setMetadata("kt_explosion_damage_enabled", new FixedMetadataValue(plugin, damageEnabled));
+        tnt.setMetadata("kt_explosion_damage_rage", new FixedMetadataValue(plugin, rage));
+        tnt.setMetadata("kt_explosion_damage_value", new FixedMetadataValue(plugin, value));
+        tnt.setMetadata("kt_explosion_killer", new FixedMetadataValue(plugin, killer.getUniqueId().toString()));
+
 
         Vector vel = new Vector(
                 (random.nextDouble() - 0.5) * 1.5,
@@ -42,6 +51,25 @@ public class ExplosionUtils {
                     cancel();
                     spawnExplosionParticles(world, tnt.getLocation());
                     world.playSound(tnt.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 2.0f, 1.0f);
+
+                    boolean damageEnabled = tnt.getMetadata("kt_explosion_damage_enabled").get(0).asBoolean();
+                    if (damageEnabled) {
+                        double damageValue = tnt.getMetadata("kt_explosion_damage_value").get(0).asDouble();
+                        double rage = tnt.getMetadata("kt_explosion_damage_rage").get(0).asDouble();
+                        Player killer = null;
+                        if (tnt.hasMetadata("kt_explosion_killer")) {
+                            String killerUUID = tnt.getMetadata("kt_explosion_killer").get(0).asString();
+                            killer = Bukkit.getPlayer(java.util.UUID.fromString(killerUUID));
+                        }
+
+                        for (Entity entity : world.getNearbyEntities(tnt.getLocation(), rage, rage, rage)) {
+                            if (entity.equals(killer)) continue;
+                            if (entity instanceof LivingEntity) {
+                                ((LivingEntity) entity).damage(damageValue, killer != null ? killer : tnt);
+                            }
+                        }
+                    }
+
                     return;
                 }
 
