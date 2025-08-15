@@ -58,6 +58,7 @@ public class KillEffectListener implements Listener {
         if (effectName == null) return;
 
         if (effectName.equalsIgnoreCase("sniper") && !victim.hasMetadata("kt_last_hit_arrow")) return;
+        if (effectName.equalsIgnoreCase("mace") && !victim.hasMetadata("kt_last_hit_mace")) return;
 
         KillEffect effect = KillEffectFactory.getEffect(effectName);
         if (effect == null) return;

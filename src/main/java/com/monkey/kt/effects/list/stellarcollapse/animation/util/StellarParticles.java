@@ -17,7 +17,7 @@ public class StellarParticles {
             double y = Math.sin(angle * 3) * 0.5;
 
             Location particleLoc = center.clone().add(x, y, z);
-            world.spawnParticle(Particle.REDSTONE, particleLoc, 0, 0, 0, 0, new Particle.DustOptions(Color.WHITE, 1.5f));
+            world.spawnParticle(Particle.DUST, particleLoc, 0, 0, 0, 0, new Particle.DustOptions(Color.WHITE, 1.5f));
             world.spawnParticle(Particle.DRAGON_BREATH, particleLoc, 1, 0.05, 0.05, 0.05, 0.01);
         }
     }
@@ -41,7 +41,7 @@ public class StellarParticles {
                     for (int y = 0; y < 50; y++) {
                         Location loc = center.clone().add(0, y * 0.3, 0);
                         world.spawnParticle(Particle.END_ROD, loc, 4, 0.08, 0.08, 0.08, 0.01);
-                        world.spawnParticle(Particle.ENCHANTMENT_TABLE, loc, 5, 0.1, 0.1, 0.1, 0.0);
+                        world.spawnParticle(Particle.ENCHANT, loc, 5, 0.1, 0.1, 0.1, 0.0);
                     }
 
                     world.spawnParticle(Particle.FLASH, center, 1);
@@ -59,7 +59,7 @@ public class StellarParticles {
 
                     Location pLoc = center.clone().add(x, y, z);
                     world.spawnParticle(Particle.DRAGON_BREATH, pLoc, 1, 0.02, 0.02, 0.02, 0.01);
-                    world.spawnParticle(Particle.REDSTONE, pLoc, 0, 0, 0, 0,
+                    world.spawnParticle(Particle.DUST, pLoc, 0, 0, 0, 0,
                             new Particle.DustOptions(Color.fromRGB(255, 255, 100), 1.2f));
                 }
 

@@ -323,3 +323,13 @@ effects:
     push-settings:
       enabled: true
       damage-per-seconds: 2
+
+  mace:
+    enabled: true
+    name: "&cMa&ece"
+    description: "&5Destroy your enemy with &bMACE"
+    price: 11250
+    damage:
+      enabled: true
+      value: 5
+      radius: 16

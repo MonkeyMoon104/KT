@@ -26,5 +26,6 @@ public class EffectIconMap {
         ICONS.put("dimensionalrift", "CRYING_OBSIDIAN");
         ICONS.put("cryocore", "SNOW");
         ICONS.put("aurafarming", "AMETHYST_CLUSTER");
+        ICONS.put("mace", "MACE");
     }
 }

@@ -136,3 +136,7 @@ permissions:
   kt.aurafarming.use:
     description: Use the aura farming kill effect
     default: op
+
+  kt.mace.use:
+    description: Use the mace kill effect
+    default: op
