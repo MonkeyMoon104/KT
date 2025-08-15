@@ -17,6 +17,7 @@ import com.monkey.kt.storage.DatabaseManager;
 import com.monkey.kt.gui.GUIManager;
 import com.monkey.kt.storage.TempBlockStorage;
 import com.monkey.kt.utils.KTStatusLogger;
+import com.monkey.kt.utils.SoundUtils;
 import com.monkey.kt.utils.WorldGuardUtils;
 import com.monkey.kt.utils.listener.CheckUpdate;
 import com.monkey.kt.utils.registration.RegistrationManager;
@@ -37,6 +38,7 @@ public class KT extends JavaPlugin {
     private AuraBoostManager auraBoostManager;
     private ResourcePack resourcePack;
     private KT instance;
+    private SoundUtils soundUtils;
 
     @Override
     public void onEnable() {
@@ -93,6 +95,8 @@ public class KT extends JavaPlugin {
         }
         RegistrationManager registrationManager = new RegistrationManager(this);
         registrationManager.setup();
+
+        this.soundUtils = new SoundUtils(this);
     }
 
     @Override
@@ -142,4 +146,5 @@ public class KT extends JavaPlugin {
     public ResourcePack getResourcePack() {
         return resourcePack;
     }
+    public SoundUtils getSoundUtils() { return soundUtils; }
 }

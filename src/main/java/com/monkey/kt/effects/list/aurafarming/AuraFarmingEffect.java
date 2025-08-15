@@ -19,7 +19,7 @@ public class AuraFarmingEffect implements KillEffect {
     public void play(Player killer, Location loc) {
         if (loc.getWorld() == null) return;
 
-        loc.getWorld().playSound(loc, "kt.aurab", SoundCategory.PLAYERS, 1.0f, 1.0f);
+        plugin.getSoundUtils().playAuraSound(killer, loc);
 
         new AuraTrailAnimation(plugin, loc.clone(), killer).start();
     }

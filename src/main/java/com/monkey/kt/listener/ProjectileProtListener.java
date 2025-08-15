@@ -1,6 +1,7 @@
 package com.monkey.kt.listener;
 
 import org.bukkit.entity.SmallFireball;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -69,6 +70,31 @@ public class ProjectileProtListener implements Listener {
 
             if (fireball.hasMetadata("kt_phoenix_firecharge")) {
                 event.blockList().clear();
+            }
+        }
+    }
+
+    @EventHandler
+    public void onTNTExplosion(EntityExplodeEvent event) {
+        Entity entity = event.getEntity();
+
+        if (entity instanceof TNTPrimed) {
+            TNTPrimed tnt = (TNTPrimed) entity;
+            if (tnt.hasMetadata("kt_explosion_tnt")) {
+                event.blockList().clear();
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onTNTDamage(EntityDamageByEntityEvent event) {
+        Entity damager = event.getDamager();
+
+        if (damager instanceof TNTPrimed) {
+            TNTPrimed tnt = (TNTPrimed) damager;
+            if (tnt.hasMetadata("kt_explosion_tnt")) {
+                event.setCancelled(true);
             }
         }
     }

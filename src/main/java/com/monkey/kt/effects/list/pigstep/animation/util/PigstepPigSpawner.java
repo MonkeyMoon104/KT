@@ -39,6 +39,7 @@ public class PigstepPigSpawner extends BukkitRunnable {
             entity.setVelocity(new Vector(0, 1.2, 0));
         });
 
+        killer.stopSound(org.bukkit.Sound.MUSIC_DISC_PIGSTEP, org.bukkit.SoundCategory.RECORDS);
         killer.playSound(
                 killer.getLocation(),
                 Sound.MUSIC_DISC_PIGSTEP,

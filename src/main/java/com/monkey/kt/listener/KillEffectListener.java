@@ -6,6 +6,7 @@ import com.monkey.kt.effects.KillEffect;
 import com.monkey.kt.effects.KillEffectFactory;
 import com.monkey.kt.storage.EffectStorage;
 import org.bukkit.ChatColor;
+import org.bukkit.SoundCategory;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -92,5 +93,4 @@ public class KillEffectListener implements Listener {
         int boost = plugin.getAuraBoostManager().getDamageAmplifier(damager);
         event.setDamage(event.getDamage() * boost);
     }
-
 }
