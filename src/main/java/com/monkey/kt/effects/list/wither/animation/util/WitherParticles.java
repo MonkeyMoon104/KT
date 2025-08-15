@@ -25,7 +25,7 @@ public class WitherParticles {
             double z = radius * Math.cos(phi);
 
             Location particleLoc = center.clone().add(x, y, z);
-            world.spawnParticle(Particle.SMOKE_NORMAL, particleLoc, 0, 0, 0, 0, 0);
+            world.spawnParticle(Particle.LARGE_SMOKE, particleLoc, 0, 0, 0, 0, 0);
         }
     }
 
@@ -34,7 +34,7 @@ public class WitherParticles {
         if (world == null) return;
 
         world.spawnParticle(Particle.FLASH, center, 1);
-        world.spawnParticle(Particle.EXPLOSION_HUGE, center, 1);
+        world.spawnParticle(Particle.EXPLOSION, center, 1);
 
         for (int i = 0; i < 360; i += 10) {
             double radians = Math.toRadians(i);
@@ -42,7 +42,7 @@ public class WitherParticles {
             double z = Math.sin(radians) * 4;
 
             Location ringLoc = center.clone().add(x, 0.5, z);
-            world.spawnParticle(Particle.SPELL_WITCH, ringLoc, 5, 0.2, 0.2, 0.2, 0.01);
+            world.spawnParticle(Particle.WITCH, ringLoc, 5, 0.2, 0.2, 0.2, 0.01);
             world.spawnParticle(Particle.PORTAL, ringLoc, 10, 0.2, 0.2, 0.2, 0.01);
         }
     }
@@ -81,7 +81,7 @@ public class WitherParticles {
                         return;
                     }
                     world.spawnParticle(Particle.SOUL_FIRE_FLAME, skull.getLocation(), 2, 0, 0, 0, 0.01);
-                    world.spawnParticle(Particle.SMOKE_LARGE, skull.getLocation(), 1, 0.05, 0.05, 0.05, 0.01);
+                    world.spawnParticle(Particle.LARGE_SMOKE, skull.getLocation(), 1, 0.05, 0.05, 0.05, 0.01);
                     ticks++;
                 }
             }.runTaskTimer(plugin, 0L, 1L);
@@ -97,8 +97,8 @@ public class WitherParticles {
             @Override
             public void run() {
                 if (step > 30) {
-                    world.spawnParticle(Particle.EXPLOSION_LARGE, center, 3);
-                    world.spawnParticle(Particle.FIREWORKS_SPARK, center, 20, 0.5, 0.5, 0.5, 0.1);
+                    world.spawnParticle(Particle.EXPLOSION, center, 3);
+                    world.spawnParticle(Particle.FIREWORK, center, 20, 0.5, 0.5, 0.5, 0.1);
                     world.spawnParticle(Particle.END_ROD, center, 40, 0.7, 0.7, 0.7, 0.01);
                     world.playSound(center, org.bukkit.Sound.ENTITY_GENERIC_EXPLODE, 3f, 0.5f);
                     launchBurstSkulls(plugin, center, killer);
@@ -116,7 +116,7 @@ public class WitherParticles {
                     Location pLoc = center.clone().add(x, 1.5 + y, z);
                     world.spawnParticle(Particle.PORTAL, pLoc, 2, 0.05, 0.05, 0.05, 0.01);
                     world.spawnParticle(Particle.SOUL_FIRE_FLAME, pLoc, 1, 0, 0, 0, 0.01);
-                    world.spawnParticle(Particle.REDSTONE, pLoc, 0, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(90, 0, 140), 1.2f));
+                    world.spawnParticle(Particle.DUST, pLoc, 0, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(90, 0, 140), 1.2f));
                 }
 
                 step++;

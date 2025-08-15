@@ -34,11 +34,11 @@ public class CryoCoreParticles {
             Location pLoc = center.clone().add(x, y, z);
 
             world.spawnParticle(Particle.SNOWFLAKE, pLoc, 4, 0.1, 0.1, 0.1, 0.02);
-            world.spawnParticle(Particle.REDSTONE, pLoc, 1, 0, 0, 0,
+            world.spawnParticle(Particle.DUST, pLoc, 1, 0, 0, 0,
                     new Particle.DustOptions(Color.fromRGB(180, 255, 255), 1.4f));
-            world.spawnParticle(Particle.BLOCK_CRACK, pLoc, 1, 0.05, 0.05, 0.05, 0.15, Material.ICE.createBlockData());
+            world.spawnParticle(Particle.BLOCK, pLoc, 1, 0.05, 0.05, 0.05, 0.15, Material.ICE.createBlockData());
             world.spawnParticle(Particle.CLOUD, pLoc, 3, 0.15, 0.15, 0.15, 0.02);
-            world.spawnParticle(Particle.SNOWBALL, pLoc, 2, 0.1, 0.1, 0.1, 0.01);
+            world.spawnParticle(Particle.ITEM_SNOWBALL, pLoc, 2, 0.1, 0.1, 0.1, 0.01);
             world.spawnParticle(Particle.ASH, pLoc, 3, 0.07, 0.07, 0.07, 0.02);
         }
     }
@@ -73,11 +73,11 @@ public class CryoCoreParticles {
 
                     Location pLoc = center.clone().add(x, y, z);
 
-                    world.spawnParticle(Particle.CRIT_MAGIC, pLoc, 3, 0.05, 0.05, 0.05, 0.02);
-                    world.spawnParticle(Particle.REDSTONE, pLoc, 1, 0, 0, 0,
+                    world.spawnParticle(Particle.ENCHANTED_HIT, pLoc, 3, 0.05, 0.05, 0.05, 0.02);
+                    world.spawnParticle(Particle.DUST, pLoc, 1, 0, 0, 0,
                             new Particle.DustOptions(Color.AQUA, 1.2f));
-                    world.spawnParticle(Particle.FIREWORKS_SPARK, pLoc, 3, 0.07, 0.07, 0.07, 0.03);
-                    world.spawnParticle(Particle.SLIME, pLoc, 3, 0.05, 0.05, 0.05, 0.01);
+                    world.spawnParticle(Particle.FIREWORK, pLoc, 3, 0.07, 0.07, 0.07, 0.03);
+                    world.spawnParticle(Particle.ITEM_SLIME, pLoc, 3, 0.05, 0.05, 0.05, 0.01);
                 }
 
                 tick++;
@@ -108,9 +108,9 @@ public class CryoCoreParticles {
                     double riseY = 0.5 + tick * 0.1 + Math.random() * 0.5;
                     Location rising = center.clone().add(x, riseY, z);
 
-                    world.spawnParticle(Particle.REDSTONE, rising, 1, 0, 0, 0,
+                    world.spawnParticle(Particle.DUST, rising, 1, 0, 0, 0,
                             new Particle.DustOptions(Color.fromRGB(200, 255, 255), 1.3f));
-                    world.spawnParticle(Particle.FIREWORKS_SPARK, rising, 3, 0.03, 0.03, 0.03, 0.02);
+                    world.spawnParticle(Particle.FIREWORK, rising, 3, 0.03, 0.03, 0.03, 0.02);
 
                     double fallY = 4.5 - tick * 0.08 - Math.random() * 0.5;
                     Location falling = center.clone().add(x, fallY, z);

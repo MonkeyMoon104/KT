@@ -48,7 +48,7 @@ public class PigstepFollowPlayerGoal implements Goal<Pig> {
         pig.lookAt(target.getEyeLocation());
 
         pig.getWorld().spawnParticle(
-                Particle.REDSTONE,
+                Particle.DUST,
                 pig.getLocation().add(0, 0.3, 0),
                 10, 0.2, 0.05, 0.2, 0,
                 pinkDust

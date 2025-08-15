@@ -18,7 +18,7 @@ public class ExplosionEffect implements KillEffect {
     public void play(Player killer, Location loc) {
         loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 2, 1);
         loc.getWorld().createExplosion(loc, 0F, false);
-        EffectUtils.playRepeatingParticle(plugin, loc, Particle.EXPLOSION_LARGE, 50, 1, 1, 1, 0.1, 2L, 5);
+        EffectUtils.playRepeatingParticle(plugin, loc, Particle.EXPLOSION, 50, 1, 1, 1, 0.1, 2L, 5);
         DamageConfig damageConfig = DamageUtils.getDamageConfig("explosion", plugin);
 
         if (damageConfig.isEnabled()) {

@@ -13,7 +13,7 @@ public class ParticleUtils {
             double x = Math.cos(angle) * radius;
             double z = Math.sin(angle) * radius;
             Location loc = tip.clone().add(x, 0, z);
-            world.spawnParticle(Particle.REDSTONE, loc, 0, 0, 0, 0, 0, dust);
+            world.spawnParticle(Particle.DUST, loc, 0, 0, 0, 0, 0, dust);
         }
     }
 }

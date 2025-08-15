@@ -24,7 +24,7 @@ public class PigstepFollowTask extends BukkitRunnable {
     @Override
     public void run() {
         if (timer++ > 100 || !pig.isValid()) {
-            pig.getWorld().spawnParticle(Particle.SMOKE_NORMAL, pig.getLocation(), 20, 0.4, 0.4, 0.4, 0.01);
+            pig.getWorld().spawnParticle(Particle.LARGE_SMOKE, pig.getLocation(), 20, 0.4, 0.4, 0.4, 0.01);
             killer.stopSound(org.bukkit.Sound.MUSIC_DISC_PIGSTEP, org.bukkit.SoundCategory.RECORDS);
             pig.remove();
             cancel();

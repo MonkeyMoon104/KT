@@ -12,8 +12,8 @@ public class AuraParticles {
         if (world == null) return;
 
         world.spawnParticle(Particle.END_ROD, loc, 10, 0.2, 0.2, 0.2, 0.01);
-        world.spawnParticle(Particle.FIREWORKS_SPARK, loc, 8, 0.2, 0.2, 0.2, 0.01);
-        world.spawnParticle(Particle.REDSTONE, loc, 0, 0, 0, 0,
+        world.spawnParticle(Particle.FIREWORK, loc, 8, 0.2, 0.2, 0.2, 0.01);
+        world.spawnParticle(Particle.DUST, loc, 0, 0, 0, 0,
                 new Particle.DustOptions(Color.fromRGB(255, 255, 255), 2.5f));
     }
 
@@ -27,9 +27,9 @@ public class AuraParticles {
 
         world.spawnParticle(Particle.END_ROD, loc, 100, radius, height, radius, 0.04);
 
-        world.spawnParticle(Particle.FIREWORKS_SPARK, loc.clone().add(0, height / 2, 0), 80, radius * 1.2, height / 2, radius * 1.2, 0.02);
+        world.spawnParticle(Particle.FIREWORK, loc.clone().add(0, height / 2, 0), 80, radius * 1.2, height / 2, radius * 1.2, 0.02);
 
-        world.spawnParticle(Particle.REDSTONE, loc, 0, 0, 0, 0,
+        world.spawnParticle(Particle.DUST, loc, 0, 0, 0, 0,
                 new Particle.DustOptions(Color.fromRGB(200, 220, 255), 5.0f));
 
         for (int layer = 0; layer < 3; layer++) {
@@ -41,7 +41,7 @@ public class AuraParticles {
                 double z = Math.sin(angle) * radius;
                 Location ringLoc = loc.clone().add(x, layerHeight, z);
 
-                world.spawnParticle(Particle.REDSTONE, ringLoc, 0, 0, 0, 0,
+                world.spawnParticle(Particle.DUST, ringLoc, 0, 0, 0, 0,
                         new Particle.DustOptions(Color.fromRGB(240, 250, 255), 3.5f));
             }
         }

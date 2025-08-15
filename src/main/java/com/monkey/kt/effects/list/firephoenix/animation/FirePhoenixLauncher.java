@@ -45,7 +45,7 @@ public class FirePhoenixLauncher {
                     double y = radius * Math.cos(phi);
                     double z = radius * Math.sin(phi) * Math.sin(theta);
 
-                    world.spawnParticle(Particle.REDSTONE,
+                    world.spawnParticle(Particle.DUST,
                             center.clone().add(x, y, z),
                             0, 0, 0, 0,
                             new Particle.DustOptions(color, 1.5f));

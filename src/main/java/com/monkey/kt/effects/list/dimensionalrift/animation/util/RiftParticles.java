@@ -22,10 +22,10 @@ public class RiftParticles {
 
             world.spawnParticle(Particle.PORTAL, loc, 1, 0.07, 0.07, 0.07, 0.03);
             if (tick % 3 == 0) {
-                world.spawnParticle(Particle.BLOCK_CRACK, loc, 2, 0.1, 0.1, 0.1, 0.02, Material.OBSIDIAN.createBlockData());
+                world.spawnParticle(Particle.BLOCK, loc, 2, 0.1, 0.1, 0.1, 0.02, Material.OBSIDIAN.createBlockData());
             }
             if (tick % 6 == 0 && i % 7 == 0) {
-                world.spawnParticle(Particle.FIREWORKS_SPARK, loc, 5, 0.05, 0.05, 0.05, 0.03);
+                world.spawnParticle(Particle.FIREWORK, loc, 5, 0.05, 0.05, 0.05, 0.03);
             }
         }
     }
@@ -63,7 +63,7 @@ public class RiftParticles {
 
             Location loc = center.clone().add(x, y, z);
 
-            world.spawnParticle(Particle.FIREWORKS_SPARK, loc, 2, 0.015, 0.015, 0.015, 0.015);
+            world.spawnParticle(Particle.FIREWORK, loc, 2, 0.015, 0.015, 0.015, 0.015);
             if (tick % 3 == 0) {
                 world.spawnParticle(Particle.PORTAL, loc, 2, 0.07, 0.07, 0.07, 0.025);
             }
@@ -119,10 +119,10 @@ public class RiftParticles {
 
             world.spawnParticle(Particle.PORTAL, loc, 3, 0.03, 0.03, 0.03, 0.015);
             if (tick % 3 == 0) {
-                world.spawnParticle(Particle.BLOCK_CRACK, loc, 2, 0.1, 0.1, 0.1, 0.03, Material.OBSIDIAN.createBlockData());
+                world.spawnParticle(Particle.BLOCK, loc, 2, 0.1, 0.1, 0.1, 0.03, Material.OBSIDIAN.createBlockData());
             }
             if (tick % 5 == 0 && i % 12 == 0) {
-                world.spawnParticle(Particle.FIREWORKS_SPARK, loc, 4, 0.05, 0.05, 0.05, 0.03);
+                world.spawnParticle(Particle.FIREWORK, loc, 4, 0.05, 0.05, 0.05, 0.03);
             }
         }
     }

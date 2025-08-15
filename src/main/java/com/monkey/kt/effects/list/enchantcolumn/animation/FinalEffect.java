@@ -97,7 +97,7 @@ public class FinalEffect {
 
                 for (ParticleArm arm : particleArms) {
                     arm.location.add(arm.direction);
-                    world.spawnParticle(Particle.ENCHANTMENT_TABLE, arm.location, 8, 0.2, 0.2, 0.2, 0.01);
+                    world.spawnParticle(Particle.ENCHANT, arm.location, 8, 0.2, 0.2, 0.2, 0.01);
                 }
             }
         }.runTaskTimer(plugin, 0L, 1L);

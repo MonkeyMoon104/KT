@@ -61,7 +61,7 @@ public class FirePhoenixParticles {
                 double pitchToKiller = Math.asin(-directionToKiller.getY());
                 if (step > 240) {
                     world.spawnParticle(Particle.FLASH, center, 3);
-                    world.spawnParticle(Particle.EXPLOSION_LARGE, center, 5, 2, 2, 2, 0);
+                    world.spawnParticle(Particle.EXPLOSION, center, 5, 2, 2, 2, 0);
 
                     for (int i = 0; i < 150; i++) {
                         double ox = (Math.random() - 0.5) * 6;
@@ -132,7 +132,7 @@ public class FirePhoenixParticles {
                 double beakX = 0 * Math.cos(yawToKiller) - (-0.4) * Math.sin(yawToKiller);
                 double beakZ = 0 * Math.sin(yawToKiller) + (-0.4) * Math.cos(yawToKiller);
 
-                world.spawnParticle(Particle.REDSTONE,
+                world.spawnParticle(Particle.DUST,
                         headPos.clone().add(beakX, 0, beakZ),
                         0, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(200, 100, 0), 1.0f));
 
@@ -184,8 +184,8 @@ public class FirePhoenixParticles {
                             }
 
                             if (wingLength > 5 && wingBeat < -0.3 && Math.random() < 0.15) {
-                                world.spawnParticle(Particle.CRIT_MAGIC, wingPos, 0, 0, 0, 0, 0);
-                                world.spawnParticle(Particle.REDSTONE, wingPos,
+                                world.spawnParticle(Particle.ENCHANTED_HIT, wingPos, 0, 0, 0, 0, 0);
+                                world.spawnParticle(Particle.DUST, wingPos,
                                         0, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(255, 215, 0), 0.8f));
                             }
                         }
@@ -233,7 +233,7 @@ public class FirePhoenixParticles {
             }
 
             private void spawnDust(World world, Location loc, Color color, float size) {
-                world.spawnParticle(Particle.REDSTONE, loc, 0, 0, 0, 0, new Particle.DustOptions(color, size));
+                world.spawnParticle(Particle.DUST, loc, 0, 0, 0, 0, new Particle.DustOptions(color, size));
             }
 
             private void spawnSphere(World world, Location center, double radius, Color color, float size) {
@@ -242,7 +242,7 @@ public class FirePhoenixParticles {
                         double x = radius * Math.sin(phi) * Math.cos(theta);
                         double y = radius * Math.cos(phi);
                         double z = radius * Math.sin(phi) * Math.sin(theta);
-                        world.spawnParticle(Particle.REDSTONE, center.clone().add(x, y, z),
+                        world.spawnParticle(Particle.DUST, center.clone().add(x, y, z),
                                 0, 0, 0, 0, new Particle.DustOptions(color, size));
                     }
                 }

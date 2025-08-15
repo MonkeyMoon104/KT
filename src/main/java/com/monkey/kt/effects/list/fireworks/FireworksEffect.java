@@ -54,7 +54,7 @@ public class FireworksEffect implements KillEffect {
                         double x = Math.cos(a + angle) * radius;
                         double z = Math.sin(a + angle) * radius;
                         Location loc = center.clone().add(x, 0.1, z);
-                        world.spawnParticle(Particle.REDSTONE, loc, 3,
+                        world.spawnParticle(Particle.DUST, loc, 3,
                                 new Particle.DustOptions(randomColor(), 1.4F));
                     }
                 }
@@ -98,7 +98,7 @@ public class FireworksEffect implements KillEffect {
                         cancel();
                         return;
                     }
-                    world.spawnParticle(Particle.FIREWORKS_SPARK, launchLoc.clone().add(0, 0.2, 0),
+                    world.spawnParticle(Particle.FIREWORK, launchLoc.clone().add(0, 0.2, 0),
                             10, 0.2, 0.02, 0.2, 0.001);
                 }
             };

@@ -17,7 +17,7 @@ public class SmokeEffect implements KillEffect {
     @Override
     public void play(Player killer, Location loc) {
         loc.getWorld().playSound(loc, Sound.BLOCK_FIRE_EXTINGUISH, 2, 1);
-        EffectUtils.playRepeatingParticle(plugin, loc, Particle.SMOKE_LARGE, 80, 1, 1, 1, 0.02, 2L, 10);
+        EffectUtils.playRepeatingParticle(plugin, loc, Particle.LARGE_SMOKE, 80, 1, 1, 1, 0.02, 2L, 10);
         DamageConfig damageConfig = DamageUtils.getDamageConfig("smoke", plugin);
 
         if (damageConfig.isEnabled()) {

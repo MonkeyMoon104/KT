@@ -61,7 +61,7 @@ public class SniperEffect implements KillEffect {
                 arrow.setInvulnerable(true);
                 arrow.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
 
-                world.spawnParticle(Particle.CRIT_MAGIC, sniperPos, 5, 0.1, 0.1, 0.1, 0.1);
+                world.spawnParticle(Particle.CRIT, sniperPos, 5, 0.1, 0.1, 0.1, 0.1);
                 world.playSound(sniperPos, Sound.ENTITY_ARROW_SHOOT, 1.6f, 1.2f + random.nextFloat() * 0.4f);
 
                 new BukkitRunnable() {

@@ -148,7 +148,7 @@ public class AuraHomingTrail {
 
     private void spawnTrailParticle(Location loc) {
         loc.getWorld().spawnParticle(Particle.END_ROD, loc, 1, 0, 0, 0, 0);
-        loc.getWorld().spawnParticle(Particle.REDSTONE, loc, 0, 0, 0, 0,
+        loc.getWorld().spawnParticle(Particle.DUST, loc, 0, 0, 0, 0,
                 new Particle.DustOptions(Color.fromRGB(170, 230, 255), 1.5f));
     }
 

@@ -60,7 +60,7 @@ public class MergeEffect {
                 DustOptions greenDust = new DustOptions(Color.GREEN, 1.5f);
                 for (int i = 0; i < positions.length; i++) {
                     positions[i].add(mergeVectors[i]);
-                    world.spawnParticle(Particle.REDSTONE, positions[i], 3, 0, 0, 0, 0, greenDust);
+                    world.spawnParticle(Particle.DUST, positions[i], 3, 0, 0, 0, 0, greenDust);
                 }
 
                 if (tick % 5 == 0) {

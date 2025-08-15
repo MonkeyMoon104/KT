@@ -54,7 +54,7 @@ public class DescentEffect {
                 Color color = rainbow.get(colorIndex++ % rainbow.size());
                 current.add(direction);
                 DustOptions dust = new DustOptions(color, 1.8f);
-                world.spawnParticle(Particle.REDSTONE, current, 3, 0, 0, 0, 0, dust);
+                world.spawnParticle(Particle.DUST, current, 3, 0, 0, 0, 0, dust);
                 ParticleUtils.spawnTipCircle(world, current, 3.0, color);
 
                 if (colorIndex % 7 == 0) {

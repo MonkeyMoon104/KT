@@ -134,7 +134,7 @@ public class WitherOrbitalAnimation {
                     return;
                 }
                 world.spawnParticle(Particle.SOUL_FIRE_FLAME, skull.getLocation(), 2, 0, 0, 0, 0.01);
-                world.spawnParticle(Particle.SMOKE_LARGE, skull.getLocation(), 1, 0.05, 0.05, 0.05, 0.01);
+                world.spawnParticle(Particle.LARGE_SMOKE, skull.getLocation(), 1, 0.05, 0.05, 0.05, 0.01);
                 ticks++;
             }
         }.runTaskTimer(plugin, 0L, 1L);

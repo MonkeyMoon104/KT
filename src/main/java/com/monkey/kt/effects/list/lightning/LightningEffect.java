@@ -21,7 +21,7 @@ public class LightningEffect implements KillEffect {
 
         loc.getWorld().playSound(loc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1.8f, 1f);
 
-        EffectUtils.playRepeatingParticle(plugin, loc, Particle.CRIT_MAGIC, 150, 1.2, 1.5, 1.2, 0.2, 2L, 5);
+        EffectUtils.playRepeatingParticle(plugin, loc, Particle.ENCHANTED_HIT, 150, 1.2, 1.5, 1.2, 0.2, 2L, 5);
         DamageConfig damageConfig = DamageUtils.getDamageConfig("lightning", plugin);
 
         if (damageConfig.isEnabled()) {

@@ -17,7 +17,7 @@ public class TotemEffect implements KillEffect {
     @Override
     public void play(Player killer, Location loc) {
         loc.getWorld().playSound(loc, Sound.ITEM_TOTEM_USE, 2.0f, 1);
-        EffectUtils.playRepeatingParticle(plugin, loc, Particle.TOTEM, 300, 1.8, 2.5, 1.8, 0.3, 2L, 10);
+        EffectUtils.playRepeatingParticle(plugin, loc, Particle.TOTEM_OF_UNDYING, 300, 1.8, 2.5, 1.8, 0.3, 2L, 10);
         DamageConfig damageConfig = DamageUtils.getDamageConfig("totem", plugin);
 
         if (damageConfig.isEnabled()) {

@@ -70,7 +70,7 @@ public class EnchantAnimation {
                 DustOptions greenDust = new DustOptions(Color.GREEN, 1.5f);
                 for (List<Location> column : columns) {
                     if (tick < column.size()) {
-                        world.spawnParticle(Particle.REDSTONE, column.get(tick), 1, 0, 0, 0, 0, greenDust);
+                        world.spawnParticle(Particle.DUST, column.get(tick), 1, 0, 0, 0, 0, greenDust);
                     }
                 }
                 if (tick % 4 == 0) {

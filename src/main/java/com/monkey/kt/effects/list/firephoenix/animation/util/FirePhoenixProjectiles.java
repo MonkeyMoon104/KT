@@ -48,9 +48,9 @@ public class FirePhoenixProjectiles {
                 Location loc = fireball.getLocation();
 
                 world.spawnParticle(Particle.FLAME, loc, 4, 0.2, 0.2, 0.2, 0.05);
-                world.spawnParticle(Particle.REDSTONE, loc, 2, 0, 0, 0,
+                world.spawnParticle(Particle.DUST, loc, 2, 0, 0, 0,
                         new Particle.DustOptions(Color.fromRGB(255, 180, 50), 1.7f));
-                world.spawnParticle(Particle.SMOKE_NORMAL, loc, 2, 0.1, 0.1, 0.1, 0.02);
+                world.spawnParticle(Particle.SMOKE, loc, 2, 0.1, 0.1, 0.1, 0.02);
 
                 angle += Math.PI / 6;
                 double radius = 0.4;
@@ -58,9 +58,9 @@ public class FirePhoenixProjectiles {
                     double x = radius * Math.cos(angle + i * Math.PI / 2);
                     double y = radius * Math.sin(angle + i * Math.PI / 2);
                     Location vortex = loc.clone().add(x, y, -i * 0.1);
-                    world.spawnParticle(Particle.CRIT, vortex, 1, 0, 0, 0, 0.01);
+                    world.spawnParticle(Particle.ENCHANTED_HIT, vortex, 1, 0, 0, 0, 0.01);
                     world.spawnParticle(Particle.LAVA, vortex, 1, 0.05, 0.05, 0.05, 0.01);
-                    world.spawnParticle(Particle.SPELL_WITCH, vortex, 1, 0, 0, 0, 0.01);
+                    world.spawnParticle(Particle.WITCH, vortex, 1, 0, 0, 0, 0.01);
                 }
             }
         }.runTaskTimer(plugin, 0L, 2L);
