@@ -95,23 +95,40 @@ public class SecureReviewCommand implements SubCommand {
             return;
         }
 
-        String optionalComment = "";
-        if (args.length > 2) {
-            optionalComment = String.join(" ", java.util.Arrays.copyOfRange(args, 2, args.length));
+        String contact = "";
+        String comment = "";
+
+        if (stars == 5) {
+            if (args.length > 2) {
+                comment = String.join(" ", java.util.Arrays.copyOfRange(args, 2, args.length));
+            }
+        } else if (stars == 4) {
+            if (args.length < 3) {
+                sender.sendMessage(color("&cFor 4-star reviews, a comment is required."));
+                return;
+            }
+            comment = String.join(" ", java.util.Arrays.copyOfRange(args, 2, args.length));
+        } else {
+            if (args.length < 4) {
+                sender.sendMessage(color("&cFor 1-3 star reviews, both a contact and a comment are required."));
+                return;
+            }
+            contact = args[2];
+            comment = String.join(" ", java.util.Arrays.copyOfRange(args, 3, args.length));
         }
 
         DailyRateLimiter.setCommandUsed(player, "review");
 
-        CommandLogger.logCommandUsage(player, "review", stars + " stars" + (optionalComment.isEmpty() ? "" : " - " + optionalComment));
+        CommandLogger.logCommandUsage(player, "review", stars + " stars" + (comment.isEmpty() ? "" : " - " + comment));
 
-        String finalComment = optionalComment;
+        String finalComment = comment;
+        String finalContact = contact;
 
         new BukkitRunnable() {
             @Override
             public void run() {
                 try {
-                    webhookManager.sendReview(player.getName(), stars, finalComment);
-
+                    webhookManager.sendReview(player.getName(), stars, finalComment, finalContact);
                     new BukkitRunnable() {
                         @Override
                         public void run() {
@@ -119,6 +136,8 @@ public class SecureReviewCommand implements SubCommand {
 
                             if (stars >= 4) {
                                 player.sendMessage(color("&7Your positive feedback helps us improve!"));
+                            } else {
+                                player.sendMessage(color("&7Thanks for your feedback, we are sorry that you encountered problems or did not like the plugin, the owner received the feedback immediately and will try to improve the plugin for a better experience ❤"));
                             }
                         }
                     }.runTask(plugin);

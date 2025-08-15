@@ -113,7 +113,7 @@ public class WebhookManager {
         });
     }
 
-    public void sendReview(String playerName, int stars, String comment) {
+    public void sendReview(String playerName, int stars, String comment, String contact) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 StringBuilder sb = new StringBuilder();
@@ -136,8 +136,12 @@ public class WebhookManager {
                 descBuilder.append(starsEmoji)
                         .append("\n\n⏰ The player can review again ").append(nextReviewTimestamp);
 
+                if (contact != null && !contact.trim().isEmpty()) {
+                    descBuilder.append("\n\n📞 Contact: ").append(escapeJson(contact));
+                }
+
                 if (comment != null && !comment.trim().isEmpty()) {
-                    descBuilder.append("\n\n💬 ").append(escapeJson(comment));
+                    descBuilder.append("\n\n💬 Comment: ").append(escapeJson(comment));
                 }
 
                 String description = escapeJson(descBuilder.toString());
