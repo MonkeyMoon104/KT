@@ -71,7 +71,6 @@ public class SensitiveBlockUtils {
             Material.TALL_SEAGRASS,
             Material.SEA_PICKLE,
 
-            Material.GRASS_BLOCK,
             Material.FERN,
             Material.DEAD_BUSH,
             Material.LARGE_FERN,
@@ -100,7 +99,6 @@ public class SensitiveBlockUtils {
             Material.LANTERN,
             Material.SOUL_LANTERN,
             Material.FLOWER_POT,
-            Material.SNOW,
             Material.SCAFFOLDING,
             Material.STRING,
 
