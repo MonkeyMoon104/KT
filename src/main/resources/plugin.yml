@@ -11,6 +11,7 @@ softdepend:
   - ViaVersion
   - ViaRewind
   - ViaBackwards
+  - Vault
 
 commands:
   killeffect:
