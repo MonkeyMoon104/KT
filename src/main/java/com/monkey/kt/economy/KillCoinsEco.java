@@ -3,6 +3,7 @@ package com.monkey.kt.economy;
 import com.monkey.kt.KT;
 import com.monkey.kt.economy.storage.KillCoinsStorage;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class KillCoinsEco {
@@ -51,8 +52,12 @@ public class KillCoinsEco {
         return getBalance(player) >= amount;
     }
 
-    public double killReward() {
-        return plugin.getConfig().getDouble("economy.reward.kill", 0D);
+    public double killReward(Entity entity) {
+        if (entity instanceof Player) {
+            return plugin.getConfig().getDouble("economy.reward.settings.player_kill", 0D);
+        } else {
+            return plugin.getConfig().getDouble("economy.reward.settings.mob_kill", 0D);
+        }
     }
 
     public double getEffectPrice(String effectKey) {

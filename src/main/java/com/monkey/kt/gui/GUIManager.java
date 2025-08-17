@@ -1,6 +1,7 @@
 package com.monkey.kt.gui;
 
 import com.monkey.kt.KT;
+import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.economy.KillCoinsEco;
 import com.monkey.kt.storage.EffectStorage;
 import org.bukkit.Bukkit;
@@ -16,21 +17,27 @@ import java.util.*;
 public class GUIManager {
 
     private final KT plugin;
-    private final KillCoinsEco economy;
+    private EconomyManager eco;
     private final EffectLoader loader;
 
     private final Map<String, ItemStack> effects = new LinkedHashMap<>();
 
-    public GUIManager(KT plugin, KillCoinsEco economy) {
+    public GUIManager(KT plugin, EconomyManager eco) {
         this.plugin = plugin;
-        this.economy = economy;
+        this.eco = eco;
         this.loader = new EffectLoader(plugin);
 
         reloadGUI(EffectIconMap.ICONS.keySet());
     }
 
+    public void updateEconomyManager(EconomyManager economyManager) {
+        this.eco = economyManager;
+        plugin.getLogger().info("GUIManager updated with new EconomyManager: " +
+                (economyManager.isUsingInternal() ? "Internal" : "External"));
+    }
+
     public void openGUI(Player player) {
-        boolean ecoEnabled = economy.isEnabled();
+        boolean ecoEnabled = eco.isEnabled();
         String title = ChatColor.translateAlternateColorCodes('&',
                 plugin.getConfig().getString("messages.gui_title"));
 
@@ -39,7 +46,7 @@ public class GUIManager {
 
         String alreadyBoughtMsg = plugin.getConfig().getString("messages.already_bought");
         String priceFormat = plugin.getConfig().getString("messages.price_format");
-        String currencySym = economy.currencySymbol();
+        String currencySym = eco.currencySymbol();
 
         int maxEffectSlots = 45;
         int slot = 0;
@@ -50,10 +57,10 @@ public class GUIManager {
 
             List<String> lore = new ArrayList<>(item.getItemMeta().getLore());
             if (ecoEnabled) {
-                if (economy.hasBoughtEffect(player, key)) {
+                if (eco.hasBoughtEffect(player, key)) {
                     lore.add(ChatColor.translateAlternateColorCodes('&', alreadyBoughtMsg));
                 } else {
-                    double price = economy.getEffectPrice(key);
+                    double price = eco.getEffectPrice(key);
                     String line = priceFormat
                             .replace("%price%", String.valueOf((int) price))
                             .replace("%currency%", currencySym);
@@ -71,6 +78,7 @@ public class GUIManager {
         int leftSlot = 48;
         int centerSlot = 49;
         int rightSlot = 50;
+        int currencySlot = 51;
 
         ItemStack closeItem = new ItemStack(Material.GRAY_WOOL);
         ItemMeta closeMeta = closeItem.getItemMeta();
@@ -97,6 +105,16 @@ public class GUIManager {
         disableItem.setItemMeta(disableMeta);
         inv.setItem(rightSlot, disableItem);
 
+        ItemStack currencyItem = new ItemStack(Material.EMERALD);
+        ItemMeta currencyMeta = currencyItem.getItemMeta();
+        String currencyName = plugin.getConfig().getString("gui.buttons.currency", "&7Your balance: &a%bal% %bal_symbol%");
+        currencyName = currencyName
+                .replace("%bal%", String.valueOf(eco.getBalance(player)))
+                .replace("%bal_symbol%", eco.currencySymbol());
+        currencyMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', currencyName));
+        currencyItem.setItemMeta(currencyMeta);
+        inv.setItem(currencySlot, currencyItem);
+
         player.openInventory(inv);
     }
 
@@ -118,6 +136,10 @@ public class GUIManager {
 
     public Map<String, ItemStack> getEffects() {
         return effects;
+    }
+
+    public EconomyManager getEconomyManager() {
+        return eco;
     }
 
     private String capitalize(String name) {

@@ -2,8 +2,10 @@ package com.monkey.kt.listener;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.cooldown.CooldownManager;
+import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.effects.KillEffect;
 import com.monkey.kt.effects.KillEffectFactory;
+import com.monkey.kt.events.EventManager;
 import com.monkey.kt.storage.EffectStorage;
 import org.bukkit.ChatColor;
 import org.bukkit.SoundCategory;
@@ -65,6 +67,8 @@ public class KillEffectListener implements Listener {
         if (effect == null) return;
 
         effect.play(killer, victim.getLocation());
+
+        plugin.getEventManager().triggerRandomEvent(killer, victim);
     }
 
     @EventHandler

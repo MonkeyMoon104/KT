@@ -53,8 +53,8 @@ public class KillEffectTabCompleter implements TabCompleter {
                         if (player.isOp()) return true;
 
                         boolean hasPermission = player.hasPermission("kt." + effect + ".use");
-                        boolean hasBought = plugin.getKillCoinsEco().hasBoughtEffect(player, effect);
-                        boolean ecoEnabled = plugin.getKillCoinsEco().isEnabled();
+                        boolean hasBought = plugin.getEconomyManager().hasBoughtEffect(player, effect);
+                        boolean ecoEnabled = plugin.getEconomyManager().isEnabled();
 
                         return hasPermission || (ecoEnabled && hasBought);
                     })

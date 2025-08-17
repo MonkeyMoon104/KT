@@ -2,6 +2,7 @@ package com.monkey.kt.commands.kt.subcommands.list;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.commands.kt.subcommands.inter.SubCommand;
+import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.economy.KillCoinsEco;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,11 +20,11 @@ import java.util.List;
 public class KillCoinsCommand implements SubCommand, TabCompleter {
 
     private final KT plugin;
-    private final KillCoinsEco eco;
+    private final EconomyManager eco;
 
     private static final List<String> ACTIONS = Arrays.asList("add", "take", "set", "reset", "bal");
 
-    public KillCoinsCommand(KT plugin, KillCoinsEco eco) {
+    public KillCoinsCommand(KT plugin, EconomyManager eco) {
         this.plugin = plugin;
         this.eco = eco;
     }

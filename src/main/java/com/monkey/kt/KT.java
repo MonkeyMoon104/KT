@@ -6,11 +6,13 @@ import com.monkey.kt.commands.kt.subcommands.list.KillCoinsCommand;
 import com.monkey.kt.commands.kt.tab.KillEffectTabCompleter;
 import com.monkey.kt.config.ConfigService;
 import com.monkey.kt.cooldown.CooldownManager;
+import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.economy.KillCoinsEco;
 import com.monkey.kt.economy.storage.KillCoinsDatabaseManager;
 import com.monkey.kt.economy.storage.KillCoinsStorage;
 import com.monkey.kt.effects.KillEffectFactory;
 import com.monkey.kt.effects.register.EffectRegistry;
+import com.monkey.kt.events.EventManager;
 import com.monkey.kt.listener.*;
 import com.monkey.kt.placeholder.KTPlaceholder;
 import com.monkey.kt.storage.DatabaseManager;
@@ -39,6 +41,11 @@ public class KT extends JavaPlugin {
     private ResourcePack resourcePack;
     private KT instance;
     private SoundUtils soundUtils;
+    private EconomyManager economyManager;
+    private InventoryClickListener inventoryClickListener;
+    private KillRewardListener killRewardListener;
+    private KTCommand ktCommand;
+    private EventManager eventManager;
 
     @Override
     public void onEnable() {
@@ -66,33 +73,45 @@ public class KT extends JavaPlugin {
         KillCoinsStorage storage = new KillCoinsStorage();
         killCoinsEco = new KillCoinsEco(this, storage);
 
+        economyManager = new EconomyManager(this, killCoinsEco);
+
         WorldGuardUtils.setup();
 
-        guiManager = new GUIManager(this, killCoinsEco);
+        eventManager = new EventManager(this);
+
+        guiManager = new GUIManager(this, economyManager);
         effectRegistry = new EffectRegistry(this);
         effectRegistry.loadEffects();
 
-        statusLogger = new KTStatusLogger(this, 26511);
+        statusLogger = new KTStatusLogger(this, 26511, economyManager);
         statusLogger.logEnable();
 
         TempBlockStorage.removeAllTempBlocks();
 
-        getCommand("killeffect").setExecutor(new KTCommand(this, guiManager, killCoinsEco));
-        KillCoinsCommand killCoinsCmd = new KillCoinsCommand(this, killCoinsEco);
+        ktCommand = new KTCommand(this, guiManager, economyManager);
+        getCommand("killeffect").setExecutor(ktCommand);
+
+        KillCoinsCommand killCoinsCmd = new KillCoinsCommand(this, economyManager);
         getCommand("killeffect").setTabCompleter(new KillEffectTabCompleter(this, killCoinsCmd));
 
+        inventoryClickListener = new InventoryClickListener(this, economyManager);
+        getServer().getPluginManager().registerEvents(inventoryClickListener, this);
+
         getServer().getPluginManager().registerEvents(new ResourcePackListenerJoin(this), this);
-        getServer().getPluginManager().registerEvents(new InventoryClickListener(this, killCoinsEco), this);
         getServer().getPluginManager().registerEvents(new KillEffectDamageTracker(this), this);
         getServer().getPluginManager().registerEvents(new KillEffectListener(this), this);
         getServer().getPluginManager().registerEvents(new ProjectileProtListener(), this);
         getServer().getPluginManager().registerEvents(new EntityByPassSpawn(), this);
-        getServer().getPluginManager().registerEvents(new KillRewardListener(this, killCoinsEco), this);
+
+        killRewardListener = new KillRewardListener(this, economyManager);
+        getServer().getPluginManager().registerEvents(killRewardListener, this);
 
         this.auraBoostManager = new AuraBoostManager();
+
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new KTPlaceholder(getAuraBoostManager(), this).register();
         }
+
         RegistrationManager registrationManager = new RegistrationManager(this);
         registrationManager.setup();
 
@@ -102,6 +121,9 @@ public class KT extends JavaPlugin {
     @Override
     public void onDisable() {
         TempBlockStorage.removeAllTempBlocks();
+        if (eventManager != null) {
+            eventManager.stopAllEvents();
+        }
         databaseManager.closeConnection();
         if (coinsDbManager != null) coinsDbManager.close();
     }
@@ -140,6 +162,13 @@ public class KT extends JavaPlugin {
     public KillCoinsEco getKillCoinsEco() {
         return killCoinsEco;
     }
+
+    public EconomyManager getEconomyManager() {
+        return economyManager;
+    }
+    public void setEconomyManager(EconomyManager economyManager) {
+        this.economyManager = economyManager;
+    }
     public AuraBoostManager getAuraBoostManager() {
         return auraBoostManager;
     }
@@ -147,4 +176,19 @@ public class KT extends JavaPlugin {
         return resourcePack;
     }
     public SoundUtils getSoundUtils() { return soundUtils; }
+    public InventoryClickListener getInventoryClickListener() {
+        return inventoryClickListener;
+    }
+    public KillRewardListener getKillRewardListener() {
+        return killRewardListener;
+    }
+    public KTCommand getKtCommand() {
+        return ktCommand;
+    }
+    public KTStatusLogger getStatusLogger () {
+        return statusLogger;
+    }
+    public EventManager getEventManager() {
+        return eventManager;
+    }
 }

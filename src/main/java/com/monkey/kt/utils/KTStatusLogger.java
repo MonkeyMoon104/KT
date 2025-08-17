@@ -1,6 +1,7 @@
 package com.monkey.kt.utils;
 
 import com.monkey.kt.KT;
+import com.monkey.kt.economy.EconomyManager;
 import org.json.JSONArray;
 
 import java.io.BufferedReader;
@@ -14,6 +15,7 @@ public class KTStatusLogger {
     private final KT plugin;
     private final Logger logger;
     private final int pluginId;
+    private EconomyManager eco;
 
     private static final String RESET = "\u001B[0m";
     private static final String DARK_GRAY = "\u001B[38;2;85;85;85m";
@@ -29,10 +31,17 @@ public class KTStatusLogger {
     private static final String SPIGOT_LINK = "https://www.spigotmc.org/resources/%E2%AD%90-1-13-1-21-killeffects-%E2%AD%90.125998/";
     private static final String GITHUB_LINK = "https://github.com/MonkeyMoon104/KT/releases";
 
-    public KTStatusLogger(KT plugin, int pluginId) {
+    public KTStatusLogger(KT plugin, int pluginId, EconomyManager eco) {
         this.plugin = plugin;
         this.pluginId = pluginId;
         this.logger = plugin.getLogger();
+        this.eco = eco;
+    }
+
+    public void updateEconomyManager(EconomyManager economyManager) {
+        this.eco = economyManager;
+        plugin.getLogger().info("StatusLogger updated with new EconomyManager: " +
+                (economyManager.isUsingInternal() ? "Internal" : "External"));
     }
 
     public void logEnable() {
@@ -40,11 +49,20 @@ public class KTStatusLogger {
             int servers = fetchServersUsingPlugin();
             int players = fetchPlayersUsingPlugin();
 
-            plugin.getServer().getScheduler().runTask(plugin, () -> logWithStats(servers, players));
+            plugin.getServer().getScheduler().runTask(plugin, () -> logWithStats("KT Plugin Enabled", servers, players));
         });
     }
 
-    private void logWithStats(int serversUsing, int playersUsing) {
+    public void logReload() {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            int servers = fetchServersUsingPlugin();
+            int players = fetchPlayersUsingPlugin();
+
+            plugin.getServer().getScheduler().runTask(plugin, () -> logWithStats("KT Plugin Reloaded", servers, players));
+        });
+    }
+
+    private void logWithStats(String title, int serversUsing, int playersUsing) {
         String pluginName = plugin.getDescription().getName();
         String version = plugin.getDescription().getVersion();
         String author = getAuthor();
@@ -69,12 +87,20 @@ public class KTStatusLogger {
         }
 
         boolean econActive = false;
+        String econType = "Unknown";
         try {
-            if (plugin.getKillCoinsEco() != null) {
-                econActive = plugin.getKillCoinsEco().isEnabled();
+            if (eco != null) {
+                econActive = eco.isEnabled();
+                if (eco.isUsingInternal()) {
+                    econType = "Internal (KillCoins)";
+                } else if (eco.getVaultEconomy() != null) {
+                    econType = "External (" + eco.getVaultEconomy().getName() + ")";
+                } else {
+                    econType = "External (Vault - Fallback to Internal)";
+                }
             }
         } catch (Exception e) {
-            logger.warning("Error while checking KillCoins economy status.");
+            logger.warning("Error while checking economy status.");
         }
 
         String resourcePackUrl = null;
@@ -89,14 +115,14 @@ public class KTStatusLogger {
         }
 
         logger.info(DARK_GRAY + "╔" + repeat("═", WIDTH) + "╗" + RESET);
-        logger.info(DARK_GRAY + "║" + repeat(" ", (WIDTH - 23) / 2) + ORANGE + "KT Plugin Loaded" + DARK_GRAY + repeat(" ", WIDTH - ((WIDTH - 23) / 2) - 23) + "║" + RESET);
+        logger.info(DARK_GRAY + "║" + repeat(" ", (WIDTH - title.length()) / 2) + ORANGE + title + DARK_GRAY + repeat(" ", WIDTH - ((WIDTH - title.length()) / 2) - title.length()) + "║" + RESET);
         logger.info(DARK_GRAY + "╠" + repeat("═", WIDTH) + "╣" + RESET);
 
         logger.info(ORANGE + "  Version: " + LIGHT_GRAY + pluginName + " " + version + RESET);
         logger.info(ORANGE + "  Author: " + LIGHT_GRAY + author + RESET);
         logger.info(ORANGE + "  Effects loaded: " + CYAN + effectsCount + RESET);
         logger.info(ORANGE + "  Database: " + (dbOpen ? GREEN + "Connected" : RED + "Closed") + RESET);
-        logger.info(ORANGE + "  KillCoins Economy: " + (econActive ? GREEN + "Enabled" : RED + "Disabled") + RESET);
+        logger.info(ORANGE + "  Economy: " + (econActive ? GREEN + "Enabled" : RED + "Disabled") + " " + CYAN + "(" + econType + ")" + RESET);
         logger.info(ORANGE + "  Resource Pack: " + (hasResourcePack ? CYAN + resourcePackUrl : RED + "Not configured") + RESET);
 
         logger.info(ORANGE + "  Servers using KT: " + CYAN + (serversUsing >= 0 ? serversUsing : "Unknown") + RESET);

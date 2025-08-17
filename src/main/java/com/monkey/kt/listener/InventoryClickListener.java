@@ -1,7 +1,7 @@
 package com.monkey.kt.listener;
 
 import com.monkey.kt.KT;
-import com.monkey.kt.economy.KillCoinsEco;
+import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.storage.EffectStorage;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
@@ -17,13 +17,19 @@ import org.bukkit.inventory.ItemStack;
 public class InventoryClickListener implements Listener {
 
     private final KT plugin;
-    private final KillCoinsEco economy;
+    private EconomyManager eco;
     private final LuckPerms luckPerms;
 
-    public InventoryClickListener(KT plugin, KillCoinsEco killCoinsEco) {
+    public InventoryClickListener(KT plugin, EconomyManager eco) {
         this.plugin = plugin;
-        this.economy = killCoinsEco;
+        this.eco = eco;
         this.luckPerms = LuckPermsProvider.get();
+    }
+
+    public void updateEconomyManager(EconomyManager economyManager) {
+        this.eco = economyManager;
+        plugin.getLogger().info("InventoryClickListener updated with new EconomyManager: " +
+                (economyManager.isUsingInternal() ? "Internal" : "External"));
     }
 
     @EventHandler
@@ -71,19 +77,30 @@ public class InventoryClickListener implements Listener {
             return;
         }
 
+        String currencyRaw = plugin.getConfig().getString("gui.buttons.currency", "&7Your balance: &a%bal% %bal_symbol%");
+        String parsed = ChatColor.translateAlternateColorCodes('&', currencyRaw);
+
+        String currencyPrefix = ChatColor.stripColor(
+                parsed.replace("%bal%", "")
+                        .replace("%bal_symbol%", "")
+        ).trim();
+        if (displayName.startsWith(currencyPrefix)) {
+            return;
+        }
+
         String effect = plugin.getGuiManager().getEffectByItem(clicked);
         if (effect == null) return;
 
         String perm = "kt." + effect + ".use";
 
-        if (economy.isEnabled()) {
-            if (!economy.hasBoughtEffect(player, effect)) {
-                double price = economy.getEffectPrice(effect);
-                if (!economy.has(player, price)) {
+        if (eco.isEnabled()) {
+            if (!eco.hasBoughtEffect(player, effect)) {
+                double price = eco.getEffectPrice(effect);
+                if (!eco.has(player, price)) {
                     player.sendMessage(color(plugin.getConfig().getString("messages.not_enough_coins")));
                     return;
                 }
-                if (!economy.tryBuyEffect(player, effect)) {
+                if (!eco.tryBuyEffect(player, effect)) {
                     player.sendMessage(color(plugin.getConfig().getString("messages.purchase_failed")));
                     return;
                 }
@@ -101,7 +118,7 @@ public class InventoryClickListener implements Listener {
         }
 
         if (!player.hasPermission(perm)) {
-            if (!economy.isEnabled() || !economy.hasBoughtEffect(player, effect)) {
+            if (!eco.isEnabled() || !eco.hasBoughtEffect(player, effect)) {
                 player.sendMessage(color(plugin.getConfig().getString("messages.no_permissions")));
                 return;
             }

@@ -56,8 +56,8 @@ public class SetCommand implements SubCommand {
 
 
         boolean hasPermission = player.hasPermission("kt." + effect + ".use");
-        boolean hasBought = plugin.getKillCoinsEco().hasBoughtEffect(player, effect);
-        boolean ecoEnabled = plugin.getKillCoinsEco().isEnabled();
+        boolean hasBought = plugin.getEconomyManager().hasBoughtEffect(player, effect);
+        boolean ecoEnabled = plugin.getEconomyManager().isEnabled();
 
         if (!player.isOp() && !hasPermission && (!ecoEnabled || !hasBought)) {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&',
