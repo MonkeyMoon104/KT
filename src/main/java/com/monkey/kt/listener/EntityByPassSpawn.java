@@ -17,7 +17,6 @@ public class EntityByPassSpawn implements Listener {
         if (event.getEntity().hasMetadata("kt_bypass_spawn")) {
             event.setCancelled(false);
             Bukkit.getLogger().info("[KT Bypass] Bypass " + type.name() + " forced spawn.");
-            return;
         }
     }
 

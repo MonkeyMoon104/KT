@@ -2,6 +2,7 @@ package com.monkey.kt.placeholder;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.boost.AuraBoostManager;
+import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.economy.KillCoinsEco;
 import com.monkey.kt.effects.KillEffectFactory;
 import com.monkey.kt.economy.storage.KillCoinsStorage;
@@ -39,29 +40,67 @@ public class KTPlaceholder extends PlaceholderExpansion {
     public String onPlaceholderRequest(Player player, String params) {
         if (player == null) return "";
 
-        KillCoinsEco eco = plugin.getKillCoinsEco();
-        KillCoinsStorage storage = eco.getStorage();
+        EconomyManager eco = plugin.getEconomyManager();
+        int playerKill = (int) plugin.getConfig().getDouble("economy.reward.settings.player_kill", 0D);
+        int mobKill = (int) plugin.getConfig().getDouble("economy.reward.settings.mob_kill", 0D);
+        int effectsize = eco.getInternalEconomy().getStorage().getBoughtEffects(player.getUniqueId()).size();
+        int effects = KillEffectFactory.getRegisteredEffects().size();
+        String current = EffectStorage.getEffect(player);
+        int amplifier = auraBoostManager.getDamageAmplifier(player);
+        int bal = (int) eco.getBalance(player);
 
         switch (params.toLowerCase()) {
             case "amplifier":
-                int amplifier = auraBoostManager.getDamageAmplifier(player);
                 return String.valueOf(amplifier);
 
             case "current_effect":
-                String current = EffectStorage.getEffect(player);
                 return current != null ? capitalize(current) : "None";
 
             case "effect_total":
-                return String.valueOf(KillEffectFactory.getRegisteredEffects().size());
+                return String.valueOf(effects);
 
             case "effect_owned":
-                return String.valueOf(storage.getBoughtEffects(player.getUniqueId()).size());
+                return String.valueOf(effectsize);
 
-            case "killcoins_bal":
-                return String.valueOf((int) eco.getBalance(player));
+            case "bal":
+                return String.valueOf(bal);
 
-            case "killcoins_reward":
-                return String.valueOf((int) eco.killReward());
+            case "kill_reward":
+                return "player (" + playerKill + ")\nmob (" + mobKill + ")";
+
+            case "p_kill_reward":
+                return String.valueOf(playerKill);
+
+            case "m_kill_reward":
+                return String.valueOf(mobKill);
+
+            case "currency_symbol":
+                return eco.currencySymbol();
+
+            case "economy_type":
+                return eco.isUsingInternal() ? "Internal" : "External";
+
+            case "economy_provider":
+                if (eco.isUsingInternal()) {
+                    return "KillCoins";
+                } else if (eco.getVaultEconomy() != null) {
+                    return eco.getVaultEconomy().getName();
+                } else {
+                    return "KillCoins (Fallback)";
+                }
+
+            case "economy_enabled":
+                return String.valueOf(eco.isEnabled());
+
+            case "event_endtime":
+                return plugin.getEventManager().getActiveEvent() != null
+                        ? plugin.getEventManager().getActiveEvent().getRemainingTimeFormatted()
+                        : "N/A";
+
+            case "event_name":
+                return plugin.getEventManager().getActiveEvent() != null
+                        ? plugin.getEventManager().getActiveEvent().getEventName()
+                        : "N/D";
 
             default:
                 return null;
