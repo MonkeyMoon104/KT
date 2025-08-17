@@ -1,4 +1,4 @@
-config-version: "2.3.9"
+config-version: "2.4"
 
 messages:
   commands_no_perm: "&cYou don't have permission to use this command."
@@ -61,9 +61,13 @@ management-structure:
 
 economy:
   enabled: true #If disabled check the permission for the effects
+  use_internal: true # If true use internal economy (killcoins) else use external eco like essentials etc.
   starting-balance: 10 #After reset the user coins
   reward:
-    kill: 5
+    enabled: true
+    settings:
+      player_kill: 10
+      mob_kill: 1
   currency:
     singular: "KillCoin"
     plural: "KillCoins"
@@ -92,6 +96,33 @@ gui:
     close: "&c✖ Close"
     current_effect: "&eCurrent Effect: %effect%"
     disable: "&4➤ Disable Effect"
+    currency: "&7Your balance: &a%bal% %bal_symbol%"
+
+events:
+  enabled: true
+  broadcast:
+    players: "&e%killer% &akilled &b%deaded%&a and his luck started the &6lucky event &e%event%&a, go to his location to get the rewards too, it ends in: &e%end%"
+    finish_collected: "&aAll the money has been collected"
+    finish_not_collected: "&aThe event is ended"
+    money_pickup: "&aYou have collected money, %remaining% pieces are missing"
+  list:
+    money_fountain:
+      enabled: true
+      chance: 5
+      settings:
+        drop: 64
+        material: EMERALD
+        money_value: 20
+        duration: 90
+
+    meteor_shower:
+      enabled: true
+      chance: 2
+      settings:
+        meteor_count: 15
+        material: DIAMOND
+        money_value: 50
+        duration: 40
 
 
 effects:
@@ -300,6 +331,7 @@ effects:
     description: "&9Cryo snow &bcore"
     structure: true
     price: 6250
+    duration-multiplier: 1
     damage:
       enabled: true
       value: 1
