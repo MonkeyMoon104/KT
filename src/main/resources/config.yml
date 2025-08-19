@@ -1,4 +1,4 @@
-config-version: "2.4"
+config-version: "2.5"
 
 messages:
   commands_no_perm: "&cYou don't have permission to use this command."
@@ -237,6 +237,21 @@ effects:
       enabled: false
       value: 0
       radius: 0
+
+  shockwawe:
+    enabled: true
+    name: "&ashockwawe"
+    description: "&aSoul fly up and down"
+    price: 700
+    effectexplosion:
+      enabled: true
+      type: BLINDNESS
+      amplifier: 1
+      duration: 3
+    damage:
+      enabled: true
+      value: 1
+      radius: 7
 
   warden:
     enabled: true
