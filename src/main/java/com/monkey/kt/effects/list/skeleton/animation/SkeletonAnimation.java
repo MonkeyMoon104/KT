@@ -46,12 +46,14 @@ public class SkeletonAnimation {
                 eq.setLeggings(deadPlayer.getInventory().getLeggings());
                 eq.setBoots(deadPlayer.getInventory().getBoots());
                 eq.setItemInMainHand(deadPlayer.getInventory().getItemInMainHand());
-
+                eq.setItemInOffHand(deadPlayer.getInventory().getItemInOffHand());
+                        
                 eq.setHelmetDropChance(0f);
                 eq.setChestplateDropChance(0f);
                 eq.setLeggingsDropChance(0f);
                 eq.setBootsDropChance(0f);
                 eq.setItemInMainHandDropChance(0f);
+                eq.setItemInOffHandDropChance(0f);
             }
         });
 

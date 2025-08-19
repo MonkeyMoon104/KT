@@ -1,4 +1,4 @@
-config-version: "2.5"
+config-version: "2.6"
 
 messages:
   commands_no_perm: "&cYou don't have permission to use this command."
