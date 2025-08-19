@@ -5,6 +5,7 @@ import com.monkey.kt.cooldown.CooldownManager;
 import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.effects.KillEffect;
 import com.monkey.kt.effects.KillEffectFactory;
+import com.monkey.kt.effects.list.skeleton.SkeletonEffect;
 import com.monkey.kt.events.EventManager;
 import com.monkey.kt.storage.EffectStorage;
 import org.bukkit.ChatColor;
@@ -66,7 +67,11 @@ public class KillEffectListener implements Listener {
         KillEffect effect = KillEffectFactory.getEffect(effectName);
         if (effect == null) return;
 
-        effect.play(killer, victim.getLocation());
+         if (effect instanceof SkeletonEffect) {
+            ((SkeletonEffect) effect).play((Player) victim, victim.getLocation());
+        } else {
+            effect.play(killer, victim.getLocation());
+        }
 
         plugin.getEventManager().triggerRandomEvent(killer, victim);
     }

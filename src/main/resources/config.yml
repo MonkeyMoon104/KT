@@ -253,6 +253,16 @@ effects:
       value: 1
       radius: 7
 
+  skeleton:
+    enabled: true
+    name: "&fSkeleton"
+    description: "&fThe victim into a skeleton"
+    price: 1000
+    damage:
+      enabled: false
+      value: 0
+      radius: 2
+
   warden:
     enabled: true
     name: "&3Warden"

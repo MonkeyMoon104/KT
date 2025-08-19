@@ -98,6 +98,14 @@ permissions:
     description: Use the pigstep kill effect
     default: op
 
+  kt.shockwawe.use:
+    description: Use the shockwawe kill effect
+    default: op
+
+  kt.skeleton.use:
+    description: Use the skeleton kill effect
+    default: op
+
   kt.warden.use:
     description: Use the warden kill effect
     default: op
