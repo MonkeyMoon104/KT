@@ -6,7 +6,6 @@ import com.monkey.kt.utils.discord.WebhookManager;
 import com.monkey.kt.utils.discord.security.AntiAbuseSystem;
 import com.monkey.kt.utils.discord.security.CommandLogger;
 import com.monkey.kt.utils.discord.security.DailyRateLimiter;
-import com.monkey.kt.utils.discord.security.WebhookDecryptor;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -14,17 +13,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class SecureReviewCommand implements SubCommand {
     private final KT plugin;
-    private WebhookManager webhookManager;
+    private final WebhookManager webhookManager;
 
     public SecureReviewCommand(KT plugin) {
         this.plugin = plugin;
 
         CommandLogger.initialize(plugin.getDataFolder());
 
-        String webhookUrl = WebhookDecryptor.getReviewWebhook();
-        if (webhookUrl != null) {
-            this.webhookManager = new WebhookManager(webhookUrl, plugin);
-        }
+        this.webhookManager = new WebhookManager(plugin);
 
         new BukkitRunnable() {
             @Override
@@ -46,7 +42,7 @@ public class SecureReviewCommand implements SubCommand {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (webhookManager == null || !plugin.getConfig().getBoolean("management-structure.review-command.enabled")) {
+        if (!plugin.getConfig().getBoolean("management-structure.review-command.enabled")) {
             sender.sendMessage(color("&cService temporarily unavailable."));
             return;
         }
@@ -118,7 +114,6 @@ public class SecureReviewCommand implements SubCommand {
         }
 
         DailyRateLimiter.setCommandUsed(player, "review");
-
         CommandLogger.logCommandUsage(player, "review", stars + " stars" + (comment.isEmpty() ? "" : " - " + comment));
 
         String finalComment = comment;
@@ -129,6 +124,7 @@ public class SecureReviewCommand implements SubCommand {
             public void run() {
                 try {
                     webhookManager.sendReview(player.getName(), stars, finalComment, finalContact);
+
                     new BukkitRunnable() {
                         @Override
                         public void run() {

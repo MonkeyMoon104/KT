@@ -6,7 +6,6 @@ import com.monkey.kt.utils.discord.WebhookManager;
 import com.monkey.kt.utils.discord.security.AntiAbuseSystem;
 import com.monkey.kt.utils.discord.security.CommandLogger;
 import com.monkey.kt.utils.discord.security.DailyRateLimiter;
-import com.monkey.kt.utils.discord.security.WebhookDecryptor;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -14,15 +13,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class SecureSuggestionCommand implements SubCommand {
     private final KT plugin;
-    private WebhookManager webhookManager;
+    private final WebhookManager webhookManager;
 
     public SecureSuggestionCommand(KT plugin) {
         this.plugin = plugin;
-
-        String webhookUrl = WebhookDecryptor.getSuggestionWebhook();
-        if (webhookUrl != null) {
-            this.webhookManager = new WebhookManager(webhookUrl, plugin);
-        }
+        this.webhookManager = new WebhookManager(plugin);
     }
 
     @Override
@@ -37,10 +32,6 @@ public class SecureSuggestionCommand implements SubCommand {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (webhookManager == null) {
-            sender.sendMessage(color("&cService temporarily unavailable."));
-            return;
-        }
 
         if (!(sender instanceof Player)) {
             sender.sendMessage(color("&cOnly players can use this command."));
@@ -115,6 +106,8 @@ public class SecureSuggestionCommand implements SubCommand {
                                     ". Please try again later."));
                         }
                     }.runTask(plugin);
+
+                    plugin.getLogger().severe("Failed to send suggestion webhook: " + e.getMessage());
                 }
             }
         }.runTaskAsynchronously(plugin);

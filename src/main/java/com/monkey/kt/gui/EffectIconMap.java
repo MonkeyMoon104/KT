@@ -17,12 +17,14 @@ public class EffectIconMap {
         ICONS.put("lightning", "LIGHTNING_ROD");
         ICONS.put("notes", "NOTE_BLOCK");
         ICONS.put("pigstep", "PIG_SPAWN_EGG");
+        ICONS.put("shockwawe", "HEART_OF_THE_SEA");
         ICONS.put("smoke", "CAMPFIRE");
         ICONS.put("sniper", "ARROW");
         ICONS.put("totem", "TOTEM_OF_UNDYING");
         ICONS.put("warden", "WARD_ARMOR_TRIM_SMITHING_TEMPLATE");
         ICONS.put("wither", "WITHER_SKELETON_SKULL");
         ICONS.put("stellarcollapse", "NETHER_STAR");
+        ICONS.put("skeleton", "BONE");
         ICONS.put("dimensionalrift", "CRYING_OBSIDIAN");
         ICONS.put("cryocore", "SNOW");
         ICONS.put("aurafarming", "AMETHYST_CLUSTER");
