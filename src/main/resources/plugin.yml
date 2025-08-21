@@ -114,6 +114,10 @@ permissions:
     description: Use the glowmissile kill effect
     default: op
 
+  kt.grave.use:
+    description: Use the grave kill effect
+    default: op
+
   kt.sniper.use:
     description: Use the sniper kill effect
     default: op

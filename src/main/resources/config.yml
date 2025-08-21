@@ -1,4 +1,4 @@
-config-version: "2.6"
+config-version: "2.6.1"
 
 messages:
   commands_no_perm: "&cYou don't have permission to use this command."
@@ -258,10 +258,6 @@ effects:
     name: "&fSkeleton"
     description: "&fThe victim into a skeleton"
     price: 1000
-    damage:
-      enabled: false
-      value: 0
-      radius: 2
 
   warden:
     enabled: true
@@ -282,6 +278,12 @@ effects:
       enabled: true
       value: 8
       radius: 5
+
+  grave:
+    enabled: true
+    name: "&8Grave"
+    description: "&fPlace a cross for the victim."
+    price: 1000
 
   sniper:
     enabled: true

@@ -13,6 +13,7 @@ public class EffectIconMap {
         ICONS.put("firephoenix", "BLAZE_POWDER");
         ICONS.put("fireworks", "FIREWORK_ROCKET");
         ICONS.put("glowmissile", "GLOW_INK_SAC");
+        ICONS.put("grave", "POPPY");
         ICONS.put("hearts", "RED_DYE");
         ICONS.put("lightning", "LIGHTNING_ROD");
         ICONS.put("notes", "NOTE_BLOCK");
