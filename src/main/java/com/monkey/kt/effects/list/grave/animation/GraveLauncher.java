@@ -16,7 +16,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 
 import java.util.Map;
 import java.util.Random;
@@ -52,12 +52,14 @@ public class GraveLauncher {
         world.playSound(surface, Sound.BLOCK_WOOD_PLACE, 1f, 1f);
         world.playSound(surface, Sound.BLOCK_NOTE_BLOCK_BASS, 0.7f, 0.8f);
 
-        new BukkitRunnable() {
+        final boolean[] taskCompleted = {false};
+
+        SchedulerWrapper.ScheduledTask task = SchedulerWrapper.runTaskTimer(plugin, new Runnable() {
             @Override
             public void run() {
                 restoreAll(holder);
             }
-        }.runTaskLater(plugin, RESTORE_TICKS);
+        }, 0L, RESTORE_TICKS);
     }
 
     private static void buildFenceCross(BlockStateHolder holder, Location base, BlockFace facing) {

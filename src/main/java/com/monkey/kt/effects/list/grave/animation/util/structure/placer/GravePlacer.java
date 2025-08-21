@@ -7,7 +7,7 @@ import com.monkey.kt.utils.SensitiveBlockUtils;
 import com.monkey.kt.utils.WorldGuardUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.scheduler.BukkitRunnable;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 
 import java.util.*;
 
@@ -54,7 +54,9 @@ public class GravePlacer {
     }
 
     private void startCoarseDirtPlacement(List<Location> candidatePositions, BlockStateHolder holder) {
-        new BukkitRunnable() {
+        final boolean[] taskCompleted = {false};
+
+        SchedulerWrapper.ScheduledTask task = SchedulerWrapper.runTaskTimer(plugin, new Runnable() {
             private final List<Location> dirtLocations = new ArrayList<>(candidatePositions);
             private int index = 0;
 
@@ -91,10 +93,10 @@ public class GravePlacer {
 
                 if (index >= dirtLocations.size()) {
                     TempBlockStorage.flush();
-                    cancel();
+                    SchedulerWrapper.safeCancelTask(this);
                 }
             }
-        }.runTaskTimer(plugin, 0L, 2L);
+        }, 0L, 2L);
     }
 
 }
