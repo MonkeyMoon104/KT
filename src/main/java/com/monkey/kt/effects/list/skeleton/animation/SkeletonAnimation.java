@@ -2,12 +2,12 @@ package com.monkey.kt.effects.list.skeleton.animation;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.util.EffectUtils;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class SkeletonAnimation {
 
@@ -47,7 +47,7 @@ public class SkeletonAnimation {
                 eq.setBoots(deadPlayer.getInventory().getBoots());
                 eq.setItemInMainHand(deadPlayer.getInventory().getItemInMainHand());
                 eq.setItemInOffHand(deadPlayer.getInventory().getItemInOffHand());
-                        
+
                 eq.setHelmetDropChance(0f);
                 eq.setChestplateDropChance(0f);
                 eq.setLeggingsDropChance(0f);
@@ -57,34 +57,35 @@ public class SkeletonAnimation {
             }
         });
 
-        new BukkitRunnable() {
-            int ticks = 0;
-            Location loc = skeleton.getLocation();
+        final int[] ticks = {0};
+        Location loc = skeleton.getLocation();
+        final boolean[] taskCompleted = {false};
 
+        SchedulerWrapper.ScheduledTask skeletonTask = SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             @Override
             public void run() {
+                if (taskCompleted[0]) return;
+
                 if (!skeleton.isValid()) {
-                    cancel();
+                    taskCompleted[0] = true;
                     return;
                 }
 
-                if (ticks > 40) {
+                if (ticks[0] > 40) {
+                    taskCompleted[0] = true;
                     skeleton.remove();
-                    cancel();
                     world.spawnParticle(Particle.DUST, loc, 40, 0.5, 0.5, 0.5, 0.02, new Particle.DustOptions(Color.fromRGB(255, 255, 255), 1.3f));
                     world.playSound(loc, Sound.BLOCK_LAVA_EXTINGUISH, 1f, 0.8f);
                     return;
                 }
 
                 loc.subtract(0, 0.05, 0);
-                skeleton.teleport(loc);
+                skeleton.teleportAsync(loc);
 
                 EffectUtils.playRepeatingParticle(plugin, loc, Particle.CLOUD, 10, 1.5, 1.5, 1.5, 0.02, 4L, 10);
 
-                ticks++;
+                ticks[0]++;
             }
-        }.runTaskTimer(plugin, 0L, 2L);
+        }, center, 0L, 2L);
     }
 }
-
-// Made by: Dominikhun250

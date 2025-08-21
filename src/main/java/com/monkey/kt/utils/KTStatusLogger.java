@@ -2,6 +2,7 @@ package com.monkey.kt.utils;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.economy.EconomyManager;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.json.JSONArray;
 
 import java.io.BufferedReader;
@@ -45,20 +46,20 @@ public class KTStatusLogger {
     }
 
     public void logEnable() {
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+        SchedulerWrapper.runTaskAsynchronously(plugin, () -> {
             int servers = fetchServersUsingPlugin();
             int players = fetchPlayersUsingPlugin();
 
-            plugin.getServer().getScheduler().runTask(plugin, () -> logWithStats("KT Plugin Enabled", servers, players));
+            SchedulerWrapper.runTask(plugin, () -> logWithStats("KT Plugin Enabled", servers, players));
         });
     }
 
     public void logReload() {
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+        SchedulerWrapper.runTaskAsynchronously(plugin, () -> {
             int servers = fetchServersUsingPlugin();
             int players = fetchPlayersUsingPlugin();
 
-            plugin.getServer().getScheduler().runTask(plugin, () -> logWithStats("KT Plugin Reloaded", servers, players));
+            SchedulerWrapper.runTask(plugin, () -> logWithStats("KT Plugin Reloaded", servers, players));
         });
     }
 

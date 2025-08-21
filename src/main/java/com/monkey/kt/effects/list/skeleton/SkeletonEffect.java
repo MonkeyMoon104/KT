@@ -19,4 +19,3 @@ public class SkeletonEffect implements KillEffect {
     }
 }
 
-// Made by: Dominikhun250

@@ -4,10 +4,10 @@ import com.monkey.kt.KT;
 import com.monkey.kt.effects.KillEffect;
 import com.monkey.kt.utils.damage.DamageConfig;
 import com.monkey.kt.utils.damage.DamageUtils;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.*;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.Random;
@@ -37,14 +37,16 @@ public class SniperEffect implements KillEffect {
             DamageUtils.applyDamageAround(killer, target, damageConfig.getRadius(), damageConfig.getValue());
         }
 
-        new BukkitRunnable() {
-            int count = 0;
-            final int max = 20;
+        final int[] count = {0};
+        final int max = 20;
+        final boolean[] taskCompleted = {false};
 
+        SchedulerWrapper.ScheduledTask sniperTask = SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             @Override
             public void run() {
-                if (count++ >= max) {
-                    cancel();
+                if (taskCompleted[0]) return;
+                if (count[0]++ >= max) {
+                    taskCompleted[0] = true;
                     return;
                 }
 
@@ -64,16 +66,19 @@ public class SniperEffect implements KillEffect {
                 world.spawnParticle(Particle.CRIT, sniperPos, 5, 0.1, 0.1, 0.1, 0.1);
                 world.playSound(sniperPos, Sound.ENTITY_ARROW_SHOOT, 1.6f, 1.2f + random.nextFloat() * 0.4f);
 
-                new BukkitRunnable() {
+                final boolean[] arrowTaskCompleted = {false};
+                SchedulerWrapper.ScheduledTask arrowRemovalTask = SchedulerWrapper.runTaskAtLocation(plugin, new Runnable() {
                     @Override
                     public void run() {
+                        if (arrowTaskCompleted[0]) return;
+                        arrowTaskCompleted[0] = true;
                         if (!arrow.isDead()) {
                             arrow.remove();
                         }
                     }
-                }.runTaskLater(plugin, 20L);
+                }, sniperPos, 20L);
             }
-        }.runTaskTimer(plugin, 0L, 2L);
+        }, target, 0L, 2L);
     }
 
     private Location getRandomSniperPosition(Location target) {

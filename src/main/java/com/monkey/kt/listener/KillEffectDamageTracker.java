@@ -1,6 +1,7 @@
 package com.monkey.kt.listener;
 
 import com.monkey.kt.KT;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -48,7 +49,7 @@ public class KillEffectDamageTracker implements Listener {
     }
 
     private void removeMetaLater(final LivingEntity entity, final String key) {
-        plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+        SchedulerWrapper.runTaskLater(plugin, new Runnable() {
             @Override
             public void run() {
                 if (entity.hasMetadata(key)) {

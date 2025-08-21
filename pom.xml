@@ -6,7 +6,7 @@
 
   <groupId>com.monkey</groupId>
   <artifactId>KT</artifactId>
-  <version>2.5</version>
+  <version>2.6-beta</version>
   <packaging>jar</packaging>
 
   <name>KT</name>

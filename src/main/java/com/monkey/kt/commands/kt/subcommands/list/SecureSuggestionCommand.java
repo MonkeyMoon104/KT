@@ -6,11 +6,10 @@ import com.monkey.kt.utils.discord.WebhookManager;
 import com.monkey.kt.utils.discord.security.AntiAbuseSystem;
 import com.monkey.kt.utils.discord.security.CommandLogger;
 import com.monkey.kt.utils.discord.security.DailyRateLimiter;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-
 public class SecureSuggestionCommand implements SubCommand {
     private final KT plugin;
     private final WebhookManager webhookManager;
@@ -84,33 +83,24 @@ public class SecureSuggestionCommand implements SubCommand {
         CommandLogger.logCommandUsage(player, "suggestion",
                 (isBug ? "BUG" : "SUGGESTION") + ": " + suggestion.substring(0, Math.min(50, suggestion.length())));
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                try {
-                    webhookManager.sendSuggestion(player.getName(), suggestion, isBug);
+        SchedulerWrapper.runTaskAsynchronously(plugin, () -> {
+            try {
+                webhookManager.sendSuggestion(player.getName(), suggestion, isBug);
 
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            player.sendMessage(color("&a✓ Your " + (isBug ? "bug report" : "suggestion") +
-                                    " has been sent to MonkeyMoon104, thank you ❤"));
-                        }
-                    }.runTask(plugin);
+                SchedulerWrapper.runTask(plugin, () -> {
+                        player.sendMessage(color("&a✓ Your " + (isBug ? "bug report" : "suggestion") +
+                                " has been sent to MonkeyMoon104, thank you ❤"));
+                    });
 
-                } catch (Exception e) {
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            player.sendMessage(color("&cFailed to send " + (isBug ? "bug report" : "suggestion") +
-                                    ". Please try again later."));
-                        }
-                    }.runTask(plugin);
+            } catch (Exception e) {
+                SchedulerWrapper.runTask(plugin, () -> {
+                    player.sendMessage(color("&cFailed to send " + (isBug ? "bug report" : "suggestion") +
+                            ". Please try again later."));
+                    });
 
-                    plugin.getLogger().severe("Failed to send suggestion webhook: " + e.getMessage());
-                }
+                plugin.getLogger().severe("Failed to send suggestion webhook: " + e.getMessage());
             }
-        }.runTaskAsynchronously(plugin);
+        });
     }
 
     private String color(String msg) {

@@ -1,6 +1,7 @@
 package com.monkey.kt.effects.list.enchantcolumn.animation;
 
 import com.monkey.kt.KT;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
@@ -45,13 +46,18 @@ public class MergeEffect {
             mergeVectors[i] = mergePoint.clone().subtract(positions[i]).toVector().multiply(1.0 / mergeTicks);
         }
 
-        new BukkitRunnable() {
+        final boolean[] taskCompleted = {false};
+
+        SchedulerWrapper.ScheduledTask task = SchedulerWrapper.runTaskTimer(plugin, new Runnable() {
             int tick = 0;
 
             @Override
             public void run() {
+                if (taskCompleted[0]) return;
+
                 if (tick > mergeTicks) {
-                    cancel();
+                    taskCompleted[0] = true;
+                    SchedulerWrapper.safeCancelTask(this);
                     world.playSound(mergePoint, Sound.BLOCK_BEACON_POWER_SELECT, 1.0f, 1.0f);
                     new DescentEffect(plugin, world, mergePoint, center, killer, effectType, amplifier, duration).start();
                     return;
@@ -69,6 +75,6 @@ public class MergeEffect {
 
                 tick++;
             }
-        }.runTaskTimer(plugin, 0L, 3L);
+        }, 0L, 3L);
     }
 }

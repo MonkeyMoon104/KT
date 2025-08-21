@@ -5,11 +5,11 @@ import com.monkey.kt.effects.list.cryocore.animation.util.structures.helper.Bloc
 import com.monkey.kt.storage.TempBlockStorage;
 import com.monkey.kt.utils.SensitiveBlockUtils;
 import com.monkey.kt.utils.WorldGuardUtils;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -62,16 +62,25 @@ public class SnowBlockPlacer {
             candidatePositions.set(j, temp);
         }
 
-        startSnowPlacement(candidatePositions, holder);
+        startSnowPlacement(candidatePositions, holder, center);
     }
 
-    private void startSnowPlacement(List<Location> candidatePositions, BlockStateHolder holder) {
-        new BukkitRunnable() {
+    private void startSnowPlacement(List<Location> candidatePositions, BlockStateHolder holder, Location center) {
+        if (candidatePositions.isEmpty()) return;
+
+        final boolean[] taskCompleted = {false};
+
+        SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             private final List<Location> snowLocations = new ArrayList<>(candidatePositions);
             private int snowindex = 0;
 
             @Override
             public void run() {
+                if (taskCompleted[0]) {
+                    SchedulerWrapper.safeCancelTask(this);
+                    return;
+                }
+
                 int processed = 0;
                 while (snowindex < snowLocations.size() && processed < 35) {
                     Location surfaceLoc = snowLocations.get(snowindex);
@@ -100,9 +109,10 @@ public class SnowBlockPlacer {
 
                 if (snowindex >= snowLocations.size()) {
                     TempBlockStorage.flush();
-                    cancel();
+                    taskCompleted[0] = true;
+                    SchedulerWrapper.safeCancelTask(this);
                 }
             }
-        }.runTaskTimer(plugin, 0L, 1L);
+        }, center, 0L, 1L);
     }
 }

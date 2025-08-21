@@ -2,7 +2,6 @@ package com.monkey.kt.utils.registration;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.utils.discord.WebhookManager;
-import com.monkey.kt.utils.discord.security.WebhookDecryptor;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -24,10 +23,7 @@ public class RegistrationManager {
     public RegistrationManager(KT plugin) {
         this.plugin = plugin;
 
-        String webhookUrl = WebhookDecryptor.getRegistrationWebhook();
-        if (webhookUrl != null) {
-            this.webhookManager = new WebhookManager(webhookUrl, plugin);
-        }
+        this.webhookManager = new WebhookManager(plugin);
     }
 
     public void setup() {

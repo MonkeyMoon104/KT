@@ -2,6 +2,7 @@ package com.monkey.kt.effects.list.mace.animation;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.list.mace.animation.util.MaceParticles;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -21,17 +22,22 @@ public class MaceOrbitalAnimation {
     public void start() {
         World world = center.getWorld();
         if (world == null) return;
+        final boolean[] taskCompleted = {false};
 
-        new BukkitRunnable() {
+        SchedulerWrapper.ScheduledTask task = SchedulerWrapper.runTaskTimer(plugin, new Runnable() {
             double angle = 0;
             int ticks = 0;
 
             @Override
             public void run() {
+                if (taskCompleted[0]) return;
+
+                ticks++;
                 if (ticks > 60) {
+                    taskCompleted[0] = true;
                     MaceParticles.spawnFinalBurst(center);
                     world.playSound(center, Sound.ENTITY_GENERIC_EXPLODE, 2.0f, 1.2f);
-                    cancel();
+                    SchedulerWrapper.safeCancelTask(this);
                     return;
                 }
 
@@ -47,9 +53,7 @@ public class MaceOrbitalAnimation {
                 if (ticks % 5 == 0) {
                     world.playSound(center, Sound.BLOCK_AMETHYST_BLOCK_CHIME, 0.6f, 1.8f);
                 }
-
-                ticks++;
             }
-        }.runTaskTimer(plugin, 0L, 1L);
+        }, 0L, 1L);
     }
 }

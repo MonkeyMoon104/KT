@@ -5,12 +5,12 @@ import com.monkey.kt.effects.list.cryocore.animation.util.structures.helper.Bloc
 import com.monkey.kt.storage.TempBlockStorage;
 import com.monkey.kt.utils.SensitiveBlockUtils;
 import com.monkey.kt.utils.WorldGuardUtils;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -32,10 +32,10 @@ public class IceSpikePlacer {
         final Map<Location, Integer> spikeHeights = new HashMap<>();
         Random random = new Random();
 
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        SchedulerWrapper.runTaskAsynchronously(plugin, () -> {
             generateSpikeLocations(center, radius, blocksToPlace, spikeHeights, random);
 
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            SchedulerWrapper.runTask(plugin, () -> {
                 startOptimizedSpikePlacement(holder, blocksToPlace, spikeHeights, center, random);
             });
         });
@@ -87,7 +87,9 @@ public class IceSpikePlacer {
     private void startOptimizedSpikePlacement(BlockStateHolder holder, List<Location> blocksToPlace,
                                               Map<Location, Integer> spikeHeights, Location center,
                                               Random random) {
-        new BukkitRunnable() {
+        final boolean[] taskCompleted = {false};
+
+        SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             private final List<Location> spikeLocations = new ArrayList<>(blocksToPlace);
             private int spikeIndex = 0;
             private int dynamicBatchSize = 70;
@@ -147,10 +149,11 @@ public class IceSpikePlacer {
                 lastExecutionTime = executionTime;
 
                 if (spikeIndex >= spikeLocations.size()) {
-                    Bukkit.getScheduler().runTaskAsynchronously(plugin, TempBlockStorage::flush);
-                    cancel();
+                    SchedulerWrapper.runTaskAsynchronously(plugin, TempBlockStorage::flush);
+                    taskCompleted[0] = true;
+                    SchedulerWrapper.safeCancelTask(this);
                 }
             }
-        }.runTaskTimer(plugin, 0L, 1L);
+        }, center, 0L, 1L);
     }
 }

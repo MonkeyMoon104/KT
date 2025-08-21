@@ -1,7 +1,7 @@
 package com.monkey.kt.effects.list.aurafarming.animation.util;
 
 import com.monkey.kt.KT;
-import org.bukkit.Bukkit;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -9,7 +9,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class AuraHomingTrail {
@@ -27,8 +26,6 @@ public class AuraHomingTrail {
     private final boolean pushEnabled;
     private final double damagePerSecond;
 
-    private BukkitRunnable task;
-
     public AuraHomingTrail(KT plugin, Player killer, Player target) {
         this.plugin = plugin;
         this.killer = killer;
@@ -42,14 +39,19 @@ public class AuraHomingTrail {
     public void start() {
         headPosition = killer.getLocation().clone().add(0, 1.5, 0);
 
-        task = new BukkitRunnable() {
+        final boolean[] taskCompleted = {false};
+
+        SchedulerWrapper.ScheduledTask task = SchedulerWrapper.runTaskTimer(plugin, new Runnable() {
             Vector controlPoint = headPosition.toVector();
 
             @Override
             public void run() {
+                if (taskCompleted[0]) return;;
+
                 if (ticks > 180 || !target.isOnline() || target.isDead() || !killer.isOnline() || killer.isDead()) {
+                    taskCompleted[0] = true;
                     removeLevitation();
-                    cancel();
+                    SchedulerWrapper.safeCancelTask(this);
                     return;
                 }
 
@@ -109,8 +111,7 @@ public class AuraHomingTrail {
 
                 ticks++;
             }
-        };
-        task.runTaskTimer(plugin, 0L, 1L);
+        }, 0L, 1L);
     }
 
     private void applyLevitation() {

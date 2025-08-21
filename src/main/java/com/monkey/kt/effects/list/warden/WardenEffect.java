@@ -4,11 +4,11 @@ import com.monkey.kt.KT;
 import com.monkey.kt.effects.KillEffect;
 import com.monkey.kt.utils.damage.DamageConfig;
 import com.monkey.kt.utils.damage.DamageUtils;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Warden;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -53,25 +53,25 @@ public class WardenEffect implements KillEffect {
             Location start = loc.clone().add(x * radius, 0.5, z * radius);
             Vector velocity = new Vector(x * 0.05, 0.10, z * 0.05);
 
-            new BukkitRunnable() {
-                Location current = start.clone();
-                Vector vel = velocity.clone();
-                int age = 0;
+            Location current = start.clone();
+            Vector vel = velocity.clone();
+            final int[] age = {0};
+            final boolean[] taskCompleted = {false};
 
+            SchedulerWrapper.ScheduledTask projectileTask = SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
                 @Override
                 public void run() {
-                    if (age > 40 || current.getY() <= loc.getY()) {
+                    if (taskCompleted[0]) return;
+                    if (age[0] > 40 || current.getY() <= loc.getY()) {
+                        taskCompleted[0] = true;
                         finishedCount[0]++;
                         impactLocations.add(current.clone());
-
-                        cancel();
 
                         if (finishedCount[0] >= points) {
                             Location center = getAverageLocation(impactLocations);
                             spawnStaticSplashRing(center, world);
                             spawnExpandingRing(center, world, killer);
                         }
-
                         return;
                     }
 
@@ -85,32 +85,34 @@ public class WardenEffect implements KillEffect {
 
                     current.add(vel);
                     vel.setY(vel.getY() - 0.015);
-                    age++;
+                    age[0]++;
                 }
-            }.runTaskTimer(plugin, i % 4, 1L);
+            }, start, i % 4, 1L);
         }
 
-        new BukkitRunnable() {
-            int ticks = 0;
+        final int[] ticks = {0};
+        final boolean[] shriekTaskCompleted = {false};
 
+        SchedulerWrapper.ScheduledTask shriekTask = SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             @Override
             public void run() {
-                if (ticks > 85) {
-                    cancel();
+                if (shriekTaskCompleted[0]) return;
+                if (ticks[0] > 85) {
+                    shriekTaskCompleted[0] = true;
                     return;
                 }
 
-                if (ticks % 2 == 0) {
+                if (ticks[0] % 2 == 0) {
                     world.spawnParticle(Particle.SHRIEK, shriekLoc, 150, 0, 0, 0, 1.5, 0);
                 }
 
-                if (ticks >= 15 && (ticks - 15) % 8 == 0) {
+                if (ticks[0] >= 15 && (ticks[0] - 15) % 8 == 0) {
                     world.spawnParticle(Particle.SONIC_BOOM, particleLoc, 1, 0, 0, 0.5, 0);
                 }
 
-                ticks++;
+                ticks[0]++;
             }
-        }.runTaskTimer(plugin, 0L, 1L);
+        }, shriekLoc, 0L, 1L);
     }
 
     private Location getAverageLocation(List<Location> locations) {
@@ -186,22 +188,24 @@ public class WardenEffect implements KillEffect {
             wardens.add(warden);
         }
 
-        new BukkitRunnable() {
-            int currentStep = 0;
+        final int[] currentStep = {0};
+        final boolean[] ringTaskCompleted = {false};
 
+        SchedulerWrapper.ScheduledTask ringTask = SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             @Override
             public void run() {
-                if (currentStep > steps) {
+                if (ringTaskCompleted[0]) return;
+                if (currentStep[0] > steps) {
+                    ringTaskCompleted[0] = true;
                     for (Warden warden : wardens) {
                         if (warden.isValid()) {
                             warden.remove();
                         }
                     }
-                    cancel();
                     return;
                 }
 
-                double currentRadius = splashRadius + currentStep * radiusIncrement;
+                double currentRadius = splashRadius + currentStep[0] * radiusIncrement;
 
                 for (int j = 0; j < ringPoints; j++) {
                     double angle = 2 * Math.PI * j / ringPoints;
@@ -219,8 +223,6 @@ public class WardenEffect implements KillEffect {
                     );
                 }
 
-                List<Location> wardenPositions = new ArrayList<>();
-
                 for (Warden warden : wardens) {
                     if (!warden.isValid()) continue;
 
@@ -231,16 +233,14 @@ public class WardenEffect implements KillEffect {
 
                     orientLocationTowardsPlayer(newLoc, killer);
 
-                    warden.teleport(newLoc);
-                    wardenPositions.add(newLoc);
+                    warden.teleportAsync(newLoc);
 
                     drawParticleLine(world, newLoc, center.clone().add(0, 3, 0), Particle.ELECTRIC_SPARK, 0.15);
-
                 }
 
-                currentStep++;
+                currentStep[0]++;
             }
-        }.runTaskTimer(plugin, 0L, 2L);
+        }, center, 0L, 2L);
     }
 
     private void orientLocationTowardsPlayer(Location from, Player player) {

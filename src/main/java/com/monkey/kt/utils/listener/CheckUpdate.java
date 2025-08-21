@@ -1,5 +1,6 @@
 package com.monkey.kt.utils.listener;
 
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import com.monkey.kt.utils.update.GitHubUpdater;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -7,7 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -25,25 +25,12 @@ public class CheckUpdate implements Listener {
         this.plugin = plugin;
         this.resourceId = resourceId;
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                checkForUpdates();
-            }
-        }.runTaskAsynchronously(plugin);
+        SchedulerWrapper.runTaskAsynchronously(plugin, this::checkForUpdates);
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        Bukkit.getLogger().info("[KT UpdateChecker] Automatic check run every hour...");
-                        checkForUpdates();
-                    }
-                }.runTaskTimerAsynchronously(plugin, 0L, 20L * 3600);
-            }
-        }.runTaskLater(plugin, 20L * 3600);
+        SchedulerWrapper.runTaskTimerAsynchronously(plugin, () -> {
+            Bukkit.getLogger().info("[KT UpdateChecker] Automatic check run every hour...");
+            checkForUpdates();
+        }, 20L * 3600, 20L * 3600);
     }
 
     public void checkForUpdates() {
@@ -120,15 +107,12 @@ public class CheckUpdate implements Listener {
         Player player = event.getPlayer();
 
         if (updateAvailable && player.isOp()) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (player.isOnline()) {
-                        player.sendMessage("§6[KT UpdateChecker] §cNew version of plugin available §eVersion: " + latestVersion);
-                        player.sendMessage("§6[KT UpdateChecker] §aDownload it here: §bhttps://www.spigotmc.org/resources/" + resourceId);
-                    }
+            SchedulerWrapper.runTaskLater(plugin, () -> {
+                if (player.isOnline()) {
+                    player.sendMessage("§6[KT UpdateChecker] §cNew version of plugin available §eVersion: " + latestVersion);
+                    player.sendMessage("§6[KT UpdateChecker] §aDownload it here: §bhttps://www.spigotmc.org/resources/" + resourceId);
                 }
-            }.runTaskLater(plugin, 20L * 10);
+            }, 20L * 10);
         }
     }
 }

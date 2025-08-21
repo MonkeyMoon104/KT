@@ -1,6 +1,7 @@
 package com.monkey.kt.utils.discord;
 
 import com.monkey.kt.KT;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -21,7 +22,7 @@ public class WebhookManager {
     }
 
     public void sendSuggestion(String playerName, String suggestion, boolean isBug) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        SchedulerWrapper.runTaskAsynchronously(plugin, () -> {
             try {
                 String serverIp = Bukkit.getIp();
                 int port = Bukkit.getPort();
@@ -71,7 +72,7 @@ public class WebhookManager {
     }
 
     public void sendReview(String playerName, int stars, String comment, String contact) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        SchedulerWrapper.runTaskAsynchronously(plugin, () -> {
             try {
                 String jsonPayload = "{"
                         + "\"playerName\":\"" + escapeJson(playerName) + "\","
@@ -90,7 +91,7 @@ public class WebhookManager {
 
     public void sendRegistrationWebhook(String firstRegistration, String currentVersion, String serverName,
                                         String serverIp, int serverPort, String bukkitVersion) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        SchedulerWrapper.runTaskAsynchronously(plugin, () -> {
             try {
                 String jsonPayload = "{"
                         + "\"firstRegistration\":\"" + escapeJson(firstRegistration) + "\","

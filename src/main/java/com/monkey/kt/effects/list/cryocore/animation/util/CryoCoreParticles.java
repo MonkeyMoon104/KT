@@ -3,10 +3,10 @@ package com.monkey.kt.effects.list.cryocore.animation.util;
 import com.monkey.kt.KT;
 import com.monkey.kt.utils.damage.DamageConfig;
 import com.monkey.kt.utils.damage.DamageUtils;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class CryoCoreParticles {
 
@@ -54,7 +54,9 @@ public class CryoCoreParticles {
         World world = center.getWorld();
         if (world == null) return;
 
-        new BukkitRunnable() {
+        final boolean[] taskCompleted = {false};
+
+        SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             int tick = 0;
             final int maxTicks = 10;
             final double maxRadius = spiker;
@@ -62,8 +64,9 @@ public class CryoCoreParticles {
 
             @Override
             public void run() {
-                if (tick > maxTicks) {
-                    cancel();
+                if (taskCompleted[0] || tick > maxTicks) {
+                    taskCompleted[0] = true;
+                    SchedulerWrapper.safeCancelTask(this);
                     return;
                 }
 
@@ -91,19 +94,22 @@ public class CryoCoreParticles {
 
                 tick++;
             }
-        }.runTaskTimer(plugin, 0L, 3L);
+        }, center, 0L, 3L);
     }
 
     public static void spawnFinalCrystalFade(Plugin plugin, World world, Location center, int spiker) {
-        new BukkitRunnable() {
+        final boolean[] taskCompleted = {false};
+
+        SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             int tick = 0;
             final int maxTicks = 26;
             final double maxRadius = spiker;
 
             @Override
             public void run() {
-                if (tick > maxTicks) {
-                    cancel();
+                if (taskCompleted[0] || tick > maxTicks) {
+                    taskCompleted[0] = true;
+                    SchedulerWrapper.safeCancelTask(this);
                     return;
                 }
 
@@ -140,6 +146,6 @@ public class CryoCoreParticles {
 
                 tick++;
             }
-        }.runTaskTimer(plugin, 0L, 4L);
+        }, center, 0L, 4L);
     }
 }

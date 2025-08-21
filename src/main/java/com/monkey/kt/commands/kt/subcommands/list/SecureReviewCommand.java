@@ -6,10 +6,10 @@ import com.monkey.kt.utils.discord.WebhookManager;
 import com.monkey.kt.utils.discord.security.AntiAbuseSystem;
 import com.monkey.kt.utils.discord.security.CommandLogger;
 import com.monkey.kt.utils.discord.security.DailyRateLimiter;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class SecureReviewCommand implements SubCommand {
     private final KT plugin;
@@ -22,12 +22,8 @@ public class SecureReviewCommand implements SubCommand {
 
         this.webhookManager = new WebhookManager(plugin);
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                DailyRateLimiter.cleanupOldEntries();
-            }
-        }.runTaskTimerAsynchronously(plugin, 20L * 3600, 20L * 3600);
+        SchedulerWrapper.runTaskTimerAsynchronously(plugin, DailyRateLimiter::cleanupOldEntries, 20L * 3600, 20L * 3600);
+
     }
 
     @Override
@@ -119,37 +115,28 @@ public class SecureReviewCommand implements SubCommand {
         String finalComment = comment;
         String finalContact = contact;
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                try {
-                    webhookManager.sendReview(player.getName(), stars, finalComment, finalContact);
+        SchedulerWrapper.runTaskAsynchronously(plugin, () -> {
+            try {
+                webhookManager.sendReview(player.getName(), stars, finalComment, finalContact);
 
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            player.sendMessage(color("&a✓ Thanks for your " + stars + " star review! ❤"));
+                SchedulerWrapper.runTask(plugin, () -> {
+                    player.sendMessage(color("&a✓ Thanks for your " + stars + " star review! ❤"));
 
-                            if (stars >= 4) {
-                                player.sendMessage(color("&7Your positive feedback helps us improve!"));
-                            } else {
-                                player.sendMessage(color("&7Thanks for your feedback, we are sorry that you encountered problems or did not like the plugin, the owner received the feedback immediately and will try to improve the plugin for a better experience ❤"));
-                            }
-                        }
-                    }.runTask(plugin);
+                    if (stars >= 4) {
+                        player.sendMessage(color("&7Your positive feedback helps us improve!"));
+                    } else {
+                        player.sendMessage(color("&7Thanks for your feedback, we are sorry that you encountered problems or did not like the plugin, the owner received the feedback immediately and will try to improve the plugin for a better experience ❤"));
+                    }
+                });
 
-                } catch (Exception e) {
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            player.sendMessage(color("&cFailed to send review. Please try again later."));
-                        }
-                    }.runTask(plugin);
+            } catch (Exception e) {
+                SchedulerWrapper.runTask(plugin, () -> {
+                    player.sendMessage(color("&cFailed to send review. Please try again later."));
+                });
 
-                    plugin.getLogger().severe("Failed to send review webhook: " + e.getMessage());
-                }
+                plugin.getLogger().severe("Failed to send review webhook: " + e.getMessage());
             }
-        }.runTaskAsynchronously(plugin);
+        });
 
         if (CommandLogger.getCommandUsageToday("review") % 10 == 0) {
             int todayCount = CommandLogger.getCommandUsageToday("review");

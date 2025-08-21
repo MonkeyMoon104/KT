@@ -2,6 +2,7 @@ package com.monkey.kt.effects.list.enchantcolumn.animation;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.list.enchantcolumn.animation.util.ParticleUtils;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.potion.*;
@@ -38,16 +39,21 @@ public class DescentEffect {
         List<Color> rainbow = Arrays.asList(Color.RED, Color.ORANGE, Color.YELLOW, Color.LIME, Color.GREEN,
                 Color.AQUA, Color.BLUE, Color.FUCHSIA, Color.PURPLE);
 
-        new BukkitRunnable() {
+        final boolean[] taskCompleted = {false};
+
+        SchedulerWrapper.ScheduledTask task = SchedulerWrapper.runTaskTimer(plugin, new Runnable() {
             int colorIndex = 0;
             Location current = start.clone();
 
             @Override
             public void run() {
+                if (taskCompleted[0]) return;
+
                 if (current.distanceSquared(center) <= 0.7) {
-                    cancel();
+                    taskCompleted[0] = true;
                     world.playSound(current, Sound.ENTITY_ELDER_GUARDIAN_CURSE, 1.5f, 0.7f);
                     new FinalEffect(plugin, world, current, killer, effectType, amplifier, duration).apply();
+                    SchedulerWrapper.safeCancelTask(this);
                     return;
                 }
 
@@ -61,6 +67,6 @@ public class DescentEffect {
                     world.playSound(current, Sound.ENTITY_BLAZE_HURT, 0.4f, 1.3f);
                 }
             }
-        }.runTaskTimer(plugin, 0L, 1L);
+        }, 0L, 1L);
     }
 }

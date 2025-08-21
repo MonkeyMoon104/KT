@@ -1,6 +1,6 @@
 package com.monkey.kt.effects.util;
 
-import org.bukkit.Bukkit;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.plugin.Plugin;
@@ -11,18 +11,28 @@ public class EffectUtils {
                                              double offsetX, double offsetY, double offsetZ, double extra,
                                              long intervalTicks, int repetitions) {
 
-        final int[] taskId = new int[1];
-        taskId[0] = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+        final boolean[] taskCompleted = {false};
+
+        SchedulerWrapper.ScheduledTask task = SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             int runCount = 0;
 
             @Override
             public void run() {
+                if (taskCompleted[0]) return;
+
                 if (runCount++ >= repetitions) {
-                    Bukkit.getScheduler().cancelTask(taskId[0]);
+                    taskCompleted[0] = true;
                     return;
                 }
-                loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, extra);
+
+                try {
+                    if (loc.getWorld() != null) {
+                        loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, extra);
+                    }
+                } catch (Exception e) {
+                    taskCompleted[0] = true;
+                }
             }
-        }, 0L, intervalTicks);
+        }, loc, 0L, intervalTicks);
     }
 }
