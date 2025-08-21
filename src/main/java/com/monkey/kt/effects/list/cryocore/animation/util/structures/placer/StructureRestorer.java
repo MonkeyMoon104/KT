@@ -4,11 +4,10 @@ import com.monkey.kt.KT;
 import com.monkey.kt.effects.list.cryocore.animation.util.structures.helper.BlockStateHolder;
 import com.monkey.kt.storage.TempBlockStorage;
 import com.monkey.kt.utils.WorldGuardUtils;
-import org.bukkit.Bukkit;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -24,41 +23,25 @@ public class StructureRestorer {
         final Map<Location, Material> blocksToRestore = new HashMap<>(holder.originalBlocks);
         final Set<Location> spikesToRemove = new HashSet<>(holder.iceSpikeBlocks);
 
-        final Map<Location, Block> cachedBlocks = new HashMap<>();
-        final Map<Location, Material> cachedMaterials = new HashMap<>();
-
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            cacheBlocksForRestoration(blocksToRestore, spikesToRemove, cachedBlocks, cachedMaterials);
-
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                startOptimizedRestoration(holder, blocksToRestore, spikesToRemove, cachedBlocks, cachedMaterials);
-            });
-        });
-    }
-
-    private void cacheBlocksForRestoration(Map<Location, Material> blocksToRestore,
-                                           Set<Location> spikesToRemove,
-                                           Map<Location, Block> cachedBlocks,
-                                           Map<Location, Material> cachedMaterials) {
-        for (Location loc : blocksToRestore.keySet()) {
-            Block block = loc.getBlock();
-            cachedBlocks.put(loc, block);
-            cachedMaterials.put(loc, block.getType());
-        }
-        for (Location loc : spikesToRemove) {
-            Block block = loc.getBlock();
-            cachedBlocks.put(loc, block);
-            cachedMaterials.put(loc, block.getType());
-        }
+        startOptimizedRestoration(holder, blocksToRestore, spikesToRemove);
     }
 
     private void startOptimizedRestoration(BlockStateHolder holder,
                                            Map<Location, Material> blocksToRestore,
-                                           Set<Location> spikesToRemove,
-                                           Map<Location, Block> cachedBlocks,
-                                           Map<Location, Material> cachedMaterials) {
+                                           Set<Location> spikesToRemove) {
 
-        new BukkitRunnable() {
+        Location centerLoc = null;
+        if (!blocksToRestore.isEmpty()) {
+            centerLoc = blocksToRestore.keySet().iterator().next();
+        } else if (!spikesToRemove.isEmpty()) {
+            centerLoc = spikesToRemove.iterator().next();
+        }
+
+        if (centerLoc == null) return;
+
+        final boolean[] taskCompleted = {false};
+
+        SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             private final List<Location> blockLocations = new ArrayList<>(blocksToRestore.keySet());
             private final List<Location> spikeLocations = new ArrayList<>(spikesToRemove);
             private int blockIndex = 0;
@@ -70,43 +53,46 @@ public class StructureRestorer {
 
             @Override
             public void run() {
+                if (taskCompleted[0]) {
+                    SchedulerWrapper.safeCancelTask(this);
+                    return;
+                }
+
                 long startTime = System.nanoTime();
                 int processed = 0;
                 int targetBatchSize = calculateDynamicBatchSize();
 
-                processed += restoreSnowBlocks(blocksToRestore, cachedBlocks, cachedMaterials, targetBatchSize / 2);
-
-                processed += removeIceSpikes(spikesToRemove, cachedBlocks, cachedMaterials, targetBatchSize - processed);
+                processed += restoreSnowBlocks(blocksToRestore, targetBatchSize / 2);
+                processed += removeIceSpikes(spikesToRemove, targetBatchSize - processed);
 
                 long executionTime = System.nanoTime() - startTime;
                 updatePerformanceMetrics(executionTime, processed);
 
                 if (blockIndex >= blockLocations.size() && spikeIndex >= spikeLocations.size()) {
                     completeRestoration(holder);
-                    cancel();
+                    taskCompleted[0] = true;
+                    SchedulerWrapper.safeCancelTask(this);
                 }
             }
 
-            private int restoreSnowBlocks(Map<Location, Material> blocksToRestore,
-                                          Map<Location, Block> cachedBlocks,
-                                          Map<Location, Material> cachedMaterials,
-                                          int maxProcessing) {
+            private int restoreSnowBlocks(Map<Location, Material> blocksToRestore, int maxProcessing) {
                 int processed = 0;
                 while (blockIndex < blockLocations.size() && processed < maxProcessing) {
                     Location loc = blockLocations.get(blockIndex);
                     Material originalMat = blocksToRestore.get(loc);
 
                     if (originalMat != null) {
-                        Block cachedBlock = cachedBlocks.get(loc);
-                        Material currentType = cachedMaterials.get(loc);
-
-                        if (currentType == Material.SNOW_BLOCK) {
-                            WorldGuardUtils.runWithWorldGuardBypass(loc, () -> {
-                                cachedBlock.setType(originalMat);
-                            });
+                        try {
+                            Block block = loc.getBlock();
+                            if (block != null && block.getType() == Material.SNOW_BLOCK) {
+                                WorldGuardUtils.runWithWorldGuardBypass(loc, () -> {
+                                    block.setType(originalMat);
+                                });
+                            }
+                            TempBlockStorage.removeTempBlock(loc);
+                        } catch (Exception e) {
+                            plugin.getLogger().warning("Failed to restore snow block at " + loc + ": " + e.getMessage());
                         }
-
-                        TempBlockStorage.removeTempBlock(loc);
                     }
 
                     blockIndex++;
@@ -115,25 +101,28 @@ public class StructureRestorer {
                 return processed;
             }
 
-            private int removeIceSpikes(Set<Location> spikesToRemove,
-                                        Map<Location, Block> cachedBlocks,
-                                        Map<Location, Material> cachedMaterials,
-                                        int maxProcessing) {
+            private int removeIceSpikes(Set<Location> spikesToRemove, int maxProcessing) {
                 int processed = 0;
                 List<Location> spikeList = new ArrayList<>(spikesToRemove);
 
                 while (spikeIndex < spikeList.size() && processed < maxProcessing) {
                     Location loc = spikeList.get(spikeIndex);
-                    Block cachedBlock = cachedBlocks.get(loc);
-                    Material currentType = cachedMaterials.get(loc);
 
-                    if (currentType == Material.PACKED_ICE || currentType == Material.BLUE_ICE) {
-                        WorldGuardUtils.runWithWorldGuardBypass(loc, () -> {
-                            cachedBlock.setType(Material.AIR);
-                        });
+                    try {
+                        Block block = loc.getBlock();
+                        if (block != null) {
+                            Material currentType = block.getType();
+                            if (currentType == Material.PACKED_ICE || currentType == Material.BLUE_ICE) {
+                                WorldGuardUtils.runWithWorldGuardBypass(loc, () -> {
+                                    block.setType(Material.AIR);
+                                });
+                            }
+                        }
+                        TempBlockStorage.removeTempBlock(loc);
+                    } catch (Exception e) {
+                        plugin.getLogger().warning("Failed to remove ice spike at " + loc + ": " + e.getMessage());
                     }
 
-                    TempBlockStorage.removeTempBlock(loc);
                     spikeIndex++;
                     processed++;
                 }
@@ -159,9 +148,8 @@ public class StructureRestorer {
 
             private void completeRestoration(BlockStateHolder holder) {
                 holder.clear();
-                Bukkit.getScheduler().runTaskAsynchronously(plugin, TempBlockStorage::flush);
+                SchedulerWrapper.runTaskAsynchronously(plugin, TempBlockStorage::flush);
             }
-
-        }.runTaskTimer(plugin, 0L, 1L);
+        }, centerLoc, 0L, 1L);
     }
 }

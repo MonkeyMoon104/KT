@@ -4,6 +4,7 @@ import com.monkey.kt.KT;
 import com.monkey.kt.effects.list.dimensionalrift.animation.util.RiftParticles;
 import com.monkey.kt.utils.damage.DamageConfig;
 import com.monkey.kt.utils.damage.DamageUtils;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -16,7 +17,7 @@ public class DimensionalRiftLauncher {
         World world = center.getWorld();
         if (world == null) return;
 
-        new BukkitRunnable() {
+        SchedulerWrapper.ScheduledTask task = SchedulerWrapper.runTaskTimer(plugin, new Runnable() {
             int tick = 0;
 
             @Override
@@ -67,10 +68,11 @@ public class DimensionalRiftLauncher {
                         world.playSound(center, Sound.ENTITY_ENDERMAN_TELEPORT, 2.5f, 0.5f);
                     }
                 } else {
-                    cancel();
+                    SchedulerWrapper.safeCancelTask(this);
+                    return;
                 }
                 tick++;
             }
-        }.runTaskTimer(plugin, 0L, 2L);
+        }, 0L, 2L);
     }
 }

@@ -2,11 +2,11 @@ package com.monkey.kt.effects.list.firephoenix.animation;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.list.firephoenix.animation.util.FirePhoenixParticles;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.Particle;
 import org.bukkit.Color;
 
@@ -16,7 +16,9 @@ public class FirePhoenixLauncher {
         World world = center.getWorld();
         if (world == null) return;
 
-        new BukkitRunnable() {
+        final boolean[] taskCompleted = {false};
+
+        SchedulerWrapper.ScheduledTask task = SchedulerWrapper.runTaskTimer(plugin, new Runnable() {
             int ticks = 0;
             final int maxTicks = 60;
             final Color[] chargeColors = {
@@ -27,10 +29,13 @@ public class FirePhoenixLauncher {
 
             @Override
             public void run() {
+                if (taskCompleted[0]) return;
+
                 if (ticks >= maxTicks) {
+                    taskCompleted[0] = true;
                     FirePhoenixParticles.spawnPhoenixExplosion(plugin, center, killer);
                     world.playSound(center, Sound.ENTITY_BLAZE_DEATH, 2.0f, 0.8f);
-                    cancel();
+                    SchedulerWrapper.safeCancelTask(this);
                     return;
                 }
 
@@ -60,6 +65,6 @@ public class FirePhoenixLauncher {
 
                 ticks++;
             }
-        }.runTaskTimer(plugin, 0L, 2L);
+        }, 0L, 2L);
     }
 }

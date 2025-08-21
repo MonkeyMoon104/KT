@@ -1,12 +1,8 @@
 package com.monkey.kt.effects.list.glowmissile.animation.util;
 
-import com.monkey.kt.utils.damage.DamageConfig;
-import com.monkey.kt.utils.damage.DamageUtils;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 public class GlowMissileParticles {
 

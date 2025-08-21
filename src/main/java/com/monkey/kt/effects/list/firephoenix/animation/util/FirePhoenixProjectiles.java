@@ -1,6 +1,7 @@
 package com.monkey.kt.effects.list.firephoenix.animation.util;
 
 import com.monkey.kt.KT;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -8,7 +9,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class FirePhoenixProjectiles {
@@ -32,13 +32,18 @@ public class FirePhoenixProjectiles {
             fireball.setMetadata("kt_phoenix_damage_value", new FixedMetadataValue(plugin, damageValue));
         }
 
-        new BukkitRunnable() {
+        final boolean[] taskCompleted = {false};
+
+        SchedulerWrapper.ScheduledTask task = SchedulerWrapper.runTaskTimer(plugin, new Runnable() {
             double angle = 0;
 
             @Override
             public void run() {
+                if (taskCompleted[0]) return;
+
                 if (!fireball.isValid() || fireball.isDead() || target.isDead() || !target.getWorld().equals(world)) {
-                    cancel();
+                    taskCompleted[0] = true;
+                    SchedulerWrapper.safeCancelTask(this);
                     return;
                 }
 
@@ -63,6 +68,6 @@ public class FirePhoenixProjectiles {
                     world.spawnParticle(Particle.WITCH, vortex, 1, 0, 0, 0, 0.01);
                 }
             }
-        }.runTaskTimer(plugin, 0L, 2L);
+        }, 0L, 2L);
     }
 }

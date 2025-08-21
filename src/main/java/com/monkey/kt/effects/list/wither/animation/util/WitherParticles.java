@@ -3,6 +3,7 @@ package com.monkey.kt.effects.list.wither.animation.util;
 import com.monkey.kt.KT;
 import com.monkey.kt.utils.damage.DamageConfig;
 import com.monkey.kt.utils.damage.DamageUtils;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -10,7 +11,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.WitherSkull;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class WitherParticles {
@@ -72,19 +72,21 @@ public class WitherParticles {
             skull.setSilent(true);
             skull.setMetadata("kt_wither_skull", new FixedMetadataValue(plugin, true));
 
-            new BukkitRunnable() {
-                int ticks = 0;
+            final int[] burstTicks = {0};
+            final boolean[] taskCompleted = {false};
+            SchedulerWrapper.ScheduledTask burstTask = SchedulerWrapper.runTaskTimerAtEntity(plugin, new Runnable() {
                 @Override
                 public void run() {
+                    if (taskCompleted[0]) return;
                     if (!skull.isValid() || skull.isDead()) {
-                        cancel();
+                        taskCompleted[0] = true;
                         return;
                     }
                     world.spawnParticle(Particle.SOUL_FIRE_FLAME, skull.getLocation(), 2, 0, 0, 0, 0.01);
                     world.spawnParticle(Particle.LARGE_SMOKE, skull.getLocation(), 1, 0.05, 0.05, 0.05, 0.01);
-                    ticks++;
+                    burstTicks[0]++;
                 }
-            }.runTaskTimer(plugin, 0L, 1L);
+            }, skull, 0L, 1L);
         }
     }
 
@@ -92,26 +94,30 @@ public class WitherParticles {
         World world = center.getWorld();
         if (world == null) return;
 
-        new BukkitRunnable() {
-            int step = 0;
+        final int[] step = {0};
+
+        final boolean[] taskCompleted = {false};
+
+        SchedulerWrapper.ScheduledTask implosionTask = SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             @Override
             public void run() {
-                if (step > 30) {
+                if (taskCompleted[0]) return;
+                if (step[0] > 30) {
+                    taskCompleted[0] = true;
                     world.spawnParticle(Particle.EXPLOSION, center, 3);
                     world.spawnParticle(Particle.FIREWORK, center, 20, 0.5, 0.5, 0.5, 0.1);
                     world.spawnParticle(Particle.END_ROD, center, 40, 0.7, 0.7, 0.7, 0.01);
                     world.playSound(center, org.bukkit.Sound.ENTITY_GENERIC_EXPLODE, 3f, 0.5f);
                     launchBurstSkulls(plugin, center, killer);
-                    cancel();
                     return;
                 }
 
-                double radius = 5 - (step * 0.15);
+                double radius = 5 - (step[0] * 0.15);
                 for (int i = 0; i < 60; i++) {
-                    double angle = 2 * Math.PI * i / 60 + step * 0.2;
+                    double angle = 2 * Math.PI * i / 60 + step[0] * 0.2;
                     double x = Math.cos(angle) * radius;
                     double z = Math.sin(angle) * radius;
-                    double y = Math.sin(step * 0.3 + i * 0.1) * 1.5;
+                    double y = Math.sin(step[0] * 0.3 + i * 0.1) * 1.5;
 
                     Location pLoc = center.clone().add(x, 1.5 + y, z);
                     world.spawnParticle(Particle.PORTAL, pLoc, 2, 0.05, 0.05, 0.05, 0.01);
@@ -119,8 +125,8 @@ public class WitherParticles {
                     world.spawnParticle(Particle.DUST, pLoc, 0, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(90, 0, 140), 1.2f));
                 }
 
-                step++;
+                step[0]++;
             }
-        }.runTaskTimer(plugin, 0L, 1L);
+        }, center, 0L, 1L);
     }
 }

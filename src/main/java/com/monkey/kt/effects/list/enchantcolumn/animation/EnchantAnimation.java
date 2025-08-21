@@ -1,6 +1,7 @@
 package com.monkey.kt.effects.list.enchantcolumn.animation;
 
 import com.monkey.kt.KT;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
@@ -55,15 +56,20 @@ public class EnchantAnimation {
             columns.add(column);
         }
 
-        new BukkitRunnable() {
+        final boolean[] taskCompleted = {false};
+
+        SchedulerWrapper.ScheduledTask task = SchedulerWrapper.runTaskTimer(plugin, new Runnable() {
             int tick = 0;
 
             @Override
             public void run() {
+                if (taskCompleted[0]) return;
+
                 if (tick > height) {
-                    cancel();
+                    taskCompleted[0] = true;
                     world.playSound(center, Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 1.0f);
                     new MergeEffect(plugin, world, center, columns, killer, effectType, amplifier, duration).start();
+                    SchedulerWrapper.safeCancelTask(this);
                     return;
                 }
 
@@ -79,6 +85,6 @@ public class EnchantAnimation {
 
                 tick++;
             }
-        }.runTaskTimer(plugin, 0L, 3L);
+        }, 0L, 3L);
     }
 }

@@ -4,11 +4,11 @@ import com.monkey.kt.KT;
 import com.monkey.kt.effects.list.cryocore.animation.util.CryoCoreParticles;
 import com.monkey.kt.effects.list.cryocore.animation.util.structures.CryoCoreStructuresManager;
 import com.monkey.kt.effects.list.cryocore.animation.util.structures.helper.BlockStateHolder;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class CryoCoreLauncher {
 
@@ -28,11 +28,18 @@ public class CryoCoreLauncher {
 
         boolean allowStructure = plugin.getConfig().getBoolean("effects.cryocore.structure", true);
 
-        new BukkitRunnable() {
+        final boolean[] taskCompleted = {false};
+
+        SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             int tick = 0;
 
             @Override
             public void run() {
+                if (taskCompleted[0]) {
+                    SchedulerWrapper.safeCancelTask(this);
+                    return;
+                }
+
                 if (tick <= EXPLOSION_DURATION) {
                     if (tick % 2 == 0) {
                         CryoCoreParticles.spawnIceExplosion(world, center, tick, spikeRadius - 1, plugin, killer);
@@ -64,12 +71,13 @@ public class CryoCoreLauncher {
                     stateHolder.originalBlocks.clear();
                     stateHolder.iceSpikeBlocks.clear();
 
-                    cancel();
+                    taskCompleted[0] = true;
+                    SchedulerWrapper.safeCancelTask(this);
                 }
 
                 tick++;
             }
-        }.runTaskTimer(plugin, 0L, 4L);
+        }, center, 0L, 4L);
     }
 
     public static void launchWithCustomDuration(KT plugin, Location center, Player killer, int durationMultiplier) {
@@ -88,11 +96,18 @@ public class CryoCoreLauncher {
         final int fadeTick = 110 * durationMultiplier;
         final int restoreTick = 120 * durationMultiplier;
 
-        new BukkitRunnable() {
+        final boolean[] taskCompleted = {false};
+
+        SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             int tick = 0;
 
             @Override
             public void run() {
+                if (taskCompleted[0]) {
+                    SchedulerWrapper.safeCancelTask(this);
+                    return;
+                }
+
                 if (tick <= explosionDuration) {
                     if (tick % 3 == 0) {
                         CryoCoreParticles.spawnIceExplosion(world, center, tick, spikeRadius - 1, plugin, killer);
@@ -120,11 +135,12 @@ public class CryoCoreLauncher {
                     stateHolder.originalBlocks.clear();
                     stateHolder.iceSpikeBlocks.clear();
 
-                    cancel();
+                    taskCompleted[0] = true;
+                    SchedulerWrapper.safeCancelTask(this);
                 }
 
                 tick++;
             }
-        }.runTaskTimer(plugin, 0L, 4L);
+        }, center, 0L, 4L);
     }
 }

@@ -7,13 +7,13 @@ import com.monkey.kt.utils.SensitiveBlockUtils;
 import com.monkey.kt.utils.WorldGuardUtils;
 import com.monkey.kt.utils.damage.DamageConfig;
 import com.monkey.kt.utils.damage.DamageUtils;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.*;
@@ -38,14 +38,17 @@ public class FireworksEffect implements KillEffect {
         Random random = new Random();
         Map<Location, Material> originalBlocks = new HashMap<>();
 
-        BukkitRunnable rotatingCircles = new BukkitRunnable() {
+        final boolean[] rotatingCirclesCompleted = {false};
+
+        SchedulerWrapper.ScheduledTask rotatingCircles = SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             double angle = 0;
             int ticks = 0;
 
             @Override
             public void run() {
-                if (ticks > 80) {
-                    cancel();
+                if (rotatingCirclesCompleted[0] || ticks > 80) {
+                    rotatingCirclesCompleted[0] = true;
+                    SchedulerWrapper.safeCancelTask(this);
                     return;
                 }
 
@@ -61,8 +64,7 @@ public class FireworksEffect implements KillEffect {
                 angle += Math.PI / 48;
                 ticks++;
             }
-        };
-        rotatingCircles.runTaskTimer(plugin, 0L, 2L);
+        }, center, 0L, 2L);
 
         final int totalPlatforms = launchPoints.size();
         final int[] finishedPlatforms = {0};
@@ -89,22 +91,28 @@ public class FireworksEffect implements KillEffect {
                 TempBlockStorage.flush();
             }
 
+            final boolean[] whiteParticlesCompleted = {false};
 
-            BukkitRunnable whiteParticlesTask = new BukkitRunnable() {
+            SchedulerWrapper.ScheduledTask whiteParticlesTask = SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
                 @Override
                 public void run() {
+                    if (whiteParticlesCompleted[0]) {
+                        SchedulerWrapper.safeCancelTask(this);
+                        return;
+                    }
+
                     Block currentBlock = platformLoc.getBlock();
                     if (currentBlock.getType() != Material.GLOWSTONE) {
-                        cancel();
+                        whiteParticlesCompleted[0] = true;
+                        SchedulerWrapper.safeCancelTask(this);
                         return;
                     }
                     world.spawnParticle(Particle.FIREWORK, launchLoc.clone().add(0, 0.2, 0),
                             10, 0.2, 0.02, 0.2, 0.001);
                 }
-            };
-            whiteParticlesTask.runTaskTimer(plugin, 0L, 2L);
+            }, launchLoc, 0L, 2L);
 
-            new BukkitRunnable() {
+            SchedulerWrapper.runTaskAtLocation(plugin, new Runnable() {
                 @Override
                 public void run() {
                     Firework firework = world.spawn(launchLoc, Firework.class);
@@ -127,24 +135,24 @@ public class FireworksEffect implements KillEffect {
                     world.playSound(launchLoc, Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 1.5f, 1.5f);
                     world.playSound(launchLoc, Sound.ITEM_FIRECHARGE_USE, 1.0f, 1.0f);
 
-                    new BukkitRunnable() {
+                    SchedulerWrapper.runTaskAtLocation(plugin, new Runnable() {
                         @Override
                         public void run() {
+                            whiteParticlesCompleted[0] = true;
+
                             Material oldType = originalBlocks.getOrDefault(platformLoc, Material.AIR);
                             WorldGuardUtils.runWithWorldGuardBypass(platformLoc, () -> platform.setType(oldType));
                             TempBlockStorage.removeTempBlock(platformLoc);
                             TempBlockStorage.flush();
                             world.playSound(launchLoc, Sound.BLOCK_FIRE_EXTINGUISH, 0.5f, 1.0f);
-
                         }
-                    }.runTaskLater(plugin, 5L);
-
+                    }, platformLoc, 5L);
 
                     finishedPlatforms[0]++;
                     if (finishedPlatforms[0] >= totalPlatforms) {
-                        rotatingCircles.cancel();
+                        rotatingCirclesCompleted[0] = true;
 
-                        new BukkitRunnable() {
+                        SchedulerWrapper.runTaskAtLocation(plugin, new Runnable() {
                             @Override
                             public void run() {
                                 int finalFireworksCount = 10;
@@ -217,12 +225,11 @@ public class FireworksEffect implements KillEffect {
                                 if (damageConfig.isEnabled()) {
                                     DamageUtils.applyDamageAround(killer, center, damageConfig.getRadius(), damageConfig.getValue());
                                 }
-
                             }
-                        }.runTaskLater(plugin, 10L);
+                        }, center, 10L);
                     }
                 }
-            }.runTaskLater(plugin, delay);
+            }, launchLoc, delay);
         }
     }
 

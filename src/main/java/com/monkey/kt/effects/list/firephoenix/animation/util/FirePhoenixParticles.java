@@ -3,10 +3,10 @@ package com.monkey.kt.effects.list.firephoenix.animation.util;
 import com.monkey.kt.KT;
 import com.monkey.kt.utils.damage.DamageConfig;
 import com.monkey.kt.utils.damage.DamageUtils;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class FirePhoenixParticles {
@@ -44,7 +44,9 @@ public class FirePhoenixParticles {
         final int finalProjectilesDelay = projectilesDelay;
         final double finalProjectilesValue = projectilesValue;
 
-        new BukkitRunnable() {
+        final boolean[] taskCompleted = {false};
+
+        SchedulerWrapper.ScheduledTask task = SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             int step = 0;
             int projectileTimer = 0;
             final Color[] phoenixColors = {
@@ -56,9 +58,12 @@ public class FirePhoenixParticles {
 
             @Override
             public void run() {
+                if (taskCompleted[0]) return;
+
                 Vector directionToKiller = killer.getLocation().toVector().subtract(center.toVector()).normalize();
                 double yawToKiller = Math.atan2(-directionToKiller.getX(), directionToKiller.getZ()) + Math.PI;
                 double pitchToKiller = Math.asin(-directionToKiller.getY());
+
                 if (step > 240) {
                     world.spawnParticle(Particle.FLASH, center, 3);
                     world.spawnParticle(Particle.EXPLOSION, center, 5, 2, 2, 2, 0);
@@ -75,7 +80,8 @@ public class FirePhoenixParticles {
                                 0, 0, 0, 0, 0.1);
                     }
                     world.playSound(center, Sound.ENTITY_GENERIC_EXPLODE, 3.0f, 0.8f);
-                    cancel();
+                    SchedulerWrapper.safeCancelTask(this);
+                    taskCompleted[0] = true;
                     return;
                 }
 
@@ -258,6 +264,6 @@ public class FirePhoenixParticles {
                     }
                 }
             }
-        }.runTaskTimer(plugin, 0L, 1L);
+        }, center,0L, 1L);
     }
 }

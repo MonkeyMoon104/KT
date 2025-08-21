@@ -24,6 +24,7 @@ import com.monkey.kt.utils.WorldGuardUtils;
 import com.monkey.kt.utils.listener.CheckUpdate;
 import com.monkey.kt.utils.registration.RegistrationManager;
 import com.monkey.kt.utils.resourcepack.ResourcePack;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -50,6 +51,15 @@ public class KT extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+
+        SchedulerWrapper.initialize();
+
+        if (SchedulerWrapper.isFolia()) {
+            getLogger().info("Detected Folia - using Folia schedulers");
+        } else {
+            getLogger().info("Using standard Bukkit schedulers");
+        }
+
         new Metrics(this, 26511);
 
         int spigotResourceId = 125998;
@@ -86,7 +96,18 @@ public class KT extends JavaPlugin {
         statusLogger = new KTStatusLogger(this, 26511, economyManager);
         statusLogger.logEnable();
 
-        TempBlockStorage.removeAllTempBlocks();
+        if (isFolia()) {
+            SchedulerWrapper.runTaskLater(this, () -> {
+                if (TempBlockStorage.hasBlocksToRestore()) {
+                    getLogger().info("Found temporary blocks from previous session, restoring...");
+                    TempBlockStorage.removeAllTempBlocksSafely();
+                } else {
+                    getLogger().info("No temporary blocks to restore");
+                }
+            }, 0L);
+        } else {
+            TempBlockStorage.removeAllTempBlocks();
+        }
 
         ktCommand = new KTCommand(this, guiManager, economyManager);
         getCommand("killeffect").setExecutor(ktCommand);
@@ -120,7 +141,10 @@ public class KT extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        TempBlockStorage.removeAllTempBlocks();
+        if (!isFolia()) {
+            TempBlockStorage.removeAllTempBlocks();
+        }
+
         if (eventManager != null) {
             eventManager.stopAllEvents();
         }
@@ -190,5 +214,8 @@ public class KT extends JavaPlugin {
     }
     public EventManager getEventManager() {
         return eventManager;
+    }
+    public static boolean isFolia() {
+        return SchedulerWrapper.isFolia();
     }
 }

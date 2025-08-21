@@ -69,7 +69,7 @@
                 </execution>
             </executions>
         </plugin>
-        <plugin>
+        <!--plugin>
             <groupId>com.github.wvengen</groupId>
             <artifactId>proguard-maven-plugin</artifactId>
             <version>2.7.0</version>
@@ -100,7 +100,7 @@
                     </configuration>
                 </execution>
             </executions>
-        </plugin>
+        </plugin-->
     </plugins>
     <resources>
       <resource>

@@ -6,12 +6,10 @@ import com.monkey.kt.effects.list.aurafarming.animation.util.AuraHomingTrail;
 import com.monkey.kt.effects.list.aurafarming.animation.util.AuraParticles;
 import com.monkey.kt.utils.damage.DamageConfig;
 import com.monkey.kt.utils.damage.DamageUtils;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -42,22 +40,25 @@ public class AuraTrailAnimation {
         directions.add(new Vector(0.6, 1, 0).normalize());
         directions.add(new Vector(0.4, 1, -0.4).normalize());
 
-        new BukkitRunnable() {
-            int ticks = 0;
-            final List<Location> currentPositions = new ArrayList<>();
-            final List<Boolean> trailEnded = new ArrayList<>();
+        final int[] ticks = {0};
+        final List<Location> currentPositions = new ArrayList<>();
+        final List<Boolean> trailEnded = new ArrayList<>();
 
-            {
-                for (int i = 0; i < directions.size(); i++) {
-                    currentPositions.add(origin.clone());
-                    trailEnded.add(false);
-                }
-            }
+        for (int i = 0; i < directions.size(); i++) {
+            currentPositions.add(origin.clone());
+            trailEnded.add(false);
+        }
 
+        final boolean[] taskCompleted = {false};
+
+        SchedulerWrapper.ScheduledTask mainTask = SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             @Override
             public void run() {
-                if (ticks > 200) {
-                    cancel();
+                if (taskCompleted[0]) return;
+
+                if (ticks[0] > 200) {
+                    taskCompleted[0] = true;
+                    SchedulerWrapper.safeCancelTask(this);
                     return;
                 }
 
@@ -66,37 +67,38 @@ public class AuraTrailAnimation {
 
                     Location currentLoc = currentPositions.get(i);
 
-                    if (ticks <= 80) {
+                    if (ticks[0] <= 80) {
                         Vector dir = directions.get(i).clone().multiply(0.15);
                         currentPositions.set(i, currentLoc.add(dir));
 
-                    } else if (ticks <= 120) {
+                    } else if (ticks[0] <= 120) {
                         Vector toKiller = killer.getLocation().clone().add(0, 1.5, 0)
                                 .subtract(currentLoc).toVector().normalize().multiply(0.12);
                         currentPositions.set(i, currentLoc.add(toKiller));
 
-                    } else if (ticks > 120 && ticks <= 140) {
+                    } else if (ticks[0] > 120 && ticks[0] <= 140) {
                         Location killerLoc = killer.getLocation().clone().add(0, 0.5, 0);
-                        int ticksLeft = 140 - ticks + 1;
+                        int ticksLeft = 140 - ticks[0] + 1;
 
                         Vector toKiller = killerLoc.toVector().subtract(currentLoc.toVector()).multiply(1.0 / ticksLeft);
                         currentPositions.set(i, currentLoc.add(toKiller));
 
-                        if (ticks == 140) {
+                        if (ticks[0] == 140) {
                             world.strikeLightningEffect(killerLoc);
                             int finalI = i;
-                            new BukkitRunnable() {
-                                int explosionTick = 0;
+
+                            final int[] explosionTick = {0};
+                            SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (explosionTick > 10) {
-                                        cancel();
+                                    if (explosionTick[0] > 10) {
+                                        SchedulerWrapper.safeCancelTask(this);
                                         return;
                                     }
-                                    AuraParticles.spawnExplosionEffect(currentPositions.get(finalI), explosionTick);
-                                    explosionTick++;
+                                    AuraParticles.spawnExplosionEffect(currentPositions.get(finalI), explosionTick[0]);
+                                    explosionTick[0]++;
                                 }
-                            }.runTaskTimer(plugin, 0L, 2L);
+                            }, killerLoc, 0L, 2L);
 
                             if (i == 0) {
                                 DamageConfig damageConfig = DamageUtils.getDamageConfig("aurafarming", plugin);
@@ -120,8 +122,8 @@ public class AuraTrailAnimation {
                     AuraParticles.spawnThickWhiteSparkle(currentPositions.get(i));
                 }
 
-                ticks++;
+                ticks[0]++;
             }
-        }.runTaskTimer(plugin, 0L, 1L);
+        }, origin, 0L, 1L);
     }
 }

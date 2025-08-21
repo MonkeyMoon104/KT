@@ -1,27 +1,35 @@
 package com.monkey.kt.effects.list.pigstep.animation.util;
 
 import com.monkey.kt.KT;
+import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.scheduler.BukkitRunnable;
 
-public class PigstepFlameTask extends BukkitRunnable {
+public class PigstepFlameTask implements Runnable {
     private final KT plugin;
     private final Location loc;
     private int ticks = 0;
+    private SchedulerWrapper.ScheduledTask task;
 
     public PigstepFlameTask(KT plugin, Location loc) {
         this.plugin = plugin;
         this.loc = loc;
     }
 
+    public void setTask(SchedulerWrapper.ScheduledTask task) {
+        this.task = task;
+    }
+
     @Override
     public void run() {
         if (ticks++ > 10) {
-            cancel();
+            if (task != null) {
+                task.cancel();
+            }
             return;
         }
+
         World world = loc.getWorld();
         if (world == null) return;
 

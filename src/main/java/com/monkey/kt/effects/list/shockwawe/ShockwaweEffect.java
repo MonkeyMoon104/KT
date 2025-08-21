@@ -22,5 +22,3 @@ public class ShockwaweEffect implements KillEffect {
         new ShockwaweAnimation(plugin, world, target.clone().add(0, 1, 0)).start(killer);
     }
 }
-
-//Made by: Dominikhun250
