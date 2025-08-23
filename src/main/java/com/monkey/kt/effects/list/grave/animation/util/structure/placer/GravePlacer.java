@@ -50,25 +50,29 @@ public class GravePlacer {
 
         Collections.shuffle(candidatePositions, random);
 
-        startCoarseDirtPlacement(candidatePositions, holder);
+        if (!candidatePositions.isEmpty()) {
+            startCoarseDirtPlacement(candidatePositions, holder);
+        } else {
+            Bukkit.getLogger().warning("candidatepositions empty!");
+        }
     }
 
     private void startCoarseDirtPlacement(List<Location> candidatePositions, BlockStateHolder holder) {
         final boolean[] taskCompleted = {false};
 
-        SchedulerWrapper.ScheduledTask task = SchedulerWrapper.runTaskTimer(plugin, new Runnable() {
+        SchedulerWrapper.ScheduledTask task = SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             private final List<Location> dirtLocations = new ArrayList<>(candidatePositions);
             private int index = 0;
 
             @Override
             public void run() {
+                if (taskCompleted[0]) return;
                 int processed = 0;
                 while (index < dirtLocations.size() && processed < 3) {
-                    Location surfaceLoc = dirtLocations.get(index);
-                    Block targetBlock = surfaceLoc.getBlock();
+                    Location groundLoc = dirtLocations.get(index);
+                    Block targetBlock = groundLoc.getBlock();
 
-                    if (!SensitiveBlockUtils.isSensitive(targetBlock)
-                            && !holder.originalBlocks.containsKey(targetBlock.getLocation())) {
+                    if (!SensitiveBlockUtils.isSensitive(targetBlock)) {
 
                         Material originalMat = targetBlock.getType();
                         if (originalMat == Material.DIRT
@@ -77,13 +81,17 @@ public class GravePlacer {
                                 || originalMat == Material.COARSE_DIRT) {
 
                             Location loc = targetBlock.getLocation();
-                            holder.originalBlocks.put(loc, originalMat);
 
-                            WorldGuardUtils.runWithWorldGuardBypass(loc, () -> {
-                                targetBlock.setType(Material.COARSE_DIRT);
-                            });
+                            if (!holder.originalBlocks.containsKey(loc)) {
+                                holder.originalBlocks.put(loc, originalMat);
+                                TempBlockStorage.saveTempBlock(loc, originalMat);
+                            }
 
-                            TempBlockStorage.saveTempBlock(loc, originalMat);
+                            if (originalMat != Material.COARSE_DIRT) {
+                                WorldGuardUtils.runWithWorldGuardBypass(loc, () -> {
+                                    targetBlock.setType(Material.COARSE_DIRT);
+                                });
+                            }
 
                         } 
                     }
@@ -92,13 +100,12 @@ public class GravePlacer {
                 }
 
                 if (index >= dirtLocations.size()) {
+                    taskCompleted[0] = true;
                     TempBlockStorage.flush();
                     SchedulerWrapper.safeCancelTask(this);
                 }
             }
-        }, 0L, 2L);
+        }, candidatePositions.get(0),0L, 2L);
     }
 
 }
-
-//Made by: Dominikhun250

@@ -54,12 +54,12 @@ public class GraveLauncher {
 
         final boolean[] taskCompleted = {false};
 
-        SchedulerWrapper.ScheduledTask task = SchedulerWrapper.runTaskTimer(plugin, new Runnable() {
+        SchedulerWrapper.ScheduledTask task = SchedulerWrapper.runTaskAtLocation(plugin, new Runnable() {
             @Override
             public void run() {
                 restoreAll(holder);
             }
-        }, 0L, RESTORE_TICKS);
+        }, surface, RESTORE_TICKS);
     }
 
     private static void buildFenceCross(BlockStateHolder holder, Location base, BlockFace facing) {

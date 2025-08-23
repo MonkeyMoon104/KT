@@ -26,5 +26,3 @@ public class GraveEffect implements KillEffect {
         GraveLauncher.launch(plugin, loc.clone().add(0.5, 0, 0.5), killer);
     }
 }
-
-//Made by: Dominikhun250
