@@ -28,10 +28,10 @@ public class SchedulerWrapper {
             regionScheduler = Bukkit.getRegionScheduler();
             asyncScheduler = Bukkit.getAsyncScheduler();
             isFolia = true;
-            Bukkit.getLogger().info("[SchedulerWrapper] Folia rilevato — uso degli scheduler Folia abilitato");
+            Bukkit.getLogger().info("[KT SchedulerWrapper] Folia detected — use of Folia schedulers enabled");
         } catch (Throwable t) {
             isFolia = false;
-            Bukkit.getLogger().info("[SchedulerWrapper] Usando Bukkit/Paper scheduler (Folia non rilevato)");
+            Bukkit.getLogger().info("[KT SchedulerWrapper] Using Bukkit/Paper scheduler (Folia not detected)");
         }
     }
 
