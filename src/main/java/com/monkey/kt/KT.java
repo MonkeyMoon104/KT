@@ -8,8 +8,6 @@ import com.monkey.kt.config.ConfigService;
 import com.monkey.kt.cooldown.CooldownManager;
 import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.economy.KillCoinsEco;
-import com.monkey.kt.economy.storage.KillCoinsDatabaseManager;
-import com.monkey.kt.economy.storage.KillCoinsStorage;
 import com.monkey.kt.effects.KillEffectFactory;
 import com.monkey.kt.effects.register.EffectRegistry;
 import com.monkey.kt.events.EventManager;
@@ -28,14 +26,14 @@ import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.concurrent.CompletableFuture;
+
 public class KT extends JavaPlugin {
 
     private DatabaseManager databaseManager;
     private GUIManager guiManager;
     private KillEffectFactory factory;
-    private EffectRegistry effectRegistry;
-    private KillCoinsDatabaseManager coinsDbManager;
-    private KillCoinsEco killCoinsEco;
+    private EffectRegistry effectRegistry;private KillCoinsEco killCoinsEco;
     private CooldownManager cooldownManager;
     private KTStatusLogger statusLogger;
     private AuraBoostManager auraBoostManager;
@@ -77,13 +75,8 @@ public class KT extends JavaPlugin {
         databaseManager = new DatabaseManager(this);
         databaseManager.loadDatabase();
 
-        coinsDbManager = new KillCoinsDatabaseManager(this);
-        coinsDbManager.loadDatabase();
-
-        KillCoinsStorage storage = new KillCoinsStorage();
-        killCoinsEco = new KillCoinsEco(this, storage);
-
-        economyManager = new EconomyManager(this, killCoinsEco);
+        economyManager = new EconomyManager(this, databaseManager);
+        economyManager.initialize();
 
         WorldGuardUtils.setup();
 
@@ -98,12 +91,23 @@ public class KT extends JavaPlugin {
 
         if (isFolia()) {
             SchedulerWrapper.runTaskLater(this, () -> {
-                if (TempBlockStorage.hasBlocksToRestore()) {
-                    getLogger().info("Found temporary blocks from previous session, restoring...");
-                    TempBlockStorage.removeAllTempBlocksSafely();
-                } else {
-                    getLogger().info("No temporary blocks to restore");
-                }
+                TempBlockStorage.hasBlocksToRestore()
+                        .thenCompose(hasBlocks -> {
+                            if (hasBlocks) {
+                                getLogger().info("Found temporary blocks from previous session, restoring...");
+                                return TempBlockStorage.printRestoreStats()
+                                        .thenCompose(v -> TempBlockStorage.removeAllTempBlocks())
+                                        .thenRun(() -> getLogger().info("Temporary blocks restoration completed!"));
+                            } else {
+                                getLogger().info("No temporary blocks to restore");
+                                return CompletableFuture.completedFuture(null);
+                            }
+                        })
+                        .exceptionally(throwable -> {
+                            getLogger().severe("Error during temp blocks operation: " + throwable.getMessage());
+                            throwable.printStackTrace();
+                            return null;
+                        });
             }, 0L);
         } else {
             TempBlockStorage.removeAllTempBlocks();
@@ -142,14 +146,19 @@ public class KT extends JavaPlugin {
     @Override
     public void onDisable() {
         if (!isFolia()) {
-            TempBlockStorage.removeAllTempBlocks();
+            TempBlockStorage.forceFlushAll();
         }
 
         if (eventManager != null) {
             eventManager.stopAllEvents();
         }
-        databaseManager.closeConnection();
-        if (coinsDbManager != null) coinsDbManager.close();
+        if (economyManager != null) {
+            economyManager.shutdown();
+        }
+
+        if (databaseManager != null) {
+            databaseManager.closeConnection();
+        }
     }
 
     private void loadResourcePack() {
@@ -184,7 +193,7 @@ public class KT extends JavaPlugin {
         return effectRegistry;
     }
     public KillCoinsEco getKillCoinsEco() {
-        return killCoinsEco;
+        return economyManager != null ? economyManager.getInternalEconomy() : null;
     }
 
     public EconomyManager getEconomyManager() {
@@ -192,6 +201,10 @@ public class KT extends JavaPlugin {
     }
     public void setEconomyManager(EconomyManager economyManager) {
         this.economyManager = economyManager;
+    }
+
+    public void setDatabaseManager(DatabaseManager databaseManager) {
+        this.databaseManager = databaseManager;
     }
     public AuraBoostManager getAuraBoostManager() {
         return auraBoostManager;
