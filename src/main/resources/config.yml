@@ -36,6 +36,15 @@ messages:
   effect_removed: "&aYou deactivated the current Kill Effect."
   effect_none_selected: "&7No effect is currently selected."
 
+database:
+  type: "sqlite"
+  TYPE-OPTIONS: sqlite, mysql, mariadb, postgres, cockroachdb, sqlserver, oracle, h2, h2-server, hsqldb, derby
+  host: "localhost"
+  port: 3306
+  database: "kt"
+  username: "root"
+  password: "password"
+
 server-info: false
 
 auto-update:
