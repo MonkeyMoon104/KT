@@ -1,6 +1,7 @@
 package com.monkey.kt.storage;
 
 import com.monkey.kt.KT;
+import com.monkey.kt.utils.ColorUtils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -32,11 +33,11 @@ public class DatabaseManager {
 
             initializeStorage();
 
-            plugin.getLogger().info("Successfully connected to " + config.dialect.name() + " database!");
+            plugin.getLogger().info(ColorUtils.success("Successfully connected to " + config.dialect.name() + " database!"));
 
         } catch (Exception e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to load database (" +
-                    config.dialect.name() + "): " + e.getMessage(), e);
+            plugin.getLogger().log(Level.SEVERE, ColorUtils.error("Failed to load database (" +
+                    config.dialect.name() + "): " + e.getMessage()), e);
             throw new RuntimeException("Database initialization failed", e);
         }
     }
@@ -176,10 +177,10 @@ public class DatabaseManager {
                 TempBlockStorage.flush();
 
                 dataSource.close();
-                plugin.getLogger().info("Database connection pool closed successfully");
+                plugin.getLogger().info(ColorUtils.success("Database connection pool closed successfully"));
 
             } catch (Exception e) {
-                plugin.getLogger().log(Level.WARNING, "Error while closing database connection", e);
+                plugin.getLogger().log(Level.WARNING, ColorUtils.warning("Error while closing database connection"), e);
             }
         }
     }
@@ -192,7 +193,7 @@ public class DatabaseManager {
         try (Connection connection = getConnection()) {
             return connection != null && !connection.isClosed();
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.WARNING, "Database health check failed", e);
+            plugin.getLogger().log(Level.WARNING, ColorUtils.warning("Database health check failed"), e);
             return false;
         }
     }

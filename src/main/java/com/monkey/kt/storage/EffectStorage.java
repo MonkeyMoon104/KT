@@ -1,5 +1,6 @@
 package com.monkey.kt.storage;
 
+import com.monkey.kt.utils.ColorUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.entity.Player;
 
@@ -37,14 +38,14 @@ public class EffectStorage {
                         playerEffects.put(uuid, effect);
                         loaded++;
                     } catch (IllegalArgumentException e) {
-                        logger.warning("Invalid UUID found in database: " + rs.getString("uuid"));
+                        logger.warning(ColorUtils.warning("Invalid UUID found in database: " + rs.getString("uuid")));
                     }
                 }
 
-                logger.info("Loaded " + loaded + " player effects from database");
+                logger.info(ColorUtils.info("Loaded " + loaded + " player effects from database"));
 
             } catch (SQLException e) {
-                logger.log(Level.SEVERE, "Error loading player effects from database", e);
+                logger.log(Level.SEVERE, ColorUtils.error("Error loading player effects from database"), e);
             }
         });
     }
@@ -82,7 +83,7 @@ public class EffectStorage {
                 ps.executeUpdate();
 
             } catch (SQLException e) {
-                logger.log(Level.SEVERE, "Error saving effect to database for player " + uuid, e);
+                logger.log(Level.SEVERE, ColorUtils.error("Error saving effect to database for player " + uuid), e);
             }
         });
     }
@@ -106,7 +107,7 @@ public class EffectStorage {
                 ps.executeUpdate();
 
             } catch (SQLException e) {
-                logger.log(Level.SEVERE, "Error removing effect from database for player " + uuid, e);
+                logger.log(Level.SEVERE, ColorUtils.error("Error removing effect from database for player " + uuid), e);
             }
         });
     }
@@ -127,7 +128,7 @@ public class EffectStorage {
 
                     ps.executeBatch();
                     connection.commit();
-                    logger.info("Batch saved " + effects.size() + " player effects");
+                    logger.info(ColorUtils.batch("Batch saved " + effects.size() + " player effects"));
 
                 } catch (SQLException e) {
                     connection.rollback();
@@ -137,7 +138,7 @@ public class EffectStorage {
                 }
 
             } catch (SQLException e) {
-                logger.log(Level.SEVERE, "Error during batch save of effects", e);
+                logger.log(Level.SEVERE, ColorUtils.error("Error during batch save of effects"), e);
             }
         });
     }
@@ -157,7 +158,7 @@ public class EffectStorage {
 
                     ps.executeBatch();
                     connection.commit();
-                    logger.info("Batch removed " + uuids.size() + " player effects");
+                    logger.info(ColorUtils.batch("Batch removed " + uuids.size() + " player effects"));
 
                 } catch (SQLException e) {
                     connection.rollback();
@@ -167,7 +168,7 @@ public class EffectStorage {
                 }
 
             } catch (SQLException e) {
-                logger.log(Level.SEVERE, "Error during batch removal of effects", e);
+                logger.log(Level.SEVERE, ColorUtils.error("Error during batch removal of effects"), e);
             }
         });
     }
@@ -196,16 +197,16 @@ public class EffectStorage {
                 int deleted = stmt.executeUpdate("DELETE FROM killeffects");
                 playerEffects.clear();
 
-                logger.info("Cleared all player effects (" + deleted + " records)");
+                logger.info(ColorUtils.info("Cleared all player effects (" + deleted + " records)"));
 
             } catch (SQLException e) {
-                logger.log(Level.SEVERE, "Error clearing all effects", e);
+                logger.log(Level.SEVERE, ColorUtils.error("Error clearing all effects"), e);
             }
         });
     }
 
     public static void forceSyncAll() {
-        logger.info("Force syncing all player effects to database...");
+        logger.info(ColorUtils.database("Force syncing all player effects to database..."));
 
         try (Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(false);
@@ -223,7 +224,7 @@ public class EffectStorage {
 
                 ps.executeBatch();
                 connection.commit();
-                logger.info("Force synced " + playerEffects.size() + " player effects");
+                logger.info(ColorUtils.success("Force synced " + playerEffects.size() + " player effects"));
 
             } catch (SQLException e) {
                 connection.rollback();
@@ -233,7 +234,7 @@ public class EffectStorage {
             }
 
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error during force sync of effects", e);
+            logger.log(Level.SEVERE, ColorUtils.error("Error during force sync of effects"), e);
         }
     }
 }

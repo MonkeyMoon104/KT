@@ -1,5 +1,7 @@
 package com.monkey.kt.storage;
 
+import com.monkey.kt.utils.ColorUtils;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -22,7 +24,7 @@ public class SQLTableInitializer {
         createTempBlocksTable();
         createKillCoinsBalanceTable();
         createKillCoinsPurchasesTable();
-        logger.info("Database tables created/verified for " + dialect.name());
+        logger.info(ColorUtils.database("Database tables created/verified for " + dialect.name()));
     }
 
     private void createKillEffectsTable() throws SQLException {
@@ -77,10 +79,10 @@ public class SQLTableInitializer {
                 stmt.execute(sql);
             }
 
-            logger.fine("Table '" + tableName + "' created/verified successfully");
+            logger.fine(ColorUtils.debug("Table '" + tableName + "' created/verified successfully"));
 
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Failed to create/verify table '" + tableName + "'", e);
+            logger.log(Level.SEVERE, ColorUtils.error("Failed to create/verify table '" + tableName + "'"), e);
             throw e;
         }
     }
@@ -106,9 +108,9 @@ public class SQLTableInitializer {
     private void optimizeMySQL() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("ANALYZE TABLE killeffects, temp_blocks");
-            logger.fine("MySQL tables analyzed for optimization");
+            logger.fine(ColorUtils.performance("MySQL tables analyzed for optimization"));
         } catch (SQLException e) {
-            logger.log(Level.WARNING, "Failed to analyze MySQL tables", e);
+            logger.log(Level.WARNING, ColorUtils.warning("Failed to analyze MySQL tables"), e);
         }
     }
 
@@ -116,9 +118,9 @@ public class SQLTableInitializer {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("ANALYZE killeffects");
             stmt.execute("ANALYZE temp_blocks");
-            logger.fine("PostgreSQL statistics updated");
+            logger.fine(ColorUtils.performance("PostgreSQL statistics updated"));
         } catch (SQLException e) {
-            logger.log(Level.WARNING, "Failed to analyze PostgreSQL tables", e);
+            logger.log(Level.WARNING, ColorUtils.warning("Failed to analyze PostgreSQL tables"), e);
         }
     }
 
@@ -126,9 +128,9 @@ public class SQLTableInitializer {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("ANALYZE");
             stmt.execute("REINDEX");
-            logger.fine("SQLite database analyzed and reindexed");
+            logger.fine(ColorUtils.performance("SQLite database analyzed and reindexed"));
         } catch (SQLException e) {
-            logger.log(Level.WARNING, "Failed to optimize SQLite database", e);
+            logger.log(Level.WARNING, ColorUtils.warning("Failed to optimize SQLite database"), e);
         }
     }
 
@@ -136,9 +138,9 @@ public class SQLTableInitializer {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("BEGIN DBMS_STATS.GATHER_TABLE_STATS(USER, 'KILLEFFECTS'); END;");
             stmt.execute("BEGIN DBMS_STATS.GATHER_TABLE_STATS(USER, 'TEMP_BLOCKS'); END;");
-            logger.fine("Oracle table statistics gathered");
+            logger.fine(ColorUtils.performance("Oracle table statistics gathered"));
         } catch (SQLException e) {
-            logger.log(Level.WARNING, "Failed to gather Oracle statistics", e);
+            logger.log(Level.WARNING, ColorUtils.warning("Failed to gather Oracle statistics"), e);
         }
     }
 }

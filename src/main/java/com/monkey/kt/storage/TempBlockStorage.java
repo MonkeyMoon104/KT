@@ -1,5 +1,6 @@
 package com.monkey.kt.storage;
 
+import com.monkey.kt.utils.ColorUtils;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.Bukkit;
@@ -44,7 +45,7 @@ public class TempBlockStorage {
 
     public static void saveTempBlock(Location loc, Material originalType) {
         if (loc.getWorld() == null || originalType == null) {
-            logger.warning("Attempted to save temp block with null world or material");
+            logger.warning(ColorUtils.warning("Attempted to save temp block with null world or material"));
             return;
         }
 
@@ -57,7 +58,7 @@ public class TempBlockStorage {
 
     public static void removeTempBlock(Location loc) {
         if (loc.getWorld() == null) {
-            logger.warning("Attempted to remove temp block with null world");
+            logger.warning(ColorUtils.warning("Attempted to remove temp block with null world"));
             return;
         }
 
@@ -70,7 +71,7 @@ public class TempBlockStorage {
 
     public static synchronized void flush() {
         if (dataSource == null) {
-            logger.warning("DataSource is null, cannot flush temp blocks");
+            logger.warning(ColorUtils.warning("DataSource is null, cannot flush temp blocks"));
             return;
         }
 
@@ -106,12 +107,12 @@ public class TempBlockStorage {
                 connection.commit();
 
                 if (!saveQueue.isEmpty() || !removeQueue.isEmpty()) {
-                    logger.fine("Flushed " + saveQueue.size() + " saves and " + removeQueue.size() + " removes");
+                    logger.fine(ColorUtils.batch("Flushed " + saveQueue.size() + " saves and " + removeQueue.size() + " removes"));
                 }
 
             } catch (SQLException e) {
                 connection.rollback();
-                logger.log(Level.SEVERE, "Error during batch processing temp blocks", e);
+                logger.log(Level.SEVERE, ColorUtils.error("Error during batch processing temp blocks"), e);
 
                 blocksToSave.addAll(saveQueue);
                 blocksToRemove.addAll(removeQueue);
@@ -121,7 +122,7 @@ public class TempBlockStorage {
             }
 
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error getting database connection for temp blocks", e);
+            logger.log(Level.SEVERE, ColorUtils.error("Error getting database connection for temp blocks"), e);
         }
     }
 
@@ -169,7 +170,7 @@ public class TempBlockStorage {
     public static CompletableFuture<Void> removeAllTempBlocks() {
         return CompletableFuture.runAsync(() -> {
             if (dataSource == null) {
-                logger.warning("DataSource is null, cannot restore temp blocks");
+                logger.warning(ColorUtils.warning("DataSource is null, cannot restore temp blocks"));
                 return;
             }
 
@@ -188,13 +189,13 @@ public class TempBlockStorage {
 
                     World world = Bukkit.getWorld(worldName);
                     if (world == null) {
-                        logger.warning("World not found: " + worldName);
+                        logger.warning(ColorUtils.warning("World not found: " + worldName));
                         continue;
                     }
 
                     Material originalMaterial = Material.getMaterial(materialName);
                     if (originalMaterial == null) {
-                        logger.warning("Material not found: " + materialName);
+                        logger.warning(ColorUtils.warning("Material not found: " + materialName));
                         continue;
                     }
 
@@ -203,13 +204,13 @@ public class TempBlockStorage {
                             .add(new TempBlockData(loc, originalMaterial));
                 }
             } catch (SQLException e) {
-                logger.log(Level.SEVERE, "Error retrieving temporary blocks", e);
+                logger.log(Level.SEVERE, ColorUtils.error("Error retrieving temporary blocks"), e);
                 return;
             }
 
             if (!blocksByWorld.isEmpty()) {
                 int totalBlocks = blocksByWorld.values().stream().mapToInt(List::size).sum();
-                logger.info("Restoring " + totalBlocks + " temporary blocks across " + blocksByWorld.size() + " worlds...");
+                logger.info(ColorUtils.info("Restoring " + totalBlocks + " temporary blocks across " + blocksByWorld.size() + " worlds..."));
 
                 restoreBlocksOptimized(blocksByWorld);
             }
@@ -245,7 +246,7 @@ public class TempBlockStorage {
                         .add(blockData);
             }
 
-            logger.info("World " + worldName + ": " + worldBlocks.size() + " blocks in " + blocksByChunk.size() + " chunks");
+            logger.info(ColorUtils.info("World " + worldName + ": " + worldBlocks.size() + " blocks in " + blocksByChunk.size() + " chunks"));
 
             for (Map.Entry<String, List<TempBlockData>> chunkEntry : blocksByChunk.entrySet()) {
                 List<TempBlockData> chunkBlocks = chunkEntry.getValue();
@@ -292,12 +293,12 @@ public class TempBlockStorage {
                     }
                 } catch (Exception e) {
                     errors++;
-                    logger.warning("Failed to restore block at " + blockData.location + ": " + e.getMessage());
+                    logger.warning(ColorUtils.warning("Failed to restore block at " + blockData.location + ": " + e.getMessage()));
                 }
             }
 
             if (processed > 0 || skipped > 0 || errors > 0) {
-                logger.fine("Batch completed: " + processed + " restored, " + skipped + " skipped, " + errors + " errors");
+                logger.fine(ColorUtils.debug("Batch completed: " + processed + " restored, " + skipped + " skipped, " + errors + " errors"));
             }
         }, chunkLocation, 0L);
     }
@@ -307,10 +308,10 @@ public class TempBlockStorage {
              Statement stmt = connection.createStatement()) {
 
             int deleted = stmt.executeUpdate("DELETE FROM temp_blocks");
-            logger.info("Temporary blocks database cleared successfully (" + deleted + " records)");
+            logger.info(ColorUtils.success("Temporary blocks database cleared successfully (" + deleted + " records)"));
 
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error clearing temporary blocks", e);
+            logger.log(Level.SEVERE, ColorUtils.error("Error clearing temporary blocks"), e);
         }
     }
 
@@ -326,7 +327,7 @@ public class TempBlockStorage {
                     return rs.getInt(1) > 0;
                 }
             } catch (SQLException e) {
-                logger.log(Level.WARNING, "Error checking temp blocks count", e);
+                logger.log(Level.WARNING, ColorUtils.warning("Error checking temp blocks count"), e);
             }
             return false;
         });
@@ -343,7 +344,7 @@ public class TempBlockStorage {
                 return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            logger.log(Level.WARNING, "Error checking temp blocks count", e);
+            logger.log(Level.WARNING, ColorUtils.warning("Error checking temp blocks count"), e);
         }
         return false;
     }
@@ -351,7 +352,7 @@ public class TempBlockStorage {
     public static CompletableFuture<Void> printRestoreStats() {
         return CompletableFuture.runAsync(() -> {
             if (dataSource == null) {
-                logger.warning("DataSource is null, cannot get restore stats");
+                logger.warning(ColorUtils.warning("DataSource is null, cannot get restore stats"));
                 return;
             }
 
@@ -360,21 +361,21 @@ public class TempBlockStorage {
                          "SELECT world, COUNT(*) as count FROM temp_blocks GROUP BY world ORDER BY count DESC");
                  ResultSet rs = ps.executeQuery()) {
 
-                logger.info("=== Temp Blocks Statistics ===");
+                logger.info(ColorUtils.header("Temp Blocks Statistics"));
                 int totalBlocks = 0;
 
                 while (rs.next()) {
                     String worldName = rs.getString("world");
                     int count = rs.getInt("count");
                     totalBlocks += count;
-                    logger.info("World " + worldName + ": " + count + " blocks");
+                    logger.info(ColorUtils.info("World " + worldName + ": " + count + " blocks"));
                 }
 
-                logger.info("Total: " + totalBlocks + " blocks");
-                logger.info("==============================");
+                logger.info(ColorUtils.info("Total: " + totalBlocks + " blocks"));
+                logger.info(ColorUtils.separator());
 
             } catch (SQLException e) {
-                logger.log(Level.WARNING, "Error getting restore stats", e);
+                logger.log(Level.WARNING, ColorUtils.warning("Error getting restore stats"), e);
             }
         });
     }
@@ -410,7 +411,7 @@ public class TempBlockStorage {
                 }
 
             } catch (SQLException e) {
-                logger.log(Level.WARNING, "Error getting temp blocks for world " + worldName, e);
+                logger.log(Level.WARNING, ColorUtils.warning("Error getting temp blocks for world " + worldName), e);
             }
 
             return blocks;
@@ -427,11 +428,11 @@ public class TempBlockStorage {
                 ps.setString(1, worldName);
                 int deleted = ps.executeUpdate();
 
-                logger.info("Cleared " + deleted + " temp blocks for world " + worldName);
+                logger.info(ColorUtils.info("Cleared " + deleted + " temp blocks for world " + worldName));
                 return deleted;
 
             } catch (SQLException e) {
-                logger.log(Level.SEVERE, "Error clearing temp blocks for world " + worldName, e);
+                logger.log(Level.SEVERE, ColorUtils.error("Error clearing temp blocks for world " + worldName), e);
                 return 0;
             }
         });
@@ -443,9 +444,9 @@ public class TempBlockStorage {
     }
 
     public static void forceFlushAll() {
-        logger.info("Force flushing all temp block operations...");
+        logger.info(ColorUtils.database("Force flushing all temp block operations..."));
         flush();
-        logger.info("Force flush completed");
+        logger.info(ColorUtils.success("Force flush completed"));
     }
 
     private static class TempBlockData {

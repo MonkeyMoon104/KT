@@ -2,6 +2,7 @@ package com.monkey.kt.economy.storage;
 
 import com.monkey.kt.storage.DatabaseDialect;
 import com.monkey.kt.storage.DatabaseExecutor;
+import com.monkey.kt.utils.ColorUtils;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.*;
@@ -50,12 +51,12 @@ public class KillCoinsStorage {
                         balanceCache.put(uuid, balance);
                         loaded++;
                     } catch (IllegalArgumentException e) {
-                        logger.warning("Invalid UUID found in balance table: " + rs.getString("uuid"));
+                        logger.warning(ColorUtils.warning("Invalid UUID found in balance table: " + rs.getString("uuid")));
                     }
                 }
-                logger.info("Loaded " + loaded + " player balances from database");
+                logger.info(ColorUtils.economy("Loaded " + loaded + " player balances from database"));
             } catch (SQLException e) {
-                logger.log(Level.SEVERE, "Error loading player balances", e);
+                logger.log(Level.SEVERE, ColorUtils.error("Error loading player balances"), e);
             }
         });
     }
@@ -74,12 +75,12 @@ public class KillCoinsStorage {
                         purchaseCache.computeIfAbsent(uuid, k -> new HashSet<>()).add(effect);
                         loaded++;
                     } catch (IllegalArgumentException e) {
-                        logger.warning("Invalid UUID found in purchases table: " + rs.getString("uuid"));
+                        logger.warning(ColorUtils.warning("Invalid UUID found in purchases table: " + rs.getString("uuid")));
                     }
                 }
-                logger.info("Loaded " + loaded + " player purchases from database");
+                logger.info(ColorUtils.purchase("Loaded " + loaded + " player purchases from database"));
             } catch (SQLException e) {
-                logger.log(Level.SEVERE, "Error loading player purchases", e);
+                logger.log(Level.SEVERE, ColorUtils.error("Error loading player purchases"), e);
             }
         });
     }
@@ -205,7 +206,7 @@ public class KillCoinsStorage {
                         balanceCache.put(entry.getKey(), entry.getValue());
                     }
                     ps.executeBatch();
-                    logger.info("Batch saved " + balances.size() + " player balances");
+                    logger.info(ColorUtils.batch("Batch saved " + balances.size() + " player balances"));
                 }
             });
         });
@@ -240,7 +241,7 @@ public class KillCoinsStorage {
                         }
                     }
                     ps.executeBatch();
-                    logger.info("Batch saved purchases for " + purchases.size() + " players");
+                    logger.info(ColorUtils.batch("Batch saved purchases for " + purchases.size() + " players"));
                 }
             });
         });
@@ -264,9 +265,9 @@ public class KillCoinsStorage {
                 try (Statement stmt = connection.createStatement()) {
                     int deleted = stmt.executeUpdate("DELETE FROM killcoins_balance");
                     balanceCache.clear();
-                    logger.info("Cleared all player balances (" + deleted + " records)");
+                    logger.info(ColorUtils.info("Cleared all player balances (" + deleted + " records)"));
                 } catch (SQLException e) {
-                    logger.log(Level.SEVERE, "Error clearing balances", e);
+                    logger.log(Level.SEVERE, ColorUtils.error("Error clearing balances"), e);
                 }
             });
         });
@@ -278,23 +279,23 @@ public class KillCoinsStorage {
                 try (Statement stmt = connection.createStatement()) {
                     int deleted = stmt.executeUpdate("DELETE FROM killcoins_purchases");
                     purchaseCache.clear();
-                    logger.info("Cleared all player purchases (" + deleted + " records)");
+                    logger.info(ColorUtils.info("Cleared all player purchases (" + deleted + " records)"));
                 } catch (SQLException e) {
-                    logger.log(Level.SEVERE, "Error clearing purchases", e);
+                    logger.log(Level.SEVERE, ColorUtils.error("Error clearing purchases"), e);
                 }
             });
         });
     }
 
     public void forceSyncAll() {
-        logger.info("Force syncing all economy data to database...");
+        logger.info(ColorUtils.database("Force syncing all economy data to database..."));
 
         CompletableFuture.allOf(
                 batchSaveBalances(new java.util.HashMap<>(balanceCache)),
                 batchSavePurchases(new java.util.HashMap<>(purchaseCache))
         ).join();
 
-        logger.info("Force sync completed");
+        logger.info(ColorUtils.success("Force sync completed"));
     }
 
     private String getInsertOrIgnoreBalanceQuery() {

@@ -1,5 +1,6 @@
 package com.monkey.kt.storage;
 
+import com.monkey.kt.utils.ColorUtils;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.*;
@@ -41,7 +42,7 @@ public class DatabaseExecutor {
 
     public boolean execute(DatabaseOperation operation) {
         if (dataSource == null || dataSource.isClosed()) {
-            logger.warning("DataSource is not available");
+            logger.warning(ColorUtils.warning("DataSource is not available"));
             return false;
         }
 
@@ -49,7 +50,7 @@ public class DatabaseExecutor {
             operation.execute(connection);
             return true;
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Database operation failed", e);
+            logger.log(Level.SEVERE, ColorUtils.error("Database operation failed"), e);
             return false;
         }
     }
@@ -60,21 +61,21 @@ public class DatabaseExecutor {
 
     public <T> T query(DatabaseQuery<T> query, T defaultValue) {
         if (dataSource == null || dataSource.isClosed()) {
-            logger.warning("DataSource is not available");
+            logger.warning(ColorUtils.warning("DataSource is not available"));
             return defaultValue;
         }
 
         try (Connection connection = dataSource.getConnection()) {
             return query.execute(connection);
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Database query failed", e);
+            logger.log(Level.SEVERE, ColorUtils.error("Database query failed"), e);
             return defaultValue;
         }
     }
 
     public boolean executeStatement(String sql, PreparedOperation operation) {
         if (dataSource == null || dataSource.isClosed()) {
-            logger.warning("DataSource is not available");
+            logger.warning(ColorUtils.warning("DataSource is not available"));
             return false;
         }
 
@@ -84,7 +85,7 @@ public class DatabaseExecutor {
             operation.execute(statement);
             return true;
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Prepared statement execution failed: " + sql, e);
+            logger.log(Level.SEVERE, ColorUtils.error("Prepared statement execution failed: " + sql), e);
             return false;
         }
     }
@@ -95,7 +96,7 @@ public class DatabaseExecutor {
 
     public <T> T queryStatement(String sql, PreparedQuery<T> query, T defaultValue) {
         if (dataSource == null || dataSource.isClosed()) {
-            logger.warning("DataSource is not available");
+            logger.warning(ColorUtils.warning("DataSource is not available"));
             return defaultValue;
         }
 
@@ -104,14 +105,14 @@ public class DatabaseExecutor {
 
             return query.execute(statement);
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Prepared statement query failed: " + sql, e);
+            logger.log(Level.SEVERE, ColorUtils.error("Prepared statement query failed: " + sql), e);
             return defaultValue;
         }
     }
 
     public boolean executeTransaction(DatabaseOperation operation) {
         if (dataSource == null || dataSource.isClosed()) {
-            logger.warning("DataSource is not available");
+            logger.warning(ColorUtils.warning("DataSource is not available"));
             return false;
         }
 
@@ -129,14 +130,14 @@ public class DatabaseExecutor {
                 connection.setAutoCommit(true);
             }
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Transaction failed", e);
+            logger.log(Level.SEVERE, ColorUtils.error("Transaction failed"), e);
             return false;
         }
     }
 
     public boolean executeBatch(String sql, List<PreparedOperation> operations) {
         if (dataSource == null || dataSource.isClosed()) {
-            logger.warning("DataSource is not available");
+            logger.warning(ColorUtils.warning("DataSource is not available"));
             return false;
         }
 

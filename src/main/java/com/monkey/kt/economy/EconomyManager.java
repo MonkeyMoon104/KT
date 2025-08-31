@@ -3,6 +3,7 @@ package com.monkey.kt.economy;
 import com.monkey.kt.KT;
 import com.monkey.kt.economy.storage.KillCoinsStorage;
 import com.monkey.kt.storage.DatabaseManager;
+import com.monkey.kt.utils.ColorUtils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
@@ -28,7 +29,7 @@ public class EconomyManager {
     }
     public void initialize() {
         if (initialized) {
-            plugin.getLogger().warning("EconomyManager already initialized!");
+            plugin.getLogger().warning(ColorUtils.warning("EconomyManager already initialized!"));
             return;
         }
 
@@ -37,15 +38,15 @@ public class EconomyManager {
         } else {
             setupVaultEconomy();
             if (vaultEconomy == null) {
-                plugin.getLogger().warning("Failed to setup Vault economy, falling back to internal economy");
+                plugin.getLogger().warning(ColorUtils.warning("Failed to setup Vault economy, falling back to internal economy"));
                 useInternal = true;
                 setupInternalEconomy();
             }
         }
 
         initialized = true;
-        plugin.getLogger().info("Economy system initialized using: " +
-                (useInternal ? "Internal KillCoins" : "Vault (" + vaultEconomy.getName() + ")"));
+        plugin.getLogger().info(ColorUtils.economy("Economy system initialized using: " +
+                (useInternal ? "Internal KillCoins" : "Vault (" + vaultEconomy.getName() + ")")));
     }
 
     private void setupInternalEconomy() {
@@ -61,24 +62,24 @@ public class EconomyManager {
             );
 
             this.internalEconomy = new KillCoinsEco(plugin, storage);
-            plugin.getLogger().info("Internal economy (KillCoins) initialized with " +
-                    databaseManager.getDialect().name() + " database");
+            plugin.getLogger().info(ColorUtils.success("Internal economy (KillCoins) initialized with " +
+                    databaseManager.getDialect().name() + " database"));
 
         } catch (Exception e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to initialize internal economy", e);
+            plugin.getLogger().log(Level.SEVERE, ColorUtils.error("Failed to initialize internal economy"), e);
             throw new RuntimeException("Internal economy initialization failed", e);
         }
     }
 
     private void setupVaultEconomy() {
         if (plugin.getServer().getPluginManager().getPlugin("Vault") == null) {
-            plugin.getLogger().warning("Vault not found! Cannot use external economy.");
+            plugin.getLogger().warning(ColorUtils.warning("Vault not found! Cannot use external economy."));
             return;
         }
 
         RegisteredServiceProvider<Economy> rsp = plugin.getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
-            plugin.getLogger().warning("No Vault economy provider found!");
+            plugin.getLogger().warning(ColorUtils.warning("No Vault economy provider found!"));
             return;
         }
 
@@ -89,7 +90,7 @@ public class EconomyManager {
 
     public boolean isEnabled() {
         if (!initialized) {
-            plugin.getLogger().warning("Economy system not initialized!");
+            plugin.getLogger().warning(ColorUtils.warning("Economy system not initialized!"));
             return false;
         }
 
@@ -267,7 +268,7 @@ public class EconomyManager {
 
     public void shutdown() {
         if (internalEconomy != null) {
-            plugin.getLogger().info("Syncing economy data before shutdown...");
+            plugin.getLogger().info(ColorUtils.database("Syncing economy data before shutdown..."));
             internalEconomy.forceSyncAll();
         }
         initialized = false;
