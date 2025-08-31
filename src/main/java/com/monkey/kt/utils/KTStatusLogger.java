@@ -79,12 +79,11 @@ public class KTStatusLogger {
 
         boolean dbOpen = false;
         try {
-            if (plugin.getDatabaseManager() != null) {
-                Connection conn = plugin.getDatabaseManager().getConnection();
-                dbOpen = (conn != null && !conn.isClosed());
+            if (plugin.getDatabaseManager() != null && plugin.getDatabaseManager().getExecutor() != null) {
+                dbOpen = plugin.getDatabaseManager().getExecutor().isAvailable();
             }
         } catch (Exception e) {
-            logger.warning("Error while checking database status.");
+            logger.warning("Error while checking database status: " + e.getMessage());
         }
 
         boolean econActive = false;
