@@ -1,7 +1,6 @@
 package com.monkey.kt.config;
 
 import com.monkey.kt.KT;
-import com.monkey.kt.config.backup.BackupUtil;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -18,18 +17,16 @@ public class ConfigService {
 
     private final KT plugin;
     private final String fileName;
-    private final int backupRetention;
     private final String versionKey;
 
     public ConfigService(KT plugin) {
-        this(plugin, "config.yml", "config-version", 5);
+        this(plugin, "config.yml", "config-version");
     }
 
-    public ConfigService(KT plugin, String fileName, String versionKey, int backupRetention) {
+    public ConfigService(KT plugin, String fileName, String versionKey) {
         this.plugin = plugin;
         this.fileName = fileName;
         this.versionKey = versionKey;
-        this.backupRetention = backupRetention;
     }
 
     public void updateAndReload() {
@@ -38,8 +35,6 @@ public class ConfigService {
 
             File file = new File(plugin.getDataFolder(), fileName);
             File defaultFile = extractDefaultConfig();
-
-            BackupUtil.backup(plugin.getLogger(), file, backupRetention);
 
             String mergedYaml = mergePreservingSpacing(file, defaultFile);
 
