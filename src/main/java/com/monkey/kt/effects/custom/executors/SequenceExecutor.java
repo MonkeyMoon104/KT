@@ -6,9 +6,11 @@ import com.monkey.kt.effects.custom.CustomKillEffect;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Map;
 
 public class SequenceExecutor {
 
@@ -36,36 +38,71 @@ public class SequenceExecutor {
 
     private void executeActions(List<?> actions, Player killer, Location location) {
         if (actions == null || actions.isEmpty()) {
+            plugin.getLogger().warning("[CustomEffect] Actions list is null or empty!");
             return;
         }
 
+        plugin.getLogger().info("[CustomEffect] Executing " + actions.size() + " actions");
+
         for (Object actionObj : actions) {
-            if (!(actionObj instanceof ConfigurationSection)) {
+            plugin.getLogger().info("[CustomEffect] Action object type: " + actionObj.getClass().getName());
+
+            ConfigurationSection action = null;
+
+            if (actionObj instanceof ConfigurationSection) {
+                action = (ConfigurationSection) actionObj;
+                plugin.getLogger().info("[CustomEffect] Action is ConfigurationSection");
+            } else if (actionObj instanceof Map) {
+                // Converti Map in ConfigurationSection usando YamlConfiguration
+                Map<?, ?> actionMap = (Map<?, ?>) actionObj;
+                plugin.getLogger().info("[CustomEffect] Action is Map with " + actionMap.size() + " entries");
+
+                YamlConfiguration tempConfig = new YamlConfiguration();
+
+                for (Map.Entry<?, ?> entry : actionMap.entrySet()) {
+                    plugin.getLogger().info("[CustomEffect]   Map entry: " + entry.getKey() + " = " + entry.getValue());
+                    tempConfig.set(entry.getKey().toString(), entry.getValue());
+                }
+                action = tempConfig;
+            } else {
+                plugin.getLogger().warning("[CustomEffect] Unknown action type: " + actionObj.getClass().getName());
                 continue;
             }
 
-            ConfigurationSection action = (ConfigurationSection) actionObj;
-            String type = action.getString("type", "").toUpperCase();
+            String type = action.getString("type", "");
+            plugin.getLogger().info("[CustomEffect] Action type RAW: '" + type + "'");
+            plugin.getLogger().info("[CustomEffect] Action type UPPER: '" + type.toUpperCase() + "'");
+
+            if (type == null || type.isEmpty()) {
+                plugin.getLogger().warning("[CustomEffect] Action type is null or empty!");
+                continue;
+            }
+
+            type = type.toUpperCase();
 
             switch (type) {
                 case "SOUND":
+                    plugin.getLogger().info("[CustomEffect] Executing SOUND action");
                     executeSound(action, location);
                     break;
 
                 case "PARTICLE":
+                    plugin.getLogger().info("[CustomEffect] Executing PARTICLE action");
                     executeParticle(action, location);
                     break;
 
                 case "PARTICLE_PATTERN":
+                    plugin.getLogger().info("[CustomEffect] Executing PARTICLE_PATTERN action");
                     executePattern(action, location);
                     break;
 
                 case "DAMAGE":
+                    plugin.getLogger().info("[CustomEffect] Executing DAMAGE action");
                     executeDamage(action, killer, location);
                     break;
 
                 default:
-                    plugin.getLogger().warning("Unknown sequence action type: " + type);
+                    plugin.getLogger().warning("[CustomEffect] Unknown sequence action type: '" + type + "'");
             }
         }
     }

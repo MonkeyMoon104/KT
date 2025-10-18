@@ -8,8 +8,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -31,88 +31,36 @@ public class CustomEffectLoader {
         if (!customEffectsFolder.exists()) {
             if (customEffectsFolder.mkdirs()) {
                 plugin.getLogger().info("Created customeffects folder");
-
-                createDefaultTemplate();
             }
+        }
+
+        File[] existingFiles = customEffectsFolder.listFiles((dir, name) ->
+                name.endsWith(".yml") && !name.equals("defaulteffect.yml")
+        );
+
+        if (existingFiles == null || existingFiles.length == 0) {
+            copyDefaultEffectFromResources();
         }
     }
 
-    private void createDefaultTemplate() {
-        File templateFile = new File(customEffectsFolder, "defaulteffect.yml");
+    private void copyDefaultEffectFromResources() {
+        File defaultEffectFile = new File(customEffectsFolder, "defaulteffect.yml");
 
-        if (!templateFile.exists()) {
-            try (InputStream in = plugin.getResource("defaulteffect.yml")) {
-                if (in != null) {
-                    Files.copy(in, templateFile.toPath());
-                    plugin.getLogger().info("Created defaulteffect.yml template in customeffects folder");
-                } else {
-                    createBasicTemplate(templateFile);
-                }
-            } catch (IOException e) {
-                plugin.getLogger().log(Level.WARNING, "Failed to create defaulteffect.yml template", e);
-                createBasicTemplate(templateFile);
-            }
+        if (defaultEffectFile.exists()) {
+            plugin.getLogger().info("defaulteffect.yml already exists, skipping...");
+            return;
         }
-    }
 
-    private void createBasicTemplate(File file) {
-        YamlConfiguration config = new YamlConfiguration();
-
-        config.set("effect.id", "example_effect");
-        config.set("effect.name", "&bExample Effect");
-        config.set("effect.description", Arrays.asList("&7This is an example", "&8Customize it!"));
-        config.set("effect.icon", "DIAMOND");
-        config.set("effect.price", 1000);
-        config.set("effect.permission", "");
-
-        config.set("sounds.enabled", true);
-        config.set("sounds.sounds", Arrays.asList(
-                createSoundMap("ENTITY_FIREWORK_ROCKET_BLAST", 1.0, 1.0, 0)
-        ));
-
-        config.set("particles.enabled", true);
-        List<Object> particles = new ArrayList<>();
-        particles.add(createParticleMap("FLAME", 50, 1.5, 1.5, 1.5, 0.05, 0, 20, 2));
-        config.set("particles.effects", particles);
-
-        config.set("damage.enabled", false);
-        config.set("damage.value", 5.0);
-        config.set("damage.radius", 5.0);
-
-        try {
-            config.save(file);
-            plugin.getLogger().info("Created basic template at " + file.getName());
+        try (InputStream in = plugin.getResource("customeffects/defaulteffect.yml")) {
+            if (in != null) {
+                Files.copy(in, defaultEffectFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                plugin.getLogger().info("Created defaulteffect.yml template from resources");
+            } else {
+                plugin.getLogger().warning("defaulteffect.yml not found in plugin resources!");
+            }
         } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to save basic template", e);
+            plugin.getLogger().log(Level.WARNING, "Failed to copy defaulteffect.yml from resources", e);
         }
-    }
-
-    private Object createSoundMap(String sound, double volume, double pitch, int delay) {
-        java.util.Map<String, Object> map = new java.util.HashMap<>();
-        map.put("sound", sound);
-        map.put("volume", volume);
-        map.put("pitch", pitch);
-        map.put("delay", delay);
-        return map;
-    }
-
-    private Object createParticleMap(String type, int count, double x, double y, double z,
-                                     double speed, int delay, int duration, int interval) {
-        java.util.Map<String, Object> map = new java.util.HashMap<>();
-        map.put("type", type);
-        map.put("count", count);
-
-        java.util.Map<String, Double> offset = new java.util.HashMap<>();
-        offset.put("x", x);
-        offset.put("y", y);
-        offset.put("z", z);
-        map.put("offset", offset);
-
-        map.put("speed", speed);
-        map.put("delay", delay);
-        map.put("duration", duration);
-        map.put("interval", interval);
-        return map;
     }
 
     public void loadAllCustomEffects() {
@@ -133,7 +81,7 @@ public class CustomEffectLoader {
         for (File file : files) {
             try {
                 YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-                CustomEffectConfig effectConfig = new CustomEffectConfig(config, file.getName());
+                CustomEffectConfig effectConfig = new CustomEffectConfig(config, file.getName(), plugin);
 
                 if (effectConfig.isValid()) {
                     loadedEffects.add(effectConfig);

@@ -1,5 +1,6 @@
 package com.monkey.kt.effects.custom;
 
+import com.monkey.kt.KT;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -9,11 +10,13 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CustomEffectConfig {
 
     private final YamlConfiguration config;
     private final String fileName;
+    private final KT plugin;
 
     private String id;
     private String name;
@@ -67,9 +70,10 @@ public class CustomEffectConfig {
     private List<Material> requiredWeapons;
     private String requiredKillType;
 
-    public CustomEffectConfig(YamlConfiguration config, String fileName) {
+    public CustomEffectConfig(YamlConfiguration config, String fileName, KT plugin) {
         this.config = config;
         this.fileName = fileName;
+        this.plugin = plugin;
         load();
     }
 
@@ -336,14 +340,29 @@ public class CustomEffectConfig {
 
         if (sequenceEnabled && config.contains("sequence.steps")) {
             List<?> stepList = config.getList("sequence.steps");
+
             if (stepList != null) {
                 for (Object obj : stepList) {
+                    ConfigurationSection section = null;
+
                     if (obj instanceof ConfigurationSection) {
-                        ConfigurationSection section = (ConfigurationSection) obj;
-                        sequenceSteps.add(new SequenceStep(
-                                section.getInt("tick", 0),
-                                section.getList("actions")
-                        ));
+                        section = (ConfigurationSection) obj;
+                    } else if (obj instanceof Map) {
+                        Map<?, ?> stepMap = (Map<?, ?>) obj;
+                        org.bukkit.configuration.file.YamlConfiguration tempConfig =
+                                new org.bukkit.configuration.file.YamlConfiguration();
+
+                        for (Map.Entry<?, ?> entry : stepMap.entrySet()) {
+                            tempConfig.set(entry.getKey().toString(), entry.getValue());
+                        }
+                        section = tempConfig;
+                    }
+
+                    if (section != null) {
+                        int tick = section.getInt("tick", 0);
+                        List<?> actions = section.getList("actions");
+
+                        sequenceSteps.add(new SequenceStep(tick, actions));
                     }
                 }
             }

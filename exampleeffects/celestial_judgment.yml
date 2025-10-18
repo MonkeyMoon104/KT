@@ -1,0 +1,385 @@
+# ========================================
+# KT Custom Effect - Celestial Judgment
+# ========================================
+
+effect:
+  id: "celestial_judgment"
+  name: "&e&lCelestial &f&lJudgment"
+  description:
+    - "&7Call upon the heavens to"
+    - "&ejudge your enemies with holy light"
+    - "&8Created by: Divine Powers"
+  icon: "BEACON"
+  price: 7500
+  permission: ""
+
+sounds:
+  enabled: false
+
+particles:
+  enabled: false
+
+patterns:
+  enabled: false
+
+entities:
+  enabled: false
+
+projectiles:
+  enabled: false
+
+damage:
+  enabled: false
+
+potions:
+  enabled: true
+  killer:
+    - type: "REGENERATION"
+      amplifier: 3
+      duration: 120
+    - type: "ABSORPTION"
+      amplifier: 2
+      duration: 120
+    - type: "GLOWING"
+      amplifier: 1
+      duration: 80
+    - type: "SPEED"
+      amplifier: 2
+      duration: 100
+  nearby:
+    radius: 10.0
+    effects:
+      - type: "BLINDNESS"
+        amplifier: 2
+        duration: 60
+      - type: "SLOWNESS"
+        amplifier: 3
+        duration: 80
+      - type: "WEAKNESS"
+        amplifier: 2
+        duration: 100
+
+messages:
+  killer: "&e⚡ &fYou have summoned &eCelestial Judgment &fupon your enemies!"
+  victim: "&7You have been judged by the heavens..."
+  broadcast: "&e⚡ &b%killer% &fhas unleashed &eCelestial Judgment &e⚡"
+  action_bar:
+    enabled: true
+    killer: "&e✦ &fDIVINE POWER ACTIVATED &e✦"
+    victim: "&7You cannot escape divine judgment..."
+
+cooldown: 30
+
+requirements:
+  weapon:
+    enabled: false
+    materials: []
+  kill_type:
+    enabled: false
+    type: "ANY"
+  worlds:
+    enabled: false
+    mode: "WHITELIST"
+    list: []
+
+sequence:
+  enabled: true
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_BEACON_ACTIVATE"
+          volume: 1.8
+          pitch: 1.5
+        - type: "SOUND"
+          sound: "BLOCK_PORTAL_TRIGGER"
+          volume: 1.5
+          pitch: 2.0
+        - type: "PARTICLE"
+          particle: "ENCHANTED_HIT"
+          count: 200
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 120
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 80
+
+    - tick: 3
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "CIRCLE"
+          particle: "END_ROD"
+          radius: 3.0
+        - type: "PARTICLE"
+          particle: "SOUL_FIRE_FLAME"
+          count: 100
+
+    - tick: 6
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_ENCHANTMENT_TABLE_USE"
+          volume: 1.5
+          pitch: 1.8
+        - type: "PARTICLE"
+          particle: "ENCHANTED_HIT"
+          count: 150
+        - type: "PARTICLE_PATTERN"
+          pattern: "CIRCLE"
+          particle: "ENCHANTED_HIT"
+          radius: 3.5
+
+    - tick: 10
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_BEACON_AMBIENT"
+          volume: 1.2
+          pitch: 1.5
+        - type: "PARTICLE_PATTERN"
+          pattern: "HELIX"
+          particle: "SOUL_FIRE_FLAME"
+          radius: 2.0
+        - type: "PARTICLE"
+          particle: "DUST"
+          count: 250
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 120
+
+    - tick: 13
+      actions:
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 180
+        - type: "PARTICLE_PATTERN"
+          pattern: "SPIRAL"
+          particle: "ENCHANTED_HIT"
+          radius: 2.5
+
+    - tick: 17
+      actions:
+        - type: "SOUND"
+          sound: "ENTITY_EVOKER_PREPARE_ATTACK"
+          volume: 1.5
+          pitch: 1.2
+        - type: "PARTICLE"
+          particle: "SOUL_FIRE_FLAME"
+          count: 200
+        - type: "PARTICLE_PATTERN"
+          pattern: "RING"
+          particle: "FIREWORK"
+          radius: 4.0
+
+    - tick: 20
+      actions:
+        - type: "SOUND"
+          sound: "ENTITY_LIGHTNING_BOLT_THUNDER"
+          volume: 1.5
+          pitch: 1.8
+        - type: "PARTICLE"
+          particle: "SOUL_FIRE_FLAME"
+          count: 220
+        - type: "PARTICLE_PATTERN"
+          pattern: "SPHERE"
+          particle: "FIREWORK"
+          radius: 3.5
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 200
+
+    - tick: 24
+      actions:
+        - type: "PARTICLE"
+          particle: "ENCHANTED_HIT"
+          count: 300
+        - type: "PARTICLE_PATTERN"
+          pattern: "HELIX"
+          particle: "END_ROD"
+          radius: 2.5
+
+    - tick: 28
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_BELL_USE"
+          volume: 2.0
+          pitch: 2.0
+        - type: "PARTICLE"
+          particle: "DUST"
+          count: 350
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 200
+        - type: "PARTICLE_PATTERN"
+          pattern: "CIRCLE"
+          particle: "SOUL_FIRE_FLAME"
+          radius: 5.0
+
+    - tick: 32
+      actions:
+        - type: "SOUND"
+          sound: "ENTITY_EVOKER_CAST_SPELL"
+          volume: 1.8
+          pitch: 1.5
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 280
+        - type: "PARTICLE"
+          particle: "SOUL_FIRE_FLAME"
+          count: 180
+
+    - tick: 36
+      actions:
+        - type: "SOUND"
+          sound: "ENTITY_GENERIC_EXPLODE"
+          volume: 2.2
+          pitch: 1.5
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 500
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 350
+        - type: "PARTICLE_PATTERN"
+          pattern: "SPHERE"
+          particle: "ENCHANTED_HIT"
+          radius: 4.5
+
+    - tick: 40
+      actions:
+        - type: "SOUND"
+          sound: "ENTITY_PLAYER_LEVELUP"
+          volume: 1.2
+          pitch: 2.0
+        - type: "PARTICLE"
+          particle: "SOUL_FIRE_FLAME"
+          count: 300
+        - type: "PARTICLE_PATTERN"
+          pattern: "CIRCLE"
+          particle: "ENCHANTED_HIT"
+          radius: 5.5
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 250
+
+    - tick: 45
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_RESPAWN_ANCHOR_CHARGE"
+          volume: 1.8
+          pitch: 1.3
+        - type: "DAMAGE"
+          radius: 8.0
+          damage: 10.0
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 600
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 400
+        - type: "PARTICLE"
+          particle: "ENCHANTED_HIT"
+          count: 300
+        - type: "PARTICLE_PATTERN"
+          pattern: "SPHERE"
+          particle: "SOUL_FIRE_FLAME"
+          radius: 5.0
+
+    - tick: 50
+      actions:
+        - type: "SOUND"
+          sound: "ITEM_TOTEM_USE"
+          volume: 2.0
+          pitch: 1.0
+        - type: "PARTICLE"
+          particle: "DUST"
+          count: 400
+        - type: "PARTICLE_PATTERN"
+          pattern: "CIRCLE"
+          particle: "END_ROD"
+          radius: 6.0
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 350
+
+    - tick: 55
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "HELIX"
+          particle: "SOUL_FIRE_FLAME"
+          radius: 3.0
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 280
+        - type: "PARTICLE"
+          particle: "ENCHANTED_HIT"
+          count: 200
+
+    - tick: 60
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_BEACON_DEACTIVATE"
+          volume: 1.5
+          pitch: 0.8
+        - type: "PARTICLE_PATTERN"
+          pattern: "SPHERE"
+          particle: "FIREWORK"
+          radius: 4.5
+        - type: "PARTICLE"
+          particle: "SOUL_FIRE_FLAME"
+          count: 220
+
+    - tick: 65
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "RING"
+          particle: "END_ROD"
+          radius: 7.0
+        - type: "PARTICLE"
+          particle: "DUST"
+          count: 250
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 180
+
+    - tick: 70
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "CIRCLE"
+          particle: "ENCHANTED_HIT"
+          radius: 8.0
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 150
+        - type: "PARTICLE"
+          particle: "SOUL_FIRE_FLAME"
+          count: 120
+
+    - tick: 75
+      actions:
+        - type: "SOUND"
+          sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
+          volume: 1.0
+          pitch: 2.0
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 100
+        - type: "PARTICLE_PATTERN"
+          pattern: "CIRCLE"
+          particle: "END_ROD"
+          radius: 9.0
+
+performance:
+  max_players: 50
+  max_entities: 15
+  min_tps: 15.0
+
+advanced:
+  cancel_death: false
+  teleport_victim:
+    enabled: false
+    height: 0
+  custom_nbt: {}
+  commands:
+    enabled: false
+    as_console: []
+    as_player: []
