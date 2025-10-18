@@ -34,7 +34,8 @@ public class KT extends JavaPlugin {
     private DatabaseManager databaseManager;
     private GUIManager guiManager;
     private KillEffectFactory factory;
-    private EffectRegistry effectRegistry;private KillCoinsEco killCoinsEco;
+    private EffectRegistry effectRegistry;
+    private KillCoinsEco killCoinsEco;
     private CooldownManager cooldownManager;
     private KTStatusLogger statusLogger;
     private AuraBoostManager auraBoostManager;
@@ -46,7 +47,6 @@ public class KT extends JavaPlugin {
     private KillRewardListener killRewardListener;
     private KTCommand ktCommand;
     private EventManager eventManager;
-
     private CustomEffectLoader customEffectLoader;
 
     @Override
@@ -85,12 +85,15 @@ public class KT extends JavaPlugin {
 
         eventManager = new EventManager(this);
 
-        guiManager = new GUIManager(this, economyManager);
         effectRegistry = new EffectRegistry(this);
-        effectRegistry.loadEffects();
+        effectRegistry.loadEffects(false);
 
         this.customEffectLoader = new CustomEffectLoader(this);
         this.customEffectLoader.loadAllCustomEffects();
+
+        cleanupObsoleteEffects();
+
+        guiManager = new GUIManager(this, economyManager);
 
         statusLogger = new KTStatusLogger(this, 26511, economyManager);
         statusLogger.logEnable();
@@ -187,6 +190,88 @@ public class KT extends JavaPlugin {
         }
 
         getLogger().info("Resource pack configured: " + url);
+    }
+
+    private void cleanupObsoleteEffects() {
+        SchedulerWrapper.runTaskAsynchronously(this, () -> {
+            try {
+                java.util.Set<String> validEffects = new java.util.HashSet<>(
+                        com.monkey.kt.effects.KillEffectFactory.getRegisteredEffects()
+                );
+
+                java.util.Map<java.util.UUID, String> allEffects =
+                        com.monkey.kt.storage.EffectStorage.getAllEffects();
+
+                int removed = 0;
+                for (java.util.Map.Entry<java.util.UUID, String> entry : allEffects.entrySet()) {
+                    String effectName = entry.getValue();
+                    if (!validEffects.contains(effectName.toLowerCase())) {
+                        com.monkey.kt.storage.EffectStorage.removeEffect(entry.getKey());
+                        removed++;
+                        getLogger().info("Removed obsolete effect '" + effectName +
+                                "' from player " + entry.getKey());
+                    }
+                }
+
+                if (removed > 0) {
+                    getLogger().info("Cleaned up " + removed + " obsolete effects from database");
+                }
+
+                if (economyManager != null && economyManager.getInternalEconomy() != null) {
+                    cleanupObsoletePurchases(validEffects);
+                }
+
+            } catch (Exception e) {
+                getLogger().warning("Error cleaning up obsolete effects: " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void cleanupObsoletePurchases(java.util.Set<String> validEffects) {
+        try {
+            com.monkey.kt.economy.storage.KillCoinsStorage storage =
+                    economyManager.getInternalEconomy().getStorage();
+
+            java.util.Map<java.util.UUID, java.util.Set<String>> allPurchases =
+                    storage.getAllPurchases();
+
+            databaseManager.getExecutor().executeTransaction(connection -> {
+                String deleteSql = "DELETE FROM killcoins_purchases WHERE effect = ?";
+                try (java.sql.PreparedStatement ps = connection.prepareStatement(deleteSql)) {
+
+                    int totalRemoved = 0;
+                    for (java.util.Map.Entry<java.util.UUID, java.util.Set<String>> entry : allPurchases.entrySet()) {
+                        java.util.Set<String> playerPurchases = entry.getValue();
+
+                        for (String effectName : playerPurchases) {
+                            if (!validEffects.contains(effectName.toLowerCase())) {
+                                ps.setString(1, effectName);
+                                int removed = ps.executeUpdate();
+                                totalRemoved += removed;
+
+                                getLogger().info("Removed obsolete purchase '" + effectName +
+                                        "' from player " + entry.getKey());
+                            }
+                        }
+                    }
+
+                    if (totalRemoved > 0) {
+                        getLogger().info("Cleaned up " + totalRemoved +
+                                " obsolete purchases from database");
+                    }
+
+                } catch (java.sql.SQLException e) {
+                    throw e;
+                }
+            });
+
+            storage.getAllPurchases().clear();
+
+        } catch (Exception e) {
+            getLogger().warning("Error cleaning up obsolete purchases: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public DatabaseManager getDatabaseManager() {

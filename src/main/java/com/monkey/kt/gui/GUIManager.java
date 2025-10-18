@@ -23,11 +23,15 @@ public class GUIManager {
     private final Map<String, ItemStack> effects = new LinkedHashMap<>();
 
     public GUIManager(KT plugin, EconomyManager eco) {
+        this(plugin, eco, EffectIconMap.ICONS.keySet());
+    }
+
+    public GUIManager(KT plugin, EconomyManager eco, Set<String> enabledEffects) {
         this.plugin = plugin;
         this.eco = eco;
         this.loader = new EffectLoader(plugin);
 
-        reloadGUI(EffectIconMap.ICONS.keySet());
+        reloadGUI(enabledEffects);
     }
 
     public void updateEconomyManager(EconomyManager economyManager) {
@@ -150,6 +154,8 @@ public class GUIManager {
     public void reloadGUI(Set<String> enabledEffects) {
         effects.clear();
         effects.putAll(loader.loadEffects(enabledEffects));
+
+        plugin.getLogger().info("GUI reloaded with " + effects.size() + " effects");
     }
 
     public Map<String, ItemStack> getEffects() {

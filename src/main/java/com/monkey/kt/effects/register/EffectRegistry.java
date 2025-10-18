@@ -21,6 +21,10 @@ public class EffectRegistry {
     }
 
     public void loadEffects() {
+        loadEffects(true);
+    }
+
+    public void loadEffects(boolean reloadGUI) {
         KillEffectFactory.clearEffects();
         Set<String> enabledEffects = new HashSet<>();
 
@@ -58,7 +62,9 @@ public class EffectRegistry {
             }
         }
 
-        plugin.getGuiManager().reloadGUI(enabledEffects);
+        if (reloadGUI && plugin.getGuiManager() != null) {
+            plugin.getGuiManager().reloadGUI(enabledEffects);
+        }
     }
 
     public int getLoadedEffectsCount() {

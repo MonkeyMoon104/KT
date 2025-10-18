@@ -53,7 +53,6 @@ public class SequenceExecutor {
                 action = (ConfigurationSection) actionObj;
                 plugin.getLogger().info("[CustomEffect] Action is ConfigurationSection");
             } else if (actionObj instanceof Map) {
-                // Converti Map in ConfigurationSection usando YamlConfiguration
                 Map<?, ?> actionMap = (Map<?, ?>) actionObj;
                 plugin.getLogger().info("[CustomEffect] Action is Map with " + actionMap.size() + " entries");
 

@@ -42,7 +42,7 @@ public class ReloadCommand implements SubCommand {
         plugin.reloadConfig();
 
         if (plugin.getEffectRegistry() != null) {
-            plugin.getEffectRegistry().loadEffects();
+            plugin.getEffectRegistry().loadEffects(true);
         }
 
         if (plugin.getCustomEffectLoader() != null) {
@@ -50,6 +50,8 @@ public class ReloadCommand implements SubCommand {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
                     "&6Custom effects reloaded!"));
         }
+
+        cleanupObsoleteEffects();
 
         boolean databaseChanged = checkDatabaseConfigChanged();
 
@@ -121,6 +123,76 @@ public class ReloadCommand implements SubCommand {
 
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
                 plugin.getConfig().getString("messages.config_reloaded", "&aConfiguration reloaded successfully!")));
+    }
+
+    private void cleanupObsoleteEffects() {
+        try {
+            java.util.Set<String> validEffects = new java.util.HashSet<>(
+                    com.monkey.kt.effects.KillEffectFactory.getRegisteredEffects()
+            );
+
+            java.util.Map<java.util.UUID, String> allEffects =
+                    com.monkey.kt.storage.EffectStorage.getAllEffects();
+
+            int removed = 0;
+            for (java.util.Map.Entry<java.util.UUID, String> entry : allEffects.entrySet()) {
+                String effectName = entry.getValue();
+                if (!validEffects.contains(effectName.toLowerCase())) {
+                    com.monkey.kt.storage.EffectStorage.removeEffect(entry.getKey());
+                    removed++;
+                    plugin.getLogger().info("Removed obsolete effect '" + effectName +
+                            "' from player " + entry.getKey());
+                }
+            }
+
+            if (removed > 0) {
+                plugin.getLogger().info("Cleaned up " + removed + " obsolete effects");
+            }
+
+            EconomyManager eco = plugin.getEconomyManager();
+            if (eco != null && eco.getInternalEconomy() != null) {
+                cleanupObsoletePurchases(validEffects, eco);
+            }
+
+        } catch (Exception e) {
+            plugin.getLogger().warning("Error cleaning up obsolete effects: " + e.getMessage());
+        }
+    }
+
+    private void cleanupObsoletePurchases(java.util.Set<String> validEffects, EconomyManager eco) {
+        try {
+            com.monkey.kt.economy.storage.KillCoinsStorage storage =
+                    eco.getInternalEconomy().getStorage();
+
+            plugin.getDatabaseManager().getExecutor().executeTransaction(connection -> {
+                String deleteSql = "DELETE FROM killcoins_purchases WHERE effect = ?";
+                try (java.sql.PreparedStatement ps = connection.prepareStatement(deleteSql)) {
+
+                    java.util.Map<java.util.UUID, java.util.Set<String>> allPurchases =
+                            storage.getAllPurchases();
+
+                    int totalRemoved = 0;
+                    for (java.util.Map.Entry<java.util.UUID, java.util.Set<String>> entry : allPurchases.entrySet()) {
+                        for (String effectName : entry.getValue()) {
+                            if (!validEffects.contains(effectName.toLowerCase())) {
+                                ps.setString(1, effectName);
+                                totalRemoved += ps.executeUpdate();
+                            }
+                        }
+                    }
+
+                    if (totalRemoved > 0) {
+                        plugin.getLogger().info("Cleaned up " + totalRemoved + " obsolete purchases");
+                    }
+
+                } catch (java.sql.SQLException e) {
+                    throw e;
+                }
+            });
+
+        } catch (Exception e) {
+            plugin.getLogger().warning("Error cleaning up obsolete purchases: " + e.getMessage());
+        }
     }
 
     private void updateEconomyReferences(EconomyManager newEconomyManager) {
