@@ -29,6 +29,24 @@ public class EffectLoader {
         Collections.sort(sortedKeys);
 
         for (String key : sortedKeys) {
+            if (plugin.getCustomEffectLoader() != null) {
+                com.monkey.kt.effects.custom.CustomEffectConfig customConfig =
+                        plugin.getCustomEffectLoader().getEffectConfig(key);
+
+                if (customConfig != null) {
+                    Material material = customConfig.getIcon();
+                    String name = customConfig.getName();
+                    List<String> lore = new ArrayList<>();
+
+                    for (String line : customConfig.getDescription()) {
+                        lore.add(ChatColor.translateAlternateColorCodes('&', line));
+                    }
+
+                    effects.put(key, EffectItemBuilder.buildItem(material, name, lore));
+                    continue;
+                }
+            }
+
             String matName = EffectIconMap.ICONS.getOrDefault(key, "STONE");
             Material material = Material.matchMaterial(matName);
 

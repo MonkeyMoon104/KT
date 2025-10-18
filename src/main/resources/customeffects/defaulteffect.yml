@@ -1,0 +1,301 @@
+# ========================================
+# KT Custom Effect Template
+# ========================================
+# This file shows all available options for creating custom effects
+# Copy this file, rename it, and customize it to create your own effect!
+
+# Basic Information
+effect:
+  # Unique identifier (use only lowercase letters, numbers, and underscores)
+  id: "my_custom_effect"
+
+  # Display name (supports color codes with &)
+  name: "&bMy Custom Effect"
+
+  # Description shown in GUI (supports multiple lines)
+  description:
+    - "&7This is my custom effect"
+    - "&8Created by: YourName"
+
+  # GUI icon material (must be a valid Bukkit Material)
+  icon: "DIAMOND"
+
+  # Price in economy (0 = free)
+  price: 1000
+
+  # Permission required (leave empty to use economy only)
+  # If set, players need this permission: kt.custom.your_permission
+  permission: ""
+
+# Sound Configuration
+sounds:
+  # Play sound at effect trigger
+  enabled: true
+
+  # List of sounds to play
+  sounds:
+    - sound: "ENTITY_FIREWORK_ROCKET_BLAST"
+      volume: 1.0
+      pitch: 1.0
+      delay: 0  # Delay in ticks (20 ticks = 1 second)
+
+    - sound: "ENTITY_GENERIC_EXPLODE"
+      volume: 0.8
+      pitch: 1.2
+      delay: 10
+
+# Particle Effects
+particles:
+  # Enable particle effects
+  enabled: true
+
+  # List of particle configurations
+  effects:
+    # First particle effect
+    - type: "FLAME"  # Particle type (must be valid Bukkit Particle)
+      count: 50      # Number of particles
+      offset:
+        x: 1.5
+        y: 1.5
+        z: 1.5
+      speed: 0.05    # Particle speed
+      delay: 0       # Delay before spawning (ticks)
+      duration: 20   # How long to show (ticks)
+      interval: 2    # Spawn interval (ticks)
+
+    # Second particle effect
+    - type: "SOUL_FIRE_FLAME"
+      count: 30
+      offset:
+        x: 1.0
+        y: 2.0
+        z: 1.0
+      speed: 0.02
+      delay: 10
+      duration: 30
+      interval: 3
+
+    # Colored dust particle example
+    - type: "DUST"
+      count: 100
+      offset:
+        x: 2.0
+        y: 2.0
+        z: 2.0
+      speed: 0.01
+      delay: 0
+      duration: 40
+      interval: 1
+      # Color for DUST particles (RGB 0-255)
+      color:
+        red: 255
+        green: 100
+        blue: 50
+      size: 1.5  # Dust particle size
+
+# Advanced Particle Patterns
+patterns:
+  enabled: false
+
+  # Available patterns: CIRCLE, SPHERE, HELIX, SPIRAL, RING, CUBE, WAVE
+  patterns:
+    - type: "CIRCLE"
+      particle: "END_ROD"
+      radius: 3.0
+      points: 30      # Number of points in pattern
+      duration: 60    # Duration in ticks
+      speed: 0.5      # Animation speed
+      height: 0       # Height offset
+
+    - type: "HELIX"
+      particle: "ENCHANTED_HIT"
+      radius: 2.0
+      points: 50
+      duration: 80
+      speed: 0.3
+      height: 5.0     # Total height of helix
+
+# Entity Spawning
+entities:
+  enabled: false
+
+  spawn:
+    # Lightning effect
+    - type: "LIGHTNING"
+      effect_only: true  # Visual only, no damage
+      delay: 0
+
+    # Spawn mobs (decorative)
+    - type: "ARMOR_STAND"
+      delay: 10
+      duration: 100    # Remove after this many ticks
+      custom_name: "&6Custom Effect"
+      visible: false
+      gravity: false
+      invulnerable: true
+
+# Projectiles
+projectiles:
+  enabled: false
+
+  launch:
+    - type: "ARROW"
+      count: 8           # Number of projectiles
+      speed: 1.5
+      spread: 45         # Angle spread in degrees
+      gravity: true
+      damage: 0.0        # Set to 0 for visual only
+      remove_on_hit: true
+      trail_particle: "CRIT"
+      delay: 0
+
+# Block Manipulation (requires structure: true in effect config)
+blocks:
+  enabled: false
+  temporary: true      # Auto-restore blocks
+  restore_delay: 100   # Ticks before restore
+
+  place:
+    # Circle of blocks
+    - pattern: "CIRCLE"
+      material: "GLOWSTONE"
+      radius: 3
+
+    # Individual blocks
+    - material: "GOLD_BLOCK"
+      offset:
+        x: 0
+        y: 1
+        z: 0
+
+# Damage Configuration
+damage:
+  enabled: false
+  value: 5.0
+  radius: 5.0
+  delay: 0           # Delay before applying damage
+
+  # Damage over time
+  damage_over_time:
+    enabled: false
+    damage: 1.0
+    interval: 20     # Ticks between damage
+    duration: 100    # Total duration
+
+# Potion Effects
+potions:
+  enabled: false
+
+  # Apply to killer
+  killer:
+    - type: "SPEED"
+      amplifier: 2
+      duration: 100  # Duration in ticks
+
+  # Apply to nearby players
+  nearby:
+    radius: 5.0
+    effects:
+      - type: "REGENERATION"
+        amplifier: 1
+        duration: 60
+
+# Custom Messages
+messages:
+  # Message to killer
+  killer: "&aYou triggered: &e%effect%"
+
+  # Message to victim
+  victim: "&cYou were killed with: &e%effect%"
+
+  # Broadcast message (empty = disabled)
+  broadcast: ""
+
+  # Action bar message
+  action_bar:
+    enabled: true
+    killer: "&b⚔ Custom Effect Activated!"
+    victim: ""
+
+# Cooldown (in seconds, 0 = no cooldown)
+cooldown: 0
+
+# Requirements
+requirements:
+  # Require specific weapon
+  weapon:
+    enabled: false
+    materials:
+      - "DIAMOND_SWORD"
+      - "NETHERITE_SWORD"
+
+  # Require specific kill type
+  kill_type:
+    enabled: false
+    type: "PLAYER"  # PLAYER, MOB, or ANY
+
+  # World whitelist/blacklist
+  worlds:
+    enabled: false
+    mode: "WHITELIST"  # WHITELIST or BLACKLIST
+    list:
+      - "world"
+      - "world_nether"
+
+# Animation Sequence (Advanced)
+sequence:
+  enabled: false
+
+  # Define a sequence of actions
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_NOTE_BLOCK_PLING"
+          volume: 1.0
+          pitch: 2.0
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 20
+
+    - tick: 20
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "CIRCLE"
+          particle: "FLAME"
+
+    - tick: 40
+      actions:
+        - type: "DAMAGE"
+          radius: 5.0
+          damage: 3.0
+
+# Performance Settings
+performance:
+  # Maximum players to affect
+  max_players: 50
+
+  # Maximum entities to spawn
+  max_entities: 10
+
+  # Cancel if TPS is below this
+  min_tps: 15.0
+
+# Advanced Options
+advanced:
+  # Cancel death event (keep player alive)
+  cancel_death: false
+
+  # Teleport victim
+  teleport_victim:
+    enabled: false
+    height: 10
+
+  # Custom NBT data for entities
+  custom_nbt: {}
+
+  # Execute commands
+  commands:
+    enabled: false
+    as_console: []
+    as_player: []

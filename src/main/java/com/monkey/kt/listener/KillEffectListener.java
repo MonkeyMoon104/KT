@@ -9,6 +9,7 @@ import com.monkey.kt.effects.list.skeleton.SkeletonEffect;
 import com.monkey.kt.events.EventManager;
 import com.monkey.kt.storage.EffectStorage;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.SoundCategory;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.*;
@@ -60,6 +61,27 @@ public class KillEffectListener implements Listener {
 
         String effectName = EffectStorage.getEffect(killer);
         if (effectName == null) return;
+
+        if (plugin.getCustomEffectLoader() != null) {
+            com.monkey.kt.effects.custom.CustomEffectConfig customConfig =
+                    plugin.getCustomEffectLoader().getEffectConfig(effectName);
+
+            if (customConfig != null) {
+                if (customConfig.isWeaponRequired()) {
+                    Material weapon = killer.getInventory().getItemInMainHand().getType();
+                    if (!customConfig.getRequiredWeapons().contains(weapon)) {
+                        return;
+                    }
+                }
+
+                String requiredKillType = customConfig.getRequiredKillType();
+                if (requiredKillType != null && !requiredKillType.equalsIgnoreCase("ANY")) {
+                    boolean isPlayer = victim instanceof Player;
+                    if (requiredKillType.equalsIgnoreCase("PLAYER") && !isPlayer) return;
+                    if (requiredKillType.equalsIgnoreCase("MOB") && isPlayer) return;
+                }
+            }
+        }
 
         if (effectName.equalsIgnoreCase("sniper") && !victim.hasMetadata("kt_last_hit_arrow")) return;
         if (effectName.equalsIgnoreCase("mace") && !victim.hasMetadata("kt_last_hit_mace")) return;

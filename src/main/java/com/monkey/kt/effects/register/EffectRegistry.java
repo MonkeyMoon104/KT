@@ -3,11 +3,13 @@ package com.monkey.kt.effects.register;
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.KillEffect;
 import com.monkey.kt.effects.KillEffectFactory;
+import com.monkey.kt.effects.custom.CustomEffectConfig;
 import org.bukkit.configuration.ConfigurationSection;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class EffectRegistry {
@@ -44,6 +46,15 @@ public class EffectRegistry {
             } catch (Exception e) {
                 plugin.getLogger().warning("Impossibile registrare l'effetto: " + clazz.getName());
                 e.printStackTrace();
+            }
+        }
+
+        if (plugin.getCustomEffectLoader() != null) {
+            List<CustomEffectConfig> customConfigs =
+                    plugin.getCustomEffectLoader().getLoadedEffects();
+
+            for (com.monkey.kt.effects.custom.CustomEffectConfig config : customConfigs) {
+                enabledEffects.add(config.getId());
             }
         }
 

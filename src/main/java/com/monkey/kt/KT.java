@@ -9,6 +9,7 @@ import com.monkey.kt.cooldown.CooldownManager;
 import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.economy.KillCoinsEco;
 import com.monkey.kt.effects.KillEffectFactory;
+import com.monkey.kt.effects.custom.CustomEffectLoader;
 import com.monkey.kt.effects.register.EffectRegistry;
 import com.monkey.kt.events.EventManager;
 import com.monkey.kt.listener.*;
@@ -45,6 +46,8 @@ public class KT extends JavaPlugin {
     private KillRewardListener killRewardListener;
     private KTCommand ktCommand;
     private EventManager eventManager;
+
+    private CustomEffectLoader customEffectLoader;
 
     @Override
     public void onEnable() {
@@ -85,6 +88,9 @@ public class KT extends JavaPlugin {
         guiManager = new GUIManager(this, economyManager);
         effectRegistry = new EffectRegistry(this);
         effectRegistry.loadEffects();
+
+        this.customEffectLoader = new CustomEffectLoader(this);
+        this.customEffectLoader.loadAllCustomEffects();
 
         statusLogger = new KTStatusLogger(this, 26511, economyManager);
         statusLogger.logEnable();
@@ -230,5 +236,8 @@ public class KT extends JavaPlugin {
     }
     public static boolean isFolia() {
         return SchedulerWrapper.isFolia();
+    }
+    public CustomEffectLoader getCustomEffectLoader() {
+        return customEffectLoader;
     }
 }

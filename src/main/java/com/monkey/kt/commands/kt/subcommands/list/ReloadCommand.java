@@ -45,6 +45,12 @@ public class ReloadCommand implements SubCommand {
             plugin.getEffectRegistry().loadEffects();
         }
 
+        if (plugin.getCustomEffectLoader() != null) {
+            plugin.getCustomEffectLoader().reloadCustomEffects();
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    "&6Custom effects reloaded!"));
+        }
+
         boolean databaseChanged = checkDatabaseConfigChanged();
 
         boolean newUseInternal = plugin.getConfig().getBoolean("economy.use_internal", true);

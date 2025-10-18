@@ -95,7 +95,20 @@ public class InventoryClickListener implements Listener {
 
         if (eco.isEnabled()) {
             if (!eco.hasBoughtEffect(player, effect)) {
-                double price = eco.getEffectPrice(effect);
+                double price = 0;
+
+                if (plugin.getCustomEffectLoader() != null) {
+                    com.monkey.kt.effects.custom.CustomEffectConfig customConfig =
+                            plugin.getCustomEffectLoader().getEffectConfig(effect);
+
+                    if (customConfig != null) {
+                        price = customConfig.getPrice();
+                    } else {
+                        price = eco.getEffectPrice(effect);
+                    }
+                } else {
+                    price = eco.getEffectPrice(effect);
+                }
                 if (!eco.has(player, price)) {
                     player.sendMessage(color(plugin.getConfig().getString("messages.not_enough_coins")));
                     return;

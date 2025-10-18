@@ -167,6 +167,15 @@ public class EconomyManager {
     }
 
     public double getEffectPrice(String effectKey) {
+        if (plugin.getCustomEffectLoader() != null) {
+            com.monkey.kt.effects.custom.CustomEffectConfig customConfig =
+                    plugin.getCustomEffectLoader().getEffectConfig(effectKey);
+
+            if (customConfig != null) {
+                return customConfig.getPrice();
+            }
+        }
+
         return plugin.getConfig().getDouble("effects." + effectKey + ".price", 0D);
     }
 

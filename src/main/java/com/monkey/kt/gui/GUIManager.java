@@ -57,14 +57,32 @@ public class GUIManager {
 
             List<String> lore = new ArrayList<>(item.getItemMeta().getLore());
             if (ecoEnabled) {
-                if (eco.hasBoughtEffect(player, key)) {
-                    lore.add(ChatColor.translateAlternateColorCodes('&', alreadyBoughtMsg));
+                boolean isCustom = plugin.getCustomEffectLoader() != null &&
+                        plugin.getCustomEffectLoader().getEffectConfig(key) != null;
+
+                if (isCustom) {
+                    com.monkey.kt.effects.custom.CustomEffectConfig customConfig =
+                            plugin.getCustomEffectLoader().getEffectConfig(key);
+
+                    if (eco.hasBoughtEffect(player, key)) {
+                        lore.add(ChatColor.translateAlternateColorCodes('&', alreadyBoughtMsg));
+                    } else {
+                        double price = customConfig.getPrice();
+                        String line = priceFormat
+                                .replace("%price%", String.valueOf((int) price))
+                                .replace("%currency%", currencySym);
+                        lore.add(ChatColor.translateAlternateColorCodes('&', line));
+                    }
                 } else {
-                    double price = eco.getEffectPrice(key);
-                    String line = priceFormat
-                            .replace("%price%", String.valueOf((int) price))
-                            .replace("%currency%", currencySym);
-                    lore.add(ChatColor.translateAlternateColorCodes('&', line));
+                    if (eco.hasBoughtEffect(player, key)) {
+                        lore.add(ChatColor.translateAlternateColorCodes('&', alreadyBoughtMsg));
+                    } else {
+                        double price = eco.getEffectPrice(key);
+                        String line = priceFormat
+                                .replace("%price%", String.valueOf((int) price))
+                                .replace("%currency%", currencySym);
+                        lore.add(ChatColor.translateAlternateColorCodes('&', line));
+                    }
                 }
             }
 
