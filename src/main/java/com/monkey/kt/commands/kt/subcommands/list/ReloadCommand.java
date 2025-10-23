@@ -41,17 +41,20 @@ public class ReloadCommand implements SubCommand {
 
         plugin.reloadConfig();
 
-        if (plugin.getEffectRegistry() != null) {
-            plugin.getEffectRegistry().loadEffects(true);
-        }
-
         if (plugin.getCustomEffectLoader() != null) {
             plugin.getCustomEffectLoader().reloadCustomEffects();
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
                     "&6Custom effects reloaded!"));
         }
 
+        if (plugin.getEffectRegistry() != null) {
+            plugin.getEffectRegistry().loadEffects(true);
+        }
+
         cleanupObsoleteEffects();
+
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                "&6Loaded " + com.monkey.kt.effects.KillEffectFactory.getRegisteredEffects().size() + " total effects"));
 
         boolean databaseChanged = checkDatabaseConfigChanged();
 
