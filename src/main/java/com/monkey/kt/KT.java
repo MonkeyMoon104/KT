@@ -27,6 +27,7 @@ import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public class KT extends JavaPlugin {
@@ -86,14 +87,24 @@ public class KT extends JavaPlugin {
         eventManager = new EventManager(this);
 
         effectRegistry = new EffectRegistry(this);
+        this.customEffectLoader = new CustomEffectLoader(this);
+
+        this.customEffectLoader.loadAllCustomEffects();
+        getLogger().info("Custom effects loaded: " + this.customEffectLoader.getLoadedEffects().size());
+
         effectRegistry.loadEffects(false);
 
-        this.customEffectLoader = new CustomEffectLoader(this);
-        this.customEffectLoader.loadAllCustomEffects();
+        int totalEffects = KillEffectFactory.getRegisteredEffects().size();
+        getLogger().info("Total effects registered in factory: " + totalEffects);
 
         cleanupObsoleteEffects();
 
-        guiManager = new GUIManager(this, economyManager);
+        Set<String> allEffects = new java.util.HashSet<>(KillEffectFactory.getRegisteredEffects());
+        getLogger().info("Creating GUI with " + allEffects.size() + " effects: " + String.join(", ", allEffects));
+
+        guiManager = new GUIManager(this, economyManager, allEffects);
+
+        getLogger().info("GUI Manager initialized with " + guiManager.getEffects().size() + " effects");
 
         statusLogger = new KTStatusLogger(this, 26511, economyManager);
         statusLogger.logEnable();
