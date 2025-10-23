@@ -31,7 +31,12 @@ public class GUIManager {
         this.eco = eco;
         this.loader = new EffectLoader(plugin);
 
+        plugin.getLogger().info("GUIManager constructor - received " + enabledEffects.size() + " effects");
+        plugin.getLogger().info("Effects list: " + String.join(", ", enabledEffects));
+
         reloadGUI(enabledEffects);
+
+        plugin.getLogger().info("GUIManager constructor - loaded " + effects.size() + " effects in GUI");
     }
 
     public void updateEconomyManager(EconomyManager economyManager) {
@@ -153,9 +158,18 @@ public class GUIManager {
 
     public void reloadGUI(Set<String> enabledEffects) {
         effects.clear();
+
+        plugin.getLogger().info("Reloading GUI with " + enabledEffects.size() + " enabled effects");
+        plugin.getLogger().info("Registered effects in factory: " +
+                com.monkey.kt.effects.KillEffectFactory.getRegisteredEffects().size());
+
         effects.putAll(loader.loadEffects(enabledEffects));
 
         plugin.getLogger().info("GUI reloaded with " + effects.size() + " effects");
+
+        if (!effects.isEmpty()) {
+            plugin.getLogger().info("Loaded effects: " + String.join(", ", effects.keySet()));
+        }
     }
 
     public Map<String, ItemStack> getEffects() {
