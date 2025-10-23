@@ -25,8 +25,11 @@ public class EffectRegistry {
     }
 
     public void loadEffects(boolean reloadGUI) {
-        KillEffectFactory.clearEffects();
         Set<String> enabledEffects = new HashSet<>();
+
+        Set<String> existingEffects = new HashSet<>(KillEffectFactory.getRegisteredEffects());
+        plugin.getLogger().info("Found " + existingEffects.size() + " existing effects (including custom)");
+
 
         ConfigurationSection section = plugin.getConfig().getConfigurationSection("effects");
         if (section == null) return;
@@ -45,7 +48,9 @@ public class EffectRegistry {
                 Constructor<? extends KillEffect> constructor = clazz.getConstructor(KT.class);
                 KillEffect effect = constructor.newInstance(plugin);
 
-                KillEffectFactory.registerEffect(key, effect);
+                if (!existingEffects.contains(key)) {
+                    KillEffectFactory.registerEffect(key, effect);
+                }
                 enabledEffects.add(key);
             } catch (Exception e) {
                 plugin.getLogger().warning("Impossibile registrare l'effetto: " + clazz.getName());
@@ -58,9 +63,13 @@ public class EffectRegistry {
                     plugin.getCustomEffectLoader().getLoadedEffects();
 
             for (com.monkey.kt.effects.custom.CustomEffectConfig config : customConfigs) {
-                enabledEffects.add(config.getId());
+                String customId = config.getId().toLowerCase();
+                enabledEffects.add(customId);
+                plugin.getLogger().fine("Added custom effect to enabled list: " + customId);
             }
         }
+
+        plugin.getLogger().info("Total enabled effects before GUI reload: " + enabledEffects.size());
 
         if (reloadGUI && plugin.getGuiManager() != null) {
             plugin.getGuiManager().reloadGUI(enabledEffects);

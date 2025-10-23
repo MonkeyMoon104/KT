@@ -64,7 +64,10 @@ public class CustomEffectLoader {
     }
 
     public void loadAllCustomEffects() {
+        int previousCount = loadedEffects.size();
         loadedEffects.clear();
+
+        plugin.getLogger().info("Previous custom effects count: " + previousCount);
 
         File[] files = customEffectsFolder.listFiles((dir, name) ->
                 name.endsWith(".yml") && !name.equals("defaulteffect.yml")
@@ -120,6 +123,11 @@ public class CustomEffectLoader {
 
     public void reloadCustomEffects() {
         plugin.getLogger().info("Reloading custom effects...");
+
+        for (CustomEffectConfig config : loadedEffects) {
+            com.monkey.kt.effects.KillEffectFactory.getRegisteredEffects().remove(config.getId().toLowerCase());
+        }
+
         loadAllCustomEffects();
     }
 }
