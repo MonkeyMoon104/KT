@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class WebhookManager {
 
     private final KT plugin;
-    private final String baseUrl = "https://kt.dominikhun250.dev/webhook";
+    private final String baseUrl = "https://nanosynthbot.it/webhook";
 
     public WebhookManager(KT plugin) {
         this.plugin = plugin;
