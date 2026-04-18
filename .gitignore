@@ -96,6 +96,8 @@ $RECYCLE.BIN/
 *.lnk
 
 target/
+build/
+.gradle/
 
 pom.xml.tag
 pom.xml.releaseBackup
@@ -113,4 +115,3 @@ buildNumber.properties
 run/
 src/main/java/com/monkey/kt/utils/discord/security/Main.java
 src/main/java/com/monkey/kt/utils/discord/security/WebhookDecryptor.java
-

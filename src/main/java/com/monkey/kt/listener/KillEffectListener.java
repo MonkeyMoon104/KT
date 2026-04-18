@@ -5,6 +5,7 @@ import com.monkey.kt.cooldown.CooldownManager;
 import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.effects.KillEffect;
 import com.monkey.kt.effects.KillEffectFactory;
+import com.monkey.kt.effects.permission.EffectPermissionResolver;
 import com.monkey.kt.effects.list.skeleton.SkeletonEffect;
 import com.monkey.kt.events.EventManager;
 import com.monkey.kt.storage.EffectStorage;
@@ -61,6 +62,21 @@ public class KillEffectListener implements Listener {
 
         String effectName = EffectStorage.getEffect(killer);
         if (effectName == null) return;
+
+        if (!killer.isOp()) {
+            boolean hasPermission = EffectPermissionResolver.hasPermission(killer, plugin, effectName);
+            boolean explicitPermissionRule = EffectPermissionResolver.hasExplicitPermissionRule(plugin, effectName);
+            boolean ecoEnabled = plugin.getEconomyManager().isEnabled();
+            boolean hasBought = plugin.getEconomyManager().hasBoughtEffect(killer, effectName);
+
+            if (explicitPermissionRule && !hasPermission) {
+                return;
+            }
+
+            if (!hasPermission && (!ecoEnabled || !hasBought)) {
+                return;
+            }
+        }
 
         if (plugin.getCustomEffectLoader() != null) {
             com.monkey.kt.effects.custom.CustomEffectConfig customConfig =

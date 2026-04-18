@@ -1,11 +1,9 @@
 package com.monkey.kt.commands.kt.manager;
 
-import com.monkey.kt.commands.kt.KTCommand;
 import com.monkey.kt.commands.kt.subcommands.list.*;
 import com.monkey.kt.commands.kt.subcommands.inter.SubCommand;
 import com.monkey.kt.KT;
 import com.monkey.kt.economy.EconomyManager;
-import com.monkey.kt.economy.KillCoinsEco;
 import com.monkey.kt.gui.GUIManager;
 
 import java.util.HashMap;
@@ -18,6 +16,10 @@ public class KTCManager {
     public KTCManager(KT plugin, GUIManager guiManager, EconomyManager eco) {
         registerSubCommand(new ReloadCommand(plugin, guiManager));
         registerSubCommand(new SetCommand(plugin));
+        ClearCommand clearCommand = new ClearCommand(plugin);
+        registerSubCommand(clearCommand);
+        subCommands.put("none", clearCommand);
+        registerSubCommand(new GuiEditorCommand(plugin));
         registerSubCommand(new TestCommand(plugin));
         registerSubCommand(new KillCoinsCommand(plugin, eco));
         registerSubCommand(new SecureSuggestionCommand(plugin));

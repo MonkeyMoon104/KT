@@ -23,8 +23,8 @@ effect:
   # Price in economy (0 = free)
   price: 1000
 
-  # Permission required (leave empty to use economy only)
-  # If set, players need this permission: kt.custom.your_permission
+  # Permission required (leave empty to use default: kt.<effect-id>.use)
+  # You can override globally from config.yml -> custom-effects.permissions.overrides.<effect-id>
   permission: ""
 
 # Sound Configuration

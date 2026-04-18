@@ -2,6 +2,7 @@ package com.monkey.kt.commands.kt.subcommands.list;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.commands.kt.subcommands.inter.SubCommand;
+import com.monkey.kt.effects.permission.EffectPermissionResolver;
 import com.monkey.kt.storage.EffectStorage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -40,8 +41,8 @@ public class SetCommand implements SubCommand {
             return;
         }
 
-        String effect = args[1].toLowerCase();
-        if (effect.equalsIgnoreCase("none")) {
+        String effect = EffectPermissionResolver.normalize(args[1]);
+        if (effect.equals("none") || effect.equals("clear")) {
             EffectStorage.removeEffect(player);
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
                     plugin.getConfig().getString("messages.effect_removed")));
@@ -54,10 +55,16 @@ public class SetCommand implements SubCommand {
             return;
         }
 
-
-        boolean hasPermission = player.hasPermission("kt." + effect + ".use");
+        boolean hasPermission = EffectPermissionResolver.hasPermission(player, plugin, effect);
+        boolean explicitPermissionRule = EffectPermissionResolver.hasExplicitPermissionRule(plugin, effect);
         boolean hasBought = plugin.getEconomyManager().hasBoughtEffect(player, effect);
         boolean ecoEnabled = plugin.getEconomyManager().isEnabled();
+
+        if (!player.isOp() && explicitPermissionRule && !hasPermission) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    plugin.getConfig().getString("messages.no_permissions")));
+            return;
+        }
 
         if (!player.isOp() && !hasPermission && (!ecoEnabled || !hasBought)) {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&',

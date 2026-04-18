@@ -4,7 +4,6 @@ import com.monkey.kt.KT;
 import com.monkey.kt.commands.kt.manager.KTCManager;
 import com.monkey.kt.commands.kt.subcommands.inter.SubCommand;
 import com.monkey.kt.economy.EconomyManager;
-import com.monkey.kt.economy.KillCoinsEco;
 import com.monkey.kt.gui.GUIManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -50,6 +49,9 @@ public class KTCommand implements CommandExecutor {
                 return true;
             }
             sub.execute(sender, args);
+        } else {
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    plugin.getConfig().getString("messages.miss_usage")));
         }
         return true;
     }

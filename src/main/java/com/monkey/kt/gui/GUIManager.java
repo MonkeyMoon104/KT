@@ -2,17 +2,20 @@ package com.monkey.kt.gui;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.economy.EconomyManager;
-import com.monkey.kt.economy.KillCoinsEco;
+import com.monkey.kt.gui.layout.GuiLayoutConfig;
 import com.monkey.kt.storage.EffectStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class GUIManager {
 
@@ -21,6 +24,7 @@ public class GUIManager {
     private final EffectLoader loader;
 
     private final Map<String, ItemStack> effects = new LinkedHashMap<>();
+    private GuiLayoutConfig layoutConfig;
 
     public GUIManager(KT plugin, EconomyManager eco) {
         this(plugin, eco, EffectIconMap.ICONS.keySet());
@@ -50,21 +54,28 @@ public class GUIManager {
         String title = ChatColor.translateAlternateColorCodes('&',
                 plugin.getConfig().getString("messages.gui_title"));
 
-        int size = 54;
-        Inventory inv = Bukkit.createInventory(null, size, title);
+        layoutConfig = GuiLayoutConfig.fromConfig(plugin.getConfig());
+        Inventory inv = Bukkit.createInventory(null, layoutConfig.getSize(), title);
 
         String alreadyBoughtMsg = plugin.getConfig().getString("messages.already_bought");
         String priceFormat = plugin.getConfig().getString("messages.price_format");
         String currencySym = eco.currencySymbol();
 
-        int maxEffectSlots = 45;
-        int slot = 0;
+        List<Integer> availableSlots = layoutConfig.getEffectSlots();
+        int slotIndex = 0;
         for (Map.Entry<String, ItemStack> entry : effects.entrySet()) {
-            if (slot >= maxEffectSlots) break;
+            if (slotIndex >= availableSlots.size()) {
+                break;
+            }
+
             String key = entry.getKey();
             ItemStack item = entry.getValue().clone();
 
-            List<String> lore = new ArrayList<>(item.getItemMeta().getLore());
+            List<String> lore = new ArrayList<>();
+            ItemMeta sourceMeta = item.getItemMeta();
+            if (sourceMeta != null && sourceMeta.getLore() != null) {
+                lore.addAll(sourceMeta.getLore());
+            }
             if (ecoEnabled) {
                 boolean isCustom = plugin.getCustomEffectLoader() != null &&
                         plugin.getCustomEffectLoader().getEffectConfig(key) != null;
@@ -96,60 +107,74 @@ public class GUIManager {
             }
 
             ItemMeta meta = item.getItemMeta();
-            meta.setLore(lore);
-            item.setItemMeta(meta);
+            if (meta != null) {
+                meta.setLore(lore);
+                item.setItemMeta(meta);
+            }
 
-            inv.setItem(slot++, item);
+            inv.setItem(availableSlots.get(slotIndex++), item);
         }
 
-        int leftSlot = 48;
-        int centerSlot = 49;
-        int rightSlot = 50;
-        int currencySlot = 51;
-
-        ItemStack closeItem = new ItemStack(Material.GRAY_WOOL);
+        ItemStack closeItem = new ItemStack(layoutConfig.getCloseButton().getMaterial());
         ItemMeta closeMeta = closeItem.getItemMeta();
-        String closeName = plugin.getConfig().getString("gui.buttons.close", "&c✖ Close");
-        closeMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', closeName));
-        closeItem.setItemMeta(closeMeta);
-        inv.setItem(leftSlot, closeItem);
+        String closeName = plugin.getConfig().getString("gui.buttons.close", "&cX Close");
+        if (closeMeta != null) {
+            closeMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', closeName));
+            closeItem.setItemMeta(closeMeta);
+        }
+        inv.setItem(layoutConfig.getCloseButton().getSlot(), closeItem);
 
         String currentEffect = EffectStorage.getEffect(player);
         String effectDisplay = currentEffect != null ? capitalize(currentEffect) : plugin.getConfig().getString("gui.none", "None");
 
-        ItemStack currentEffectItem = new ItemStack(Material.OAK_SIGN);
+        ItemStack currentEffectItem = new ItemStack(layoutConfig.getCurrentEffectButton().getMaterial());
         ItemMeta currentMeta = currentEffectItem.getItemMeta();
         String currentEffectName = plugin.getConfig().getString("gui.buttons.current_effect", "&eCurrent Effect: %effect%");
         currentEffectName = currentEffectName.replace("%effect%", effectDisplay);
-        currentMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', currentEffectName));
-        currentEffectItem.setItemMeta(currentMeta);
-        inv.setItem(centerSlot, currentEffectItem);
+        if (currentMeta != null) {
+            currentMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', currentEffectName));
+            currentEffectItem.setItemMeta(currentMeta);
+        }
+        inv.setItem(layoutConfig.getCurrentEffectButton().getSlot(), currentEffectItem);
 
-        ItemStack disableItem = new ItemStack(Material.RED_WOOL);
+        ItemStack disableItem = new ItemStack(layoutConfig.getDisableButton().getMaterial());
         ItemMeta disableMeta = disableItem.getItemMeta();
-        String disableName = plugin.getConfig().getString("gui.buttons.disable", "&4➤ Disable Effect");
-        disableMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', disableName));
-        disableItem.setItemMeta(disableMeta);
-        inv.setItem(rightSlot, disableItem);
+        String disableName = plugin.getConfig().getString("gui.buttons.disable", "&4> Disable Effect");
+        if (disableMeta != null) {
+            disableMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', disableName));
+            disableItem.setItemMeta(disableMeta);
+        }
+        inv.setItem(layoutConfig.getDisableButton().getSlot(), disableItem);
 
-        ItemStack currencyItem = new ItemStack(Material.EMERALD);
+        ItemStack currencyItem = new ItemStack(layoutConfig.getCurrencyButton().getMaterial());
         ItemMeta currencyMeta = currencyItem.getItemMeta();
         String currencyName = plugin.getConfig().getString("gui.buttons.currency", "&7Your balance: &a%bal% %bal_symbol%");
         currencyName = currencyName
                 .replace("%bal%", String.valueOf(eco.getBalance(player)))
                 .replace("%bal_symbol%", eco.currencySymbol());
-        currencyMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', currencyName));
-        currencyItem.setItemMeta(currencyMeta);
-        inv.setItem(currencySlot, currencyItem);
+        if (currencyMeta != null) {
+            currencyMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', currencyName));
+            currencyItem.setItemMeta(currencyMeta);
+        }
+        inv.setItem(layoutConfig.getCurrencyButton().getSlot(), currencyItem);
 
         player.openInventory(inv);
     }
 
     public String getEffectByItem(ItemStack clicked) {
-        if (clicked == null || !clicked.hasItemMeta()) return null;
-        String name = clicked.getItemMeta().getDisplayName();
+        if (clicked == null || !clicked.hasItemMeta()) {
+            return null;
+        }
+
+        ItemMeta clickedMeta = clicked.getItemMeta();
+        if (clickedMeta == null || clickedMeta.getDisplayName() == null) {
+            return null;
+        }
+
+        String name = clickedMeta.getDisplayName();
         for (Map.Entry<String, ItemStack> entry : effects.entrySet()) {
-            if (entry.getValue().getItemMeta().getDisplayName().equals(name)) {
+            ItemMeta effectMeta = entry.getValue().getItemMeta();
+            if (effectMeta != null && name.equals(effectMeta.getDisplayName())) {
                 return entry.getKey();
             }
         }
@@ -158,6 +183,7 @@ public class GUIManager {
 
     public void reloadGUI(Set<String> enabledEffects) {
         effects.clear();
+        layoutConfig = GuiLayoutConfig.fromConfig(plugin.getConfig());
 
         plugin.getLogger().info("Reloading GUI with " + enabledEffects.size() + " enabled effects");
         plugin.getLogger().info("Registered effects in factory: " +
@@ -180,8 +206,17 @@ public class GUIManager {
         return eco;
     }
 
+    public GuiLayoutConfig getLayoutConfig() {
+        if (layoutConfig == null) {
+            layoutConfig = GuiLayoutConfig.fromConfig(plugin.getConfig());
+        }
+        return layoutConfig;
+    }
+
     private String capitalize(String name) {
-        if (name == null || name.isEmpty()) return name;
+        if (name == null || name.isEmpty()) {
+            return name;
+        }
         return Character.toUpperCase(name.charAt(0)) + name.substring(1);
     }
 }

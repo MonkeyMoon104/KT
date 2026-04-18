@@ -1,4 +1,4 @@
-config-version: "2.9"
+config-version: "3.0.0"
 
 messages:
   commands_no_perm: "&cYou don't have permission to use this command."
@@ -8,7 +8,7 @@ messages:
   config_reloaded: "&aConfiguration successfully reloaded!"
   gui_title: "&6Select your KillEffect"
   effect_not_found: "&cKillEffect not found!"
-  miss_usage: "&cUse this command &e/kt reload|set|test"
+  miss_usage: "&cUse this command &e/kt reload|set|clear|test|guieditor"
   only_players: "&cOnly players can execute this command!"
   effect_executed: "&aKillEffect executed: &e%effect%"
   invalid_potion: "&cInvalid or missing configured potion: no potion applied."
@@ -101,12 +101,35 @@ resource_pack:
 
 gui:
   none: "&7None"
+  layout:
+    rows: 6
+    effect_slots:
+      start: 0
+      end: 44
+      list: []
+    buttons:
+      close:
+        slot: 48
+        material: GRAY_WOOL
+      current_effect:
+        slot: 49
+        material: OAK_SIGN
+      disable:
+        slot: 50
+        material: RED_WOOL
+      currency:
+        slot: 51
+        material: EMERALD
   buttons:
     close: "&c✖ Close"
     current_effect: "&eCurrent Effect: %effect%"
     disable: "&4➤ Disable Effect"
     currency: "&7Your balance: &a%bal% %bal_symbol%"
 
+custom-effects:
+  permissions:
+    default-node: "kt.%effect%.use"
+    overrides: {}
 events:
   enabled: true
   broadcast:
@@ -387,8 +410,8 @@ effects:
           type: REGENERATION
           amplifier: 2
           duration: 10
-        damage-message: "&b☄ You received a damage boost for {duration}s!"
-        potion-message: "&d✨ You received {potion} {amplifier} for {duration}s!"
+        damage-message: "&bâ˜„ You received a damage boost for {duration}s!"
+        potion-message: "&dâœ¨ You received {potion} {amplifier} for {duration}s!"
     damage:
       enabled: true
       value: 10
@@ -406,3 +429,23 @@ effects:
       enabled: true
       value: 5
       radius: 16
+  prismaticnova:
+    enabled: true
+    name: "&dPrismatic &bNova"
+    description: "&fChromatic nova that collapses into a radiant blast"
+    price: 12800
+    damage:
+      enabled: true
+      value: 6
+      radius: 8
+
+  voidlotus:
+    enabled: true
+    name: "&5Void &dLotus"
+    description: "&8A dark lotus blooms and implodes the battlefield"
+    price: 13350
+    damage:
+      enabled: true
+      value: 7
+      radius: 9
+

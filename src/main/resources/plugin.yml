@@ -1,8 +1,8 @@
 name: KT
-version: '${project.version}'
+version: '${version}'
 main: com.monkey.kt.KT
 author: MonkeyMoon104
-api-version: '1.13'
+api-version: '1.21'
 folia-supported: true
 depend:
   - LuckPerms
@@ -13,6 +13,10 @@ softdepend:
   - ViaRewind
   - ViaBackwards
   - Vault
+libraries:
+  - org.reflections:reflections:0.10.2
+  - org.json:json:20251224
+  - com.zaxxer:HikariCP:7.0.2
 
 commands:
   killeffect:
@@ -45,6 +49,14 @@ permissions:
 
   kt.set:
     description: Allows set effect without GUI
+    default: op
+
+  kt.clear:
+    description: Allows players to clear their selected effect
+    default: true
+
+  kt.guieditor:
+    description: Allows editing GUI rows, slots and button items from command
     default: op
 
   kt.test:
@@ -153,4 +165,12 @@ permissions:
 
   kt.mace.use:
     description: Use the mace kill effect
+    default: op
+
+  kt.prismaticnova.use:
+    description: Use the prismatic nova kill effect
+    default: op
+
+  kt.voidlotus.use:
+    description: Use the void lotus kill effect
     default: op

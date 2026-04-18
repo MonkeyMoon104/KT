@@ -30,5 +30,7 @@ public class EffectIconMap {
         ICONS.put("cryocore", "SNOW");
         ICONS.put("aurafarming", "AMETHYST_CLUSTER");
         ICONS.put("mace", "MACE");
+        ICONS.put("prismaticnova", "PRISMARINE_CRYSTALS");
+        ICONS.put("voidlotus", "ENDER_EYE");
     }
 }
