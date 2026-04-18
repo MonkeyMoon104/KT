@@ -58,7 +58,6 @@ public class SniperEffect implements KillEffect {
                 arrow.setDamage(0.0);
                 arrow.setSilent(true);
                 arrow.setCritical(false);
-                arrow.setKnockbackStrength(0);
                 arrow.setPersistent(false);
                 arrow.setInvulnerable(true);
                 arrow.setPickupStatus(Arrow.PickupStatus.DISALLOWED);

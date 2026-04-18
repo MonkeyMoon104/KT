@@ -67,7 +67,8 @@ public final class PrismaticNovaAnimation {
             double z = Math.sin(angle) * radius;
 
             float hue = (float) ((i / (double) points) + (tick * 0.03)) % 1f;
-            Color color = Color.fromRGB(java.awt.Color.HSBtoRGB(hue, 0.85f, 1.0f));
+            int rgb = java.awt.Color.HSBtoRGB(hue, 0.85f, 1.0f) & 0x00FFFFFF;
+            Color color = Color.fromRGB(rgb);
             Particle.DustOptions dust = new Particle.DustOptions(color, 1.35f);
 
             world.spawnParticle(

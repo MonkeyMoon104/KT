@@ -3,7 +3,9 @@ package com.monkey.kt.effects.custom;
 import com.monkey.kt.KT;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.potion.PotionEffectType;
@@ -468,8 +470,17 @@ public class CustomEffectConfig {
 
         public Sound getSound() {
             try {
-                return Sound.valueOf(sound.toUpperCase());
-            } catch (IllegalArgumentException e) {
+                if (sound == null || sound.isBlank()) {
+                    return null;
+                }
+                NamespacedKey key = sound.contains(":")
+                        ? NamespacedKey.fromString(sound.toLowerCase())
+                        : NamespacedKey.minecraft(sound.toLowerCase().replace('_', '.'));
+                if (key == null) {
+                    return null;
+                }
+                return Registry.SOUNDS.get(key);
+            } catch (Exception e) {
                 return null;
             }
         }

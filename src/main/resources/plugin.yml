@@ -14,7 +14,6 @@ softdepend:
   - ViaBackwards
   - Vault
 libraries:
-  - org.reflections:reflections:0.10.2
   - org.json:json:20251224
   - com.zaxxer:HikariCP:7.0.2
 

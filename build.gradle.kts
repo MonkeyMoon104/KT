@@ -26,7 +26,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.16")
     implementation("org.bstats:bstats-bukkit:3.2.1")
-    compileOnly("org.reflections:reflections:0.10.2")
+    implementation("org.reflections:reflections:0.10.2")
     compileOnly("net.luckperms:api:5.5")
     compileOnly("org.json:json:20251224")
     compileOnly("me.clip:placeholderapi:2.12.2")
@@ -50,6 +50,7 @@ tasks.processResources {
 tasks.shadowJar {
     archiveClassifier.set("")
     relocate("org.bstats", "com.monkey.kt.bstats")
+    relocate("org.reflections", "com.monkey.kt.reflections")
 }
 
 tasks.jar {
