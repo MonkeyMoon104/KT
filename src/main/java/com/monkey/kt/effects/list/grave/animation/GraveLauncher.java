@@ -6,6 +6,7 @@ import com.monkey.kt.effects.list.grave.animation.util.structure.placer.GravePla
 import com.monkey.kt.storage.TempBlockStorage;
 import com.monkey.kt.utils.SensitiveBlockUtils;
 import com.monkey.kt.utils.WorldGuardUtils;
+import io.papermc.paper.datacomponent.item.ResolvableProfile;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -13,6 +14,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Rotatable;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Player;
@@ -110,10 +112,15 @@ public class GraveLauncher {
 
         setBlockTypeRemember(holder, headBlock, Material.PLAYER_HEAD);
 
+        BlockData data = headBlock.getBlockData();
+        if (data instanceof Rotatable rotatable) {
+            rotatable.setRotation(facing);
+            headBlock.setBlockData(rotatable, false);
+        }
+
         if (headBlock.getState() instanceof Skull) {
             Skull skull = (Skull) headBlock.getState();
-            skull.setOwningPlayer(killer);
-            skull.setRotation(facing);
+            skull.setProfile(ResolvableProfile.resolvableProfile(killer.getPlayerProfile()));
             skull.update(true, false);
         }
 

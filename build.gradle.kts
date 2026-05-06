@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.monkey"
-version = "3.0.0"
+version = "3.0.1"
 description = "KT"
 
 java {
@@ -37,7 +37,6 @@ dependencies {
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
     options.release.set(21)
-    exclude("com/monkey/kt/utils/discord/security/Main.java")
 }
 
 tasks.processResources {

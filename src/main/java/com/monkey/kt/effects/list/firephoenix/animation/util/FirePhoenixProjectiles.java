@@ -1,6 +1,7 @@
 package com.monkey.kt.effects.list.firephoenix.animation.util;
 
 import com.monkey.kt.KT;
+import com.monkey.kt.utils.entity.EntityDataUtils;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -8,7 +9,6 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.SmallFireball;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
 public class FirePhoenixProjectiles {
@@ -25,11 +25,11 @@ public class FirePhoenixProjectiles {
         fireball.setYield(0);
         fireball.setSilent(true);
 
-        fireball.setMetadata("kt_phoenix_firecharge", new FixedMetadataValue(plugin, true));
+        EntityDataUtils.setBoolean(fireball, plugin, "kt_phoenix_firecharge", true);
 
         if (shouldDamage) {
-            fireball.setMetadata("kt_phoenix_damage_enabled", new FixedMetadataValue(plugin, true));
-            fireball.setMetadata("kt_phoenix_damage_value", new FixedMetadataValue(plugin, damageValue));
+            EntityDataUtils.setBoolean(fireball, plugin, "kt_phoenix_damage_enabled", true);
+            EntityDataUtils.setDouble(fireball, plugin, "kt_phoenix_damage_value", damageValue);
         }
 
         final boolean[] taskCompleted = {false};

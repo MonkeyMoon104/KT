@@ -3,6 +3,7 @@ package com.monkey.kt.events.meteorshower;
 import com.monkey.kt.KT;
 import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.events.helper.GameEvent;
+import com.monkey.kt.utils.text.TextUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -45,7 +46,7 @@ public class MeteorShowerEvent implements GameEvent {
                 .replace("%deaded%", victim.getName())
                 .replace("%event%", "Meteor Shower")
                 .replace("%end%", formatDuration(duration));
-        Bukkit.broadcastMessage(msg.replace("&", "§"));
+        TextUtils.broadcast(plugin.getServer(), msg);
 
         this.endTimestamp = System.currentTimeMillis() + (duration * 1000L);
 
@@ -78,7 +79,7 @@ public class MeteorShowerEvent implements GameEvent {
 
         String finishMsg = plugin.getConfig().getString(finishMsgKey, "");
         if (finishMsg != null && !finishMsg.isEmpty()) {
-            plugin.getServer().broadcastMessage(finishMsg.replace("&", "§"));
+            TextUtils.broadcast(plugin.getServer(), finishMsg);
         }
 
         if (plugin.getEventManager() != null) {

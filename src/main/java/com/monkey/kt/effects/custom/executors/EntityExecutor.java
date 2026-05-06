@@ -2,15 +2,14 @@ package com.monkey.kt.effects.custom.executors;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.custom.CustomEffectConfig;
+import com.monkey.kt.utils.entity.EntityDataUtils;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
+import com.monkey.kt.utils.text.TextUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.metadata.FixedMetadataValue;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class EntityExecutor {
@@ -54,11 +53,11 @@ public class EntityExecutor {
 
             Entity entity = location.getWorld().spawnEntity(location, entityType);
 
-            entity.setMetadata("kt_custom_entity", new FixedMetadataValue(plugin, true));
-            entity.setMetadata("kt_bypass_spawn", new FixedMetadataValue(plugin, true));
+            EntityDataUtils.setBoolean(entity, plugin, "kt_custom_entity", true);
+            EntityDataUtils.setBoolean(entity, plugin, "kt_bypass_spawn", true);
 
             if (!data.getCustomName().isEmpty()) {
-                entity.setCustomName(ChatColor.translateAlternateColorCodes('&', data.getCustomName()));
+                entity.customName(TextUtils.component(data.getCustomName()));
                 entity.setCustomNameVisible(true);
             }
 

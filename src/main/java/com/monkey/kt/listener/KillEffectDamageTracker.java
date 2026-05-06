@@ -1,6 +1,7 @@
 package com.monkey.kt.listener;
 
 import com.monkey.kt.KT;
+import com.monkey.kt.utils.entity.EntityDataUtils;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -11,7 +12,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
 
 public class KillEffectDamageTracker implements Listener {
 
@@ -32,7 +32,7 @@ public class KillEffectDamageTracker implements Listener {
         if (damager instanceof Arrow) {
             Arrow arrow = (Arrow) damager;
             if (arrow.getShooter() instanceof Player) {
-                entityVictim.setMetadata("kt_last_hit_arrow", new FixedMetadataValue(plugin, true));
+                EntityDataUtils.setBoolean(entityVictim, plugin, "kt_last_hit_arrow", true);
                 removeMetaLater(entityVictim, "kt_last_hit_arrow");
             }
             return;
@@ -42,7 +42,7 @@ public class KillEffectDamageTracker implements Listener {
             Player player = (Player) damager;
             ItemStack weapon = player.getInventory().getItemInMainHand();
             if (weapon != null && weapon.getType() == Material.MACE) {
-                entityVictim.setMetadata("kt_last_hit_mace", new FixedMetadataValue(plugin, true));
+                EntityDataUtils.setBoolean(entityVictim, plugin, "kt_last_hit_mace", true);
                 removeMetaLater(entityVictim, "kt_last_hit_mace");
             }
         }
@@ -52,8 +52,8 @@ public class KillEffectDamageTracker implements Listener {
         SchedulerWrapper.runTaskLater(plugin, new Runnable() {
             @Override
             public void run() {
-                if (entity.hasMetadata(key)) {
-                    entity.removeMetadata(key, plugin);
+                if (EntityDataUtils.hasBoolean(entity, plugin, key)) {
+                    EntityDataUtils.remove(entity, plugin, key);
                 }
             }
         }, 10L);

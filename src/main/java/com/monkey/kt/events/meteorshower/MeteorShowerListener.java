@@ -2,7 +2,7 @@ package com.monkey.kt.events.meteorshower;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.economy.EconomyManager;
-import org.bukkit.ChatColor;
+import com.monkey.kt.utils.text.TextUtils;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -62,7 +62,7 @@ public class MeteorShowerListener implements Listener {
         String pickupMsg = plugin.getConfig().getString("events.broadcast.money_pickup", "");
         if (pickupMsg != null && !pickupMsg.isEmpty()) {
             pickupMsg = pickupMsg.replace("%remaining%", String.valueOf(remaining));
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', pickupMsg));
+            player.sendMessage(TextUtils.legacySection(pickupMsg));
         }
 
         if (meteorItems.isEmpty() && currentEvent != null) {

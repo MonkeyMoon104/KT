@@ -9,9 +9,6 @@ depend:
   - WorldGuard
   - PlaceholderAPI
 softdepend:
-  - ViaVersion
-  - ViaRewind
-  - ViaBackwards
   - Vault
 libraries:
   - org.json:json:20251224

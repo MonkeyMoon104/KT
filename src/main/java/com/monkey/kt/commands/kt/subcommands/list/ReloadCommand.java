@@ -4,9 +4,9 @@ import com.monkey.kt.KT;
 import com.monkey.kt.commands.kt.subcommands.inter.SubCommand;
 import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.gui.GUIManager;
+import com.monkey.kt.utils.text.TextUtils;
 import com.monkey.kt.storage.DatabaseManager;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -33,7 +33,7 @@ public class ReloadCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
 
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&eReloading KT configuration..."));
+        sender.sendMessage(TextUtils.legacySection("&eReloading KT configuration..."));
 
         EconomyManager currentEconomyManager = plugin.getEconomyManager();
         boolean wasUsingInternal = currentEconomyManager != null ? currentEconomyManager.isUsingInternal() : true;
@@ -43,8 +43,7 @@ public class ReloadCommand implements SubCommand {
 
         if (plugin.getCustomEffectLoader() != null) {
             plugin.getCustomEffectLoader().reloadCustomEffects();
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                    "&6Custom effects reloaded!"));
+            sender.sendMessage(TextUtils.legacySection("&6Custom effects reloaded!"));
         }
 
         if (plugin.getEffectRegistry() != null) {
@@ -53,7 +52,7 @@ public class ReloadCommand implements SubCommand {
 
         cleanupObsoleteEffects();
 
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+        sender.sendMessage(TextUtils.legacySection(
                 "&6Loaded " + com.monkey.kt.effects.KillEffectFactory.getRegisteredEffects().size() + " total effects"));
 
         boolean databaseChanged = checkDatabaseConfigChanged();
@@ -61,7 +60,7 @@ public class ReloadCommand implements SubCommand {
         boolean newUseInternal = plugin.getConfig().getBoolean("economy.use_internal", true);
 
         if (wasUsingInternal != newUseInternal || databaseChanged || currentEconomyManager == null || !currentEconomyManager.isInitialized()) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+            sender.sendMessage(TextUtils.legacySection(
                     "&6Economy type changing from " + (wasUsingInternal ? "Internal" : "External") +
                             " to " + (newUseInternal ? "Internal" : "External") + "..."));
 
@@ -79,7 +78,7 @@ public class ReloadCommand implements SubCommand {
                 newEconomyManager.initialize();
 
                 if (!newEconomyManager.isInitialized()) {
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    sender.sendMessage(TextUtils.legacySection(
                             "&cFailed to initialize economy manager! Check console for errors."));
                     return;
                 }
@@ -91,20 +90,20 @@ public class ReloadCommand implements SubCommand {
                 String newProvider = getEconomyProviderName(newEconomyManager);
 
                 if (newEconomyManager.isUsingInternal() && !newUseInternal) {
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    sender.sendMessage(TextUtils.legacySection(
                             "&cWarning: Requested external economy but fell back to internal. " +
                                     "Check if Vault and economy plugin are properly installed."));
                     plugin.getLogger().warning("Failed to setup external economy, using internal fallback. " +
                             "Vault status: " + (plugin.getServer().getPluginManager().getPlugin("Vault") != null ? "Found" : "Not found"));
                 } else {
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    sender.sendMessage(TextUtils.legacySection(
                             "&aEconomy provider successfully changed from &e" + previousProvider + " &ato &e" + newProvider));
                 }
 
                 plugin.getLogger().info("Economy type changed from " + previousProvider + " to " + newProvider);
 
             } catch (Exception e) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                sender.sendMessage(TextUtils.legacySection(
                         "&cError during economy system reload: " + e.getMessage()));
                 plugin.getLogger().severe("Failed to reload economy system: " + e.getMessage());
                 e.printStackTrace();
@@ -113,7 +112,7 @@ public class ReloadCommand implements SubCommand {
         } else {
             String newProvider = getEconomyProviderName(plugin.getEconomyManager());
             if (!previousProvider.equals(newProvider)) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                sender.sendMessage(TextUtils.legacySection(
                         "&6Economy provider changed from &e" + previousProvider + " &ato &e" + newProvider));
             }
         }
@@ -124,7 +123,7 @@ public class ReloadCommand implements SubCommand {
             plugin.getStatusLogger().logReload();
         }
 
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+        sender.sendMessage(TextUtils.legacySection(
                 plugin.getConfig().getString("messages.config_reloaded", "&aConfiguration reloaded successfully!")));
     }
 

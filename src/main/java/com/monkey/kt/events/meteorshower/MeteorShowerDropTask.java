@@ -2,7 +2,13 @@ package com.monkey.kt.events.meteorshower;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.economy.EconomyManager;
-import org.bukkit.*;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -41,7 +47,7 @@ public class MeteorShowerDropTask extends BukkitRunnable {
 
         ItemStack stack = new ItemStack(material, 1);
         stack.editMeta(meta -> {
-            meta.setDisplayName("§r");
+            meta.displayName(Component.empty());
             meta.getPersistentDataContainer().set(
                     new NamespacedKey(plugin, "meteorshower-uuid"),
                     PersistentDataType.STRING,

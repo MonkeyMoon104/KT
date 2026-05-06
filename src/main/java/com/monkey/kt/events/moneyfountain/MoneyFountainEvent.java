@@ -3,6 +3,7 @@ package com.monkey.kt.events.moneyfountain;
 import com.monkey.kt.KT;
 import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.events.helper.GameEvent;
+import com.monkey.kt.utils.text.TextUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -45,7 +46,7 @@ public class MoneyFountainEvent implements GameEvent {
                 .replace("%deaded%", victim.getName())
                 .replace("%event%", "Money Fountain")
                 .replace("%end%", formatDuration(duration));
-        Bukkit.broadcastMessage(msg.replace("&", "§"));
+        TextUtils.broadcast(plugin.getServer(), msg);
 
         this.endTimestamp = System.currentTimeMillis() + (duration * 1000L);
 
@@ -75,12 +76,12 @@ public class MoneyFountainEvent implements GameEvent {
         if (timeExpired) {
             String finishnotMsg = plugin.getConfig().getString("events.broadcast.finish_not_collected", "");
             if (finishnotMsg != null && !finishnotMsg.isEmpty()) {
-                plugin.getServer().broadcastMessage(finishnotMsg.replace("&", "§"));
+                TextUtils.broadcast(plugin.getServer(), finishnotMsg);
             }
         } else {
             String finishMsg = plugin.getConfig().getString("events.broadcast.finish_collected", "");
             if (finishMsg != null && !finishMsg.isEmpty()) {
-                plugin.getServer().broadcastMessage(finishMsg.replace("&", "§"));
+                TextUtils.broadcast(plugin.getServer(), finishMsg);
             }
         }
 

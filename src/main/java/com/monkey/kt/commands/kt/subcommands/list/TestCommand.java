@@ -5,7 +5,7 @@ import com.monkey.kt.commands.kt.subcommands.inter.SubCommand;
 import com.monkey.kt.cooldown.CommandCooldownManager;
 import com.monkey.kt.effects.KillEffect;
 import com.monkey.kt.effects.KillEffectFactory;
-import org.bukkit.ChatColor;
+import com.monkey.kt.utils.text.TextUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -31,20 +31,20 @@ public class TestCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.only_players")));
+            sender.sendMessage(TextUtils.legacySection(plugin.getConfig().getString("messages.only_players")));
             return;
         }
         Player player = (Player) sender;
 
         if (args.length < 2) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.miss_usage")));
+            sender.sendMessage(TextUtils.legacySection(plugin.getConfig().getString("messages.miss_usage")));
             return;
         }
 
         String effectName = args[1].toLowerCase();
         KillEffect effect = KillEffectFactory.getEffect(effectName);
         if (effect == null) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.effect_not_found")));
+            sender.sendMessage(TextUtils.legacySection(plugin.getConfig().getString("messages.effect_not_found")));
             return;
         }
 
@@ -56,7 +56,7 @@ public class TestCommand implements SubCommand {
                     long remaining = CommandCooldownManager.getRemaining(player, cooldownKey);
                     String msg = plugin.getConfig().getString("messages.on_command_cooldown", "&cPlease wait %seconds%s before using this command again.")
                             .replace("%seconds%", String.valueOf(remaining));
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
+                    player.sendMessage(TextUtils.legacySection(msg));
                     return;
                 }
 
@@ -66,7 +66,7 @@ public class TestCommand implements SubCommand {
         }
 
         effect.play(player, player.getLocation());
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.effect_executed"))
+        sender.sendMessage(TextUtils.legacySection(plugin.getConfig().getString("messages.effect_executed"))
                 .replace("%effect%", effectName));
     }
 }

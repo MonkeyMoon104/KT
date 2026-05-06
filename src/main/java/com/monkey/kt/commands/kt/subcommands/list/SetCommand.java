@@ -4,7 +4,7 @@ import com.monkey.kt.KT;
 import com.monkey.kt.commands.kt.subcommands.inter.SubCommand;
 import com.monkey.kt.effects.permission.EffectPermissionResolver;
 import com.monkey.kt.storage.EffectStorage;
-import org.bukkit.ChatColor;
+import com.monkey.kt.utils.text.TextUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -29,29 +29,25 @@ public class SetCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                    plugin.getConfig().getString("messages.only_players")));
+            sender.sendMessage(TextUtils.legacySection(plugin.getConfig().getString("messages.only_players")));
             return;
         }
         Player player = (Player) sender;
 
         if (args.length < 2) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                    plugin.getConfig().getString("messages.miss_usage")));
+            sender.sendMessage(TextUtils.legacySection(plugin.getConfig().getString("messages.miss_usage")));
             return;
         }
 
         String effect = EffectPermissionResolver.normalize(args[1]);
         if (effect.equals("none") || effect.equals("clear")) {
             EffectStorage.removeEffect(player);
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                    plugin.getConfig().getString("messages.effect_removed")));
+            sender.sendMessage(TextUtils.legacySection(plugin.getConfig().getString("messages.effect_removed")));
             return;
         }
 
         if (!plugin.getGuiManager().getEffects().containsKey(effect)) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                    plugin.getConfig().getString("messages.effect_not_found")));
+            sender.sendMessage(TextUtils.legacySection(plugin.getConfig().getString("messages.effect_not_found")));
             return;
         }
 
@@ -61,26 +57,23 @@ public class SetCommand implements SubCommand {
         boolean ecoEnabled = plugin.getEconomyManager().isEnabled();
 
         if (!player.isOp() && explicitPermissionRule && !hasPermission) {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                    plugin.getConfig().getString("messages.no_permissions")));
+            player.sendMessage(TextUtils.legacySection(plugin.getConfig().getString("messages.no_permissions")));
             return;
         }
 
         if (!player.isOp() && !hasPermission && (!ecoEnabled || !hasBought)) {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                    plugin.getConfig().getString("messages.no_permissions")));
+            player.sendMessage(TextUtils.legacySection(plugin.getConfig().getString("messages.no_permissions")));
             return;
         }
 
         String current = EffectStorage.getEffect(player);
         if (effect.equalsIgnoreCase(current)) {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                    plugin.getConfig().getString("messages.effect_already_set")));
+            player.sendMessage(TextUtils.legacySection(plugin.getConfig().getString("messages.effect_already_set")));
             return;
         }
 
         EffectStorage.setEffect(player, effect);
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+        sender.sendMessage(TextUtils.legacySection(
                         plugin.getConfig().getString("messages.effect_set"))
                 .replace("%effect%", effect));
     }

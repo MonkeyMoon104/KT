@@ -1,13 +1,13 @@
 package com.monkey.kt.effects.list.explosion.animation.util;
 
 import com.monkey.kt.KT;
+import com.monkey.kt.utils.entity.EntityDataUtils;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
 import java.util.Random;
@@ -25,16 +25,16 @@ public class ExplosionUtils {
         tnt.setInvulnerable(true);
         tnt.setSilent(true);
         tnt.setYield(0f);
-        tnt.setMetadata("kt_explosion_tnt", new FixedMetadataValue(plugin, true));
+        EntityDataUtils.setBoolean(tnt, plugin, "kt_explosion_tnt", true);
 
         boolean damageEnabled = plugin.getConfig().getBoolean("effects.explosion.projectiles.damage", true);
         int rage = plugin.getConfig().getInt("effects.explosion.projectiles.settings.rage", 5);
         double value = plugin.getConfig().getDouble("effects.explosion.projectiles.settings.value", 2);
 
-        tnt.setMetadata("kt_explosion_damage_enabled", new FixedMetadataValue(plugin, damageEnabled));
-        tnt.setMetadata("kt_explosion_damage_rage", new FixedMetadataValue(plugin, rage));
-        tnt.setMetadata("kt_explosion_damage_value", new FixedMetadataValue(plugin, value));
-        tnt.setMetadata("kt_explosion_killer", new FixedMetadataValue(plugin, killer.getUniqueId().toString()));
+        EntityDataUtils.setBoolean(tnt, plugin, "kt_explosion_damage_enabled", damageEnabled);
+        EntityDataUtils.setDouble(tnt, plugin, "kt_explosion_damage_rage", rage);
+        EntityDataUtils.setDouble(tnt, plugin, "kt_explosion_damage_value", value);
+        EntityDataUtils.setString(tnt, plugin, "kt_explosion_killer", killer.getUniqueId().toString());
 
         Vector vel = new Vector(
                 (random.nextDouble() - 0.5) * 1.5,
@@ -56,11 +56,7 @@ public class ExplosionUtils {
 
                 if (!tnt.isValid() || tnt.isDead() || tickCount > 200) {
                     taskCompleted[0] = true;
-
-                    if (tnt.hasMetadata("kt_explosion_task")) {
-                        SchedulerWrapper.safeCancelTask(tnt.getMetadata("kt_explosion_task").get(0).value());
-                    }
-
+                    SchedulerWrapper.safeCancelTask(this);
                     handleExplosion(plugin, tnt);
                     return;
                 }
@@ -74,9 +70,6 @@ public class ExplosionUtils {
             }
         }, tnt, 0L, 1L);
 
-        if (task != null) {
-            tnt.setMetadata("kt_explosion_task", new FixedMetadataValue(plugin, task));
-        }
     }
 
     private static void handleExplosion(KT plugin, TNTPrimed tnt) {
@@ -84,28 +77,19 @@ public class ExplosionUtils {
         World world = explosionLoc.getWorld();
         if (world == null) return;
 
-        if (tnt.hasMetadata("kt_explosion_task")) {
-            tnt.getMetadata("kt_explosion_task").forEach(meta -> {
-                SchedulerWrapper.safeCancelTask(meta.value());
-            });
-        }
-
         spawnExplosionParticles(world, explosionLoc);
         world.playSound(explosionLoc, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 2.0f, 1.0f);
 
-        boolean damageEnabled = tnt.hasMetadata("kt_explosion_damage_enabled") ?
-                tnt.getMetadata("kt_explosion_damage_enabled").get(0).asBoolean() : false;
+        boolean damageEnabled = EntityDataUtils.getBoolean(tnt, plugin, "kt_explosion_damage_enabled", false);
 
         if (damageEnabled) {
-            double damageValue = tnt.hasMetadata("kt_explosion_damage_value") ?
-                    tnt.getMetadata("kt_explosion_damage_value").get(0).asDouble() : 2.0;
-            double rage = tnt.hasMetadata("kt_explosion_damage_rage") ?
-                    tnt.getMetadata("kt_explosion_damage_rage").get(0).asDouble() : 5.0;
+            double damageValue = EntityDataUtils.getDouble(tnt, plugin, "kt_explosion_damage_value", 2.0);
+            double rage = EntityDataUtils.getDouble(tnt, plugin, "kt_explosion_damage_rage", 5.0);
 
             Player killer = null;
-            if (tnt.hasMetadata("kt_explosion_killer")) {
+            if (EntityDataUtils.hasString(tnt, plugin, "kt_explosion_killer")) {
                 try {
-                    String killerUUID = tnt.getMetadata("kt_explosion_killer").get(0).asString();
+                    String killerUUID = EntityDataUtils.getString(tnt, plugin, "kt_explosion_killer");
                     killer = Bukkit.getPlayer(java.util.UUID.fromString(killerUUID));
                 } catch (Exception e) {
                 }

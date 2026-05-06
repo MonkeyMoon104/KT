@@ -1,6 +1,7 @@
 package com.monkey.kt.effects.custom;
 
 import com.monkey.kt.KT;
+import com.monkey.kt.utils.potion.PotionEffectUtils;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Registry;
@@ -598,7 +599,7 @@ public class CustomEffectConfig {
         }
 
         public PotionEffectType getType() {
-            return PotionEffectType.getByName(type.toUpperCase());
+            return PotionEffectUtils.fromName(type);
         }
         public int getAmplifier() { return amplifier; }
         public int getDuration() { return duration; }

@@ -2,7 +2,6 @@ package com.monkey.kt.gui;
 
 import com.monkey.kt.KT;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -36,13 +35,7 @@ public class EffectLoader {
                 if (customConfig != null) {
                     Material material = customConfig.getIcon();
                     String name = customConfig.getName();
-                    List<String> lore = new ArrayList<>();
-
-                    for (String line : customConfig.getDescription()) {
-                        lore.add(ChatColor.translateAlternateColorCodes('&', line));
-                    }
-
-                    effects.put(key, EffectItemBuilder.buildItem(material, name, lore));
+                    effects.put(key, EffectItemBuilder.buildItem(material, name, new ArrayList<>(customConfig.getDescription())));
                     continue;
                 }
             }
@@ -66,11 +59,11 @@ public class EffectLoader {
             if (descObj instanceof List<?>) {
                 for (Object line : (List<?>) descObj) {
                     if (line instanceof String) {
-                        lore.add(ChatColor.translateAlternateColorCodes('&', (String) line));
+                        lore.add((String) line);
                     }
                 }
             } else if (descObj instanceof String) {
-                lore.add(ChatColor.translateAlternateColorCodes('&', (String) descObj));
+                lore.add((String) descObj);
             } else {
                 lore.add(capitalize(key));
             }

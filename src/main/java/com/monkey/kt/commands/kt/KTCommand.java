@@ -5,7 +5,7 @@ import com.monkey.kt.commands.kt.manager.KTCManager;
 import com.monkey.kt.commands.kt.subcommands.inter.SubCommand;
 import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.gui.GUIManager;
-import org.bukkit.ChatColor;
+import com.monkey.kt.utils.text.TextUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -37,7 +37,7 @@ public class KTCommand implements CommandExecutor {
                 Player player = (Player) sender;
                 guiManager.openGUI(player);
             } else {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.only_players")));
+                TextUtils.send(sender, plugin.getConfig().getString("messages.only_players"));
             }
             return true;
         }
@@ -45,13 +45,12 @@ public class KTCommand implements CommandExecutor {
         SubCommand sub = manager.getSubCommand(args[0]);
         if (sub != null) {
             if (sub.getPermission() != null && !sender.hasPermission(sub.getPermission())) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.commands_no_perm")));
+                TextUtils.send(sender, plugin.getConfig().getString("messages.commands_no_perm"));
                 return true;
             }
             sub.execute(sender, args);
         } else {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                    plugin.getConfig().getString("messages.miss_usage")));
+            TextUtils.send(sender, plugin.getConfig().getString("messages.miss_usage"));
         }
         return true;
     }

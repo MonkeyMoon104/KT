@@ -3,9 +3,8 @@ package com.monkey.kt.commands.kt.subcommands.list;
 import com.monkey.kt.KT;
 import com.monkey.kt.commands.kt.subcommands.inter.SubCommand;
 import com.monkey.kt.economy.EconomyManager;
-import com.monkey.kt.economy.KillCoinsEco;
+import com.monkey.kt.utils.text.TextUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -168,7 +167,7 @@ public class KillCoinsCommand implements SubCommand, TabCompleter {
     }
 
     private String color(String msg) {
-        return ChatColor.translateAlternateColorCodes('&', msg);
+        return TextUtils.legacySection(msg);
     }
 
     @Override

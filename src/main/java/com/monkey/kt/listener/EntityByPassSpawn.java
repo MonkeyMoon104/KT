@@ -1,5 +1,7 @@
 package com.monkey.kt.listener;
 
+import com.monkey.kt.KT;
+import com.monkey.kt.utils.entity.EntityDataUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -10,11 +12,17 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 public class EntityByPassSpawn implements Listener {
 
+    private final KT plugin;
+
+    public EntityByPassSpawn(KT plugin) {
+        this.plugin = plugin;
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onCreatureSpawn(CreatureSpawnEvent event) {
         EntityType type = event.getEntityType();
 
-        if (event.getEntity().hasMetadata("kt_bypass_spawn")) {
+        if (EntityDataUtils.hasBoolean(event.getEntity(), plugin, "kt_bypass_spawn")) {
             event.setCancelled(false);
             Bukkit.getLogger().info("[KT Bypass] Bypass " + type.name() + " forced spawn.");
         }
@@ -22,7 +30,7 @@ public class EntityByPassSpawn implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
-        if (event.getEntity().hasMetadata("kt_bypass_spawn")) {
+        if (EntityDataUtils.hasBoolean(event.getEntity(), plugin, "kt_bypass_spawn")) {
             EntityType type = event.getEntityType();
             if (type == EntityType.WARDEN || type == EntityType.WITHER) {
                 event.setCancelled(true);

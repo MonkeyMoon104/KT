@@ -4,8 +4,9 @@ import com.monkey.kt.KT;
 import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.gui.layout.GuiLayoutConfig;
 import com.monkey.kt.storage.EffectStorage;
+import com.monkey.kt.utils.text.TextUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -51,11 +52,10 @@ public class GUIManager {
 
     public void openGUI(Player player) {
         boolean ecoEnabled = eco.isEnabled();
-        String title = ChatColor.translateAlternateColorCodes('&',
-                plugin.getConfig().getString("messages.gui_title"));
+        String title = plugin.getConfig().getString("messages.gui_title");
 
         layoutConfig = GuiLayoutConfig.fromConfig(plugin.getConfig());
-        Inventory inv = Bukkit.createInventory(null, layoutConfig.getSize(), title);
+        Inventory inv = Bukkit.createInventory(null, layoutConfig.getSize(), TextUtils.component(title));
 
         String alreadyBoughtMsg = plugin.getConfig().getString("messages.already_bought");
         String priceFormat = plugin.getConfig().getString("messages.price_format");
@@ -71,10 +71,10 @@ public class GUIManager {
             String key = entry.getKey();
             ItemStack item = entry.getValue().clone();
 
-            List<String> lore = new ArrayList<>();
+            List<Component> lore = new ArrayList<>();
             ItemMeta sourceMeta = item.getItemMeta();
-            if (sourceMeta != null && sourceMeta.getLore() != null) {
-                lore.addAll(sourceMeta.getLore());
+            if (sourceMeta != null && sourceMeta.lore() != null) {
+                lore.addAll(sourceMeta.lore());
             }
             if (ecoEnabled) {
                 boolean isCustom = plugin.getCustomEffectLoader() != null &&
@@ -85,30 +85,30 @@ public class GUIManager {
                             plugin.getCustomEffectLoader().getEffectConfig(key);
 
                     if (eco.hasBoughtEffect(player, key)) {
-                        lore.add(ChatColor.translateAlternateColorCodes('&', alreadyBoughtMsg));
+                        lore.add(TextUtils.component(alreadyBoughtMsg));
                     } else {
                         double price = customConfig.getPrice();
                         String line = priceFormat
                                 .replace("%price%", String.valueOf((int) price))
                                 .replace("%currency%", currencySym);
-                        lore.add(ChatColor.translateAlternateColorCodes('&', line));
+                        lore.add(TextUtils.component(line));
                     }
                 } else {
                     if (eco.hasBoughtEffect(player, key)) {
-                        lore.add(ChatColor.translateAlternateColorCodes('&', alreadyBoughtMsg));
+                        lore.add(TextUtils.component(alreadyBoughtMsg));
                     } else {
                         double price = eco.getEffectPrice(key);
                         String line = priceFormat
                                 .replace("%price%", String.valueOf((int) price))
                                 .replace("%currency%", currencySym);
-                        lore.add(ChatColor.translateAlternateColorCodes('&', line));
+                        lore.add(TextUtils.component(line));
                     }
                 }
             }
 
             ItemMeta meta = item.getItemMeta();
             if (meta != null) {
-                meta.setLore(lore);
+                meta.lore(lore);
                 item.setItemMeta(meta);
             }
 
@@ -119,7 +119,7 @@ public class GUIManager {
         ItemMeta closeMeta = closeItem.getItemMeta();
         String closeName = plugin.getConfig().getString("gui.buttons.close", "&cX Close");
         if (closeMeta != null) {
-            closeMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', closeName));
+            closeMeta.displayName(TextUtils.component(closeName));
             closeItem.setItemMeta(closeMeta);
         }
         inv.setItem(layoutConfig.getCloseButton().getSlot(), closeItem);
@@ -132,7 +132,7 @@ public class GUIManager {
         String currentEffectName = plugin.getConfig().getString("gui.buttons.current_effect", "&eCurrent Effect: %effect%");
         currentEffectName = currentEffectName.replace("%effect%", effectDisplay);
         if (currentMeta != null) {
-            currentMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', currentEffectName));
+            currentMeta.displayName(TextUtils.component(currentEffectName));
             currentEffectItem.setItemMeta(currentMeta);
         }
         inv.setItem(layoutConfig.getCurrentEffectButton().getSlot(), currentEffectItem);
@@ -141,7 +141,7 @@ public class GUIManager {
         ItemMeta disableMeta = disableItem.getItemMeta();
         String disableName = plugin.getConfig().getString("gui.buttons.disable", "&4> Disable Effect");
         if (disableMeta != null) {
-            disableMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', disableName));
+            disableMeta.displayName(TextUtils.component(disableName));
             disableItem.setItemMeta(disableMeta);
         }
         inv.setItem(layoutConfig.getDisableButton().getSlot(), disableItem);
@@ -153,7 +153,7 @@ public class GUIManager {
                 .replace("%bal%", String.valueOf(eco.getBalance(player)))
                 .replace("%bal_symbol%", eco.currencySymbol());
         if (currencyMeta != null) {
-            currencyMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', currencyName));
+            currencyMeta.displayName(TextUtils.component(currencyName));
             currencyItem.setItemMeta(currencyMeta);
         }
         inv.setItem(layoutConfig.getCurrencyButton().getSlot(), currencyItem);
@@ -167,14 +167,14 @@ public class GUIManager {
         }
 
         ItemMeta clickedMeta = clicked.getItemMeta();
-        if (clickedMeta == null || clickedMeta.getDisplayName() == null) {
+        if (clickedMeta == null || clickedMeta.displayName() == null) {
             return null;
         }
 
-        String name = clickedMeta.getDisplayName();
+        Component name = clickedMeta.displayName();
         for (Map.Entry<String, ItemStack> entry : effects.entrySet()) {
             ItemMeta effectMeta = entry.getValue().getItemMeta();
-            if (effectMeta != null && name.equals(effectMeta.getDisplayName())) {
+            if (effectMeta != null && name.equals(effectMeta.displayName())) {
                 return entry.getKey();
             }
         }

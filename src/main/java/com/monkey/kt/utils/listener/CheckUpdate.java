@@ -12,7 +12,7 @@ import org.bukkit.plugin.Plugin;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 
 public class CheckUpdate implements Listener {
 
@@ -35,7 +35,7 @@ public class CheckUpdate implements Listener {
 
     public void checkForUpdates() {
         try {
-            URL url = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceId);
+            java.net.URL url = URI.create("https://api.spigotmc.org/legacy/update.php?resource=" + resourceId).toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(5000);
@@ -46,7 +46,7 @@ public class CheckUpdate implements Listener {
             reader.close();
 
             this.latestVersion = latestVersion;
-            String currentVersion = plugin.getDescription().getVersion();
+            String currentVersion = plugin.getPluginMeta().getVersion();
 
             Bukkit.getLogger().info("[KT UpdateChecker] Current version: " + currentVersion);
             Bukkit.getLogger().info("[KT UpdateChecker] Latest version: " + latestVersion);

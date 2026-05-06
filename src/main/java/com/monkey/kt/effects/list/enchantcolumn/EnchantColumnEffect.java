@@ -3,6 +3,7 @@ package com.monkey.kt.effects.list.enchantcolumn;
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.KillEffect;
 import com.monkey.kt.effects.list.enchantcolumn.animation.*;
+import com.monkey.kt.utils.potion.PotionEffectUtils;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -21,7 +22,7 @@ public class EnchantColumnEffect implements KillEffect {
         ConfigurationSection section = plugin.getConfig().getConfigurationSection("effects.enchantcolumn.effectexplosion");
         if (section != null) {
             String typeName = section.getString("type", "REGENERATION");
-            this.effectType = PotionEffectType.getByName(typeName.toUpperCase());
+            this.effectType = PotionEffectUtils.fromName(typeName);
             this.amplifier = section.getInt("amplifier", 1);
             this.duration = section.getInt("duration", 10);
         } else {

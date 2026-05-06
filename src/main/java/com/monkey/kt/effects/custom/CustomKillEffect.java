@@ -4,7 +4,7 @@ import com.monkey.kt.KT;
 import com.monkey.kt.effects.KillEffect;
 import com.monkey.kt.effects.custom.executors.*;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
-import org.bukkit.ChatColor;
+import com.monkey.kt.utils.text.TextUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -126,14 +126,14 @@ public class CustomKillEffect implements KillEffect {
         String killerMsg = config.getKillerMessage();
         if (killerMsg != null && !killerMsg.isEmpty()) {
             killerMsg = killerMsg.replace("%effect%", config.getName());
-            killer.sendMessage(ChatColor.translateAlternateColorCodes('&', killerMsg));
+            killer.sendMessage(TextUtils.legacySection(killerMsg));
         }
 
         if (config.isActionBarEnabled()) {
             String actionBar = config.getActionBarKiller();
             if (actionBar != null && !actionBar.isEmpty()) {
                 actionBar = actionBar.replace("%effect%", config.getName());
-                killer.sendActionBar(ChatColor.translateAlternateColorCodes('&', actionBar));
+                killer.sendActionBar(TextUtils.component(actionBar));
             }
         }
 
@@ -143,14 +143,14 @@ public class CustomKillEffect implements KillEffect {
             String victimMsg = config.getVictimMessage();
             if (victimMsg != null && !victimMsg.isEmpty()) {
                 victimMsg = victimMsg.replace("%effect%", config.getName());
-                playerVictim.sendMessage(ChatColor.translateAlternateColorCodes('&', victimMsg));
+                playerVictim.sendMessage(TextUtils.legacySection(victimMsg));
             }
 
             if (config.isActionBarEnabled()) {
                 String actionBar = config.getActionBarVictim();
                 if (actionBar != null && !actionBar.isEmpty()) {
                     actionBar = actionBar.replace("%effect%", config.getName());
-                    playerVictim.sendActionBar(ChatColor.translateAlternateColorCodes('&', actionBar));
+                    playerVictim.sendActionBar(TextUtils.component(actionBar));
                 }
             }
         }
@@ -162,7 +162,7 @@ public class CustomKillEffect implements KillEffect {
             if (victim instanceof Player) {
                 broadcast = broadcast.replace("%victim%", victim.getName());
             }
-            plugin.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', broadcast));
+            TextUtils.broadcast(plugin.getServer(), broadcast);
         }
     }
 

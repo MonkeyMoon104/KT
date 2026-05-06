@@ -2,12 +2,13 @@ package com.monkey.kt.effects.list.skeleton.animation;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.util.EffectUtils;
+import com.monkey.kt.utils.entity.EntityDataUtils;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.metadata.FixedMetadataValue;
 
 public class SkeletonAnimation {
 
@@ -30,12 +31,12 @@ public class SkeletonAnimation {
         world.playSound(center, Sound.BLOCK_PORTAL_TRAVEL, 2f, 0.6f);
 
         Skeleton skeleton = world.spawn(center.clone().add(0, 0.1, 0), Skeleton.class, sk -> {
-            sk.setMetadata("kt_bypass_spawn", new FixedMetadataValue(plugin, true));
+            EntityDataUtils.setBoolean(sk, plugin, "kt_bypass_spawn", true);
             sk.setAI(false);
             sk.setInvulnerable(true);
             sk.setSilent(true);
             sk.setCollidable(false);
-            sk.setCustomName(deadPlayer.getName());
+            sk.customName(Component.text(deadPlayer.getName()));
             sk.setCustomNameVisible(true);
             sk.setGravity(false);
 

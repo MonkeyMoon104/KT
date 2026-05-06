@@ -2,7 +2,12 @@ package com.monkey.kt.events.moneyfountain;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.economy.EconomyManager;
-import org.bukkit.*;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -41,7 +46,7 @@ public class MoneyFountainDropTask extends BukkitRunnable {
         ItemStack stack = new ItemStack(material, 1);
         stack = stack.asOne();
         stack.editMeta(meta -> {
-            meta.setDisplayName("§r");
+            meta.displayName(Component.empty());
             meta.getPersistentDataContainer().set(
                     new NamespacedKey(plugin, "moneyfountain-uuid"),
                     PersistentDataType.STRING,

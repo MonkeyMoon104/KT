@@ -2,8 +2,7 @@ package com.monkey.kt.listener;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.economy.EconomyManager;
-import com.monkey.kt.economy.KillCoinsEco;
-import org.bukkit.ChatColor;
+import com.monkey.kt.utils.text.TextUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -40,7 +39,7 @@ public class KillRewardListener implements Listener {
                         message = message.replace("%amount%", String.valueOf((int) reward))
                                 .replace("%currency%", eco.currencySymbol());
 
-                        killer.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+                        killer.sendMessage(TextUtils.legacySection(message));
                     }
                 }
             }

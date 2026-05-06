@@ -2,7 +2,7 @@ package com.monkey.kt.commands.kt.subcommands.list;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.commands.kt.subcommands.inter.SubCommand;
-import org.bukkit.ChatColor;
+import com.monkey.kt.utils.text.TextUtils;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 
@@ -185,6 +185,6 @@ public class GuiEditorCommand implements SubCommand {
     }
 
     private String color(String message) {
-        return ChatColor.translateAlternateColorCodes('&', message);
+        return TextUtils.legacySection(message);
     }
 }

@@ -3,7 +3,7 @@ package com.monkey.kt.commands.kt.subcommands.list;
 import com.monkey.kt.KT;
 import com.monkey.kt.commands.kt.subcommands.inter.SubCommand;
 import com.monkey.kt.storage.EffectStorage;
-import org.bukkit.ChatColor;
+import com.monkey.kt.utils.text.TextUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -28,8 +28,7 @@ public class ClearCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                    plugin.getConfig().getString("messages.only_players")));
+            sender.sendMessage(TextUtils.legacySection(plugin.getConfig().getString("messages.only_players")));
             return;
         }
 
@@ -37,13 +36,11 @@ public class ClearCommand implements SubCommand {
         String current = EffectStorage.getEffect(player);
 
         if (current == null) {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                    plugin.getConfig().getString("messages.effect_none_selected")));
+            player.sendMessage(TextUtils.legacySection(plugin.getConfig().getString("messages.effect_none_selected")));
             return;
         }
 
         EffectStorage.removeEffect(player);
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                plugin.getConfig().getString("messages.effect_removed")));
+        player.sendMessage(TextUtils.legacySection(plugin.getConfig().getString("messages.effect_removed")));
     }
 }

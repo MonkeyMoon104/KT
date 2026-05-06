@@ -5,11 +5,11 @@ import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.effects.permission.EffectPermissionResolver;
 import com.monkey.kt.gui.layout.GuiLayoutConfig;
 import com.monkey.kt.storage.EffectStorage;
+import com.monkey.kt.utils.text.TextUtils;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.types.PermissionNode;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,10 +36,9 @@ public class InventoryClickListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        String guiTitle = ChatColor.translateAlternateColorCodes('&',
-                plugin.getConfig().getString("messages.gui_title"));
+        String guiTitle = plugin.getConfig().getString("messages.gui_title");
 
-        if (!event.getView().getTitle().equals(guiTitle)) {
+        if (!event.getView().title().equals(TextUtils.component(guiTitle))) {
             return;
         }
 
@@ -173,6 +172,6 @@ public class InventoryClickListener implements Listener {
     }
 
     private String color(String s) {
-        return ChatColor.translateAlternateColorCodes('&', s);
+        return TextUtils.legacySection(s);
     }
 }

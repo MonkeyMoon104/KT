@@ -4,16 +4,18 @@ import com.monkey.kt.KT;
 import com.monkey.kt.effects.KillEffect;
 import com.monkey.kt.utils.damage.DamageConfig;
 import com.monkey.kt.utils.damage.DamageUtils;
+import com.monkey.kt.utils.entity.EntityDataUtils;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Warden;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WardenEffect implements KillEffect {
     private final KT plugin;
@@ -166,11 +168,12 @@ public class WardenEffect implements KillEffect {
         );
 
         List<Warden> wardens = new ArrayList<>();
+        Map<Warden, Vector> wardenDirections = new HashMap<>();
 
         for (Vector dir : directions) {
             Location spawnLoc = center.clone();
             Warden warden = (Warden) world.spawn(spawnLoc, Warden.class, entity -> {
-                entity.setMetadata("kt_bypass_spawn", new FixedMetadataValue(plugin, true));
+                EntityDataUtils.setBoolean(entity, plugin, "kt_bypass_spawn", true);
 
                 entity.setAI(false);
                 entity.setSilent(true);
@@ -181,11 +184,10 @@ public class WardenEffect implements KillEffect {
                 entity.setRemoveWhenFarAway(true);
                 entity.setCollidable(false);
                 entity.setGravity(false);
-
-                entity.setMetadata("kt_direction", new FixedMetadataValue(plugin, dir.clone()));
             });
 
             wardens.add(warden);
+            wardenDirections.put(warden, dir.clone());
         }
 
         final int[] currentStep = {0};
@@ -226,7 +228,10 @@ public class WardenEffect implements KillEffect {
                 for (Warden warden : wardens) {
                     if (!warden.isValid()) continue;
 
-                    Vector dir = (Vector) warden.getMetadata("kt_direction").get(0).value();
+                    Vector dir = wardenDirections.get(warden);
+                    if (dir == null) {
+                        continue;
+                    }
 
                     Location newLoc = center.clone().add(dir.clone().multiply(currentRadius));
                     newLoc.setY(center.getY());

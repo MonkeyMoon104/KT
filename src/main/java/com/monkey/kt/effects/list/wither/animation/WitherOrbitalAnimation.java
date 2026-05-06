@@ -2,12 +2,16 @@ package com.monkey.kt.effects.list.wither.animation;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.list.wither.animation.util.WitherParticles;
+import com.monkey.kt.utils.entity.EntityDataUtils;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
-import org.bukkit.*;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wither;
 import org.bukkit.entity.WitherSkull;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
 public class WitherOrbitalAnimation {
@@ -33,7 +37,7 @@ public class WitherOrbitalAnimation {
         final int[] ticks = {0};
 
         final boolean[] taskCompleted = {false};
-        SchedulerWrapper.ScheduledTask task = SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
+        SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             @Override
             public void run() {
                 if (taskCompleted[0]) return;
@@ -74,7 +78,7 @@ public class WitherOrbitalAnimation {
                 world.spawnParticle(Particle.SOUL, pos1, 5, 0.2, 0.2, 0.2, 0.01);
                 world.spawnParticle(Particle.ASH, pos2, 5, 0.2, 0.2, 0.2, 0.01);
                 if (ticks[0] % 20 == 0) {
-                    world.strikeLightningEffect(center.clone().add(Math.random()*4-2, 0, Math.random()*4-2));
+                    world.strikeLightningEffect(center.clone().add(Math.random() * 4 - 2, 0, Math.random() * 4 - 2));
                 }
 
                 ticks[0]++;
@@ -97,18 +101,16 @@ public class WitherOrbitalAnimation {
         World world = loc.getWorld();
         if (world == null) return null;
 
-        Wither wither = world.spawn(loc, Wither.class, entity -> {
-            entity.setMetadata("kt_bypass_spawn", new FixedMetadataValue(plugin, true));
+        return world.spawn(loc, Wither.class, entity -> {
+            EntityDataUtils.setBoolean(entity, plugin, "kt_bypass_spawn", true);
             entity.setAI(false);
             entity.setCustomNameVisible(false);
             entity.setInvulnerable(true);
             entity.setSilent(true);
             entity.setCollidable(false);
             entity.setHealth(300);
-            entity.setCustomName("§7§oSpectral Wither");
+            entity.customName(Component.text("Spectral Wither"));
         });
-
-        return wither;
     }
 
     private void launchSkull(World world, Location from, Location to) {
@@ -124,11 +126,10 @@ public class WitherOrbitalAnimation {
         skull.setCharged(true);
         skull.setGravity(true);
         skull.setSilent(true);
-        skull.setMetadata("kt_wither_skull", new FixedMetadataValue(plugin, true));
+        EntityDataUtils.setBoolean(skull, plugin, "kt_wither_skull", true);
 
-        final int[] skullTicks = {0};
         final boolean[] taskCompleted = {false};
-        SchedulerWrapper.ScheduledTask skullTask = SchedulerWrapper.runTaskTimerAtEntity(plugin, new Runnable() {
+        SchedulerWrapper.runTaskTimerAtEntity(plugin, new Runnable() {
             @Override
             public void run() {
                 if (taskCompleted[0]) return;
@@ -138,7 +139,6 @@ public class WitherOrbitalAnimation {
                 }
                 world.spawnParticle(Particle.SOUL_FIRE_FLAME, skull.getLocation(), 2, 0, 0, 0, 0.01);
                 world.spawnParticle(Particle.LARGE_SMOKE, skull.getLocation(), 1, 0.05, 0.05, 0.05, 0.01);
-                skullTicks[0]++;
             }
         }, skull, 0L, 1L);
     }

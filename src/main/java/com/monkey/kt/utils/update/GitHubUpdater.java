@@ -5,7 +5,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Files;
 
 public class GitHubUpdater {
@@ -19,7 +19,7 @@ public class GitHubUpdater {
 
     public void checkAndUpdate() {
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(apiUrl).openConnection();
+            HttpURLConnection connection = (HttpURLConnection) URI.create(apiUrl).toURL().openConnection();
             connection.setRequestProperty("User-Agent", "Mozilla/5.0");
 
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -31,7 +31,7 @@ public class GitHubUpdater {
             String jsonStr = json.toString();
 
             String latestVersion = extract(jsonStr, "\"tag_name\":\"", "\"");
-            String currentVersion = plugin.getDescription().getVersion();
+            String currentVersion = plugin.getPluginMeta().getVersion();
 
             if (!latestVersion.equalsIgnoreCase("v" + currentVersion)) {
                 Bukkit.getLogger().info("[KT AutoUpdater] New version found: " + latestVersion);
@@ -79,7 +79,7 @@ public class GitHubUpdater {
     }
 
     private void downloadFile(String fileURL, File destination) throws IOException {
-        HttpURLConnection conn = (HttpURLConnection) new URL(fileURL).openConnection();
+        HttpURLConnection conn = (HttpURLConnection) URI.create(fileURL).toURL().openConnection();
         conn.setRequestProperty("User-Agent", "Mozilla/5.0");
 
         try (InputStream in = conn.getInputStream()) {

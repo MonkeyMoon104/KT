@@ -1,7 +1,8 @@
 package com.monkey.kt.effects.list.aurafarming.animation.util;
 
 import com.monkey.kt.KT;
-import org.bukkit.ChatColor;
+import com.monkey.kt.utils.potion.PotionEffectUtils;
+import com.monkey.kt.utils.text.TextUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -22,10 +23,10 @@ public class AuraBoostApplier {
 
             int currentAmplifier = plugin.getAuraBoostManager().getDamageAmplifier(killer);
 
-            String message = section.getString("damage-message", "&b☄ You received a damage boost for {duration}s (Amplifier: {amplifier})!");
+            String message = section.getString("damage-message", "&bYou received a damage boost for {duration}s (Amplifier: {amplifier})!");
             message = message.replace("{duration}", String.valueOf(duration));
             message = message.replace("{amplifier}", String.valueOf(currentAmplifier));
-            killer.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+            killer.sendMessage(TextUtils.legacySection(message));
         }
 
         ConfigurationSection potionBoost = section.getConfigurationSection("potion");
@@ -34,29 +35,20 @@ public class AuraBoostApplier {
             int amplifier = potionBoost.getInt("amplifier", 1);
             int duration = potionBoost.getInt("duration", 10);
 
-            PotionEffectType potionType = getPotionEffectTypeByName(type);
+            PotionEffectType potionType = PotionEffectUtils.fromName(type);
             if (potionType != null) {
                 killer.addPotionEffect(new PotionEffect(potionType, duration * 20, amplifier - 1, true, true));
 
-                String message = section.getString("potion-message", "&d✨ You received {potion} {amplifier} for {duration}s!");
+                String message = section.getString("potion-message", "&dYou received {potion} {amplifier} for {duration}s!");
                 message = message
-                        .replace("{potion}", potionType.getName())
+                        .replace("{potion}", PotionEffectUtils.displayName(potionType))
                         .replace("{amplifier}", String.valueOf(amplifier))
                         .replace("{duration}", String.valueOf(duration));
-                killer.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+                killer.sendMessage(TextUtils.legacySection(message));
             } else {
-                killer.sendMessage(ChatColor.RED + "⚠ Invalid potion type: " + type);
+                killer.sendMessage(TextUtils.legacySection("&cInvalid potion type: " + type));
                 plugin.getLogger().warning("Invalid potion type in config: " + type);
             }
         }
-    }
-
-    private static PotionEffectType getPotionEffectTypeByName(String name) {
-        for (PotionEffectType type : PotionEffectType.values()) {
-            if (type != null && type.getName() != null && type.getName().equalsIgnoreCase(name)) {
-                return type;
-            }
-        }
-        return null;
     }
 }

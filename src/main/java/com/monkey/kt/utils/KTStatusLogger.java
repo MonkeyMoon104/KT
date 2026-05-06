@@ -7,7 +7,7 @@ import org.json.JSONArray;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.URL;
+import java.net.URI;
 import java.sql.Connection;
 import java.util.logging.Logger;
 
@@ -64,8 +64,8 @@ public class KTStatusLogger {
     }
 
     private void logWithStats(String title, int serversUsing, int playersUsing) {
-        String pluginName = plugin.getDescription().getName();
-        String version = plugin.getDescription().getVersion();
+        String pluginName = plugin.getPluginMeta().getName();
+        String version = plugin.getPluginMeta().getVersion();
         String author = getAuthor();
 
         int effectsCount = 0;
@@ -165,7 +165,7 @@ public class KTStatusLogger {
     }
 
     private String readUrl(String urlString) throws Exception {
-        URL url = new URL(urlString);
+        java.net.URL url = URI.create(urlString).toURL();
         try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
             StringBuilder sb = new StringBuilder();
             String line;
@@ -177,10 +177,10 @@ public class KTStatusLogger {
     }
 
     private String getAuthor() {
-        if (plugin.getDescription().getAuthors() == null || plugin.getDescription().getAuthors().isEmpty()) {
+        if (plugin.getPluginMeta().getAuthors() == null || plugin.getPluginMeta().getAuthors().isEmpty()) {
             return "Unknown";
         }
-        return plugin.getDescription().getAuthors().get(0);
+        return plugin.getPluginMeta().getAuthors().get(0);
     }
 
     private String repeat(String s, int times) {

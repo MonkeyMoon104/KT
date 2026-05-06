@@ -2,11 +2,11 @@ package com.monkey.kt.effects.custom.executors;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.custom.CustomEffectConfig;
+import com.monkey.kt.utils.entity.EntityDataUtils;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.*;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
 import java.util.List;
@@ -47,9 +47,9 @@ public class ProjectileExecutor {
 
             if (projectile != null) {
                 projectile.setGravity(data.hasGravity());
-                projectile.setMetadata("kt_custom_projectile", new FixedMetadataValue(plugin, true));
-                projectile.setMetadata("kt_custom_damage", new FixedMetadataValue(plugin, data.getDamage()));
-                projectile.setMetadata("kt_custom_remove", new FixedMetadataValue(plugin, data.shouldRemoveOnHit()));
+                EntityDataUtils.setBoolean(projectile, plugin, "kt_custom_projectile", true);
+                EntityDataUtils.setDouble(projectile, plugin, "kt_custom_damage", data.getDamage());
+                EntityDataUtils.setBoolean(projectile, plugin, "kt_custom_remove", data.shouldRemoveOnHit());
 
                 if (!data.getTrailParticle().isEmpty()) {
                     addTrailEffect(projectile, data.getTrailParticle());

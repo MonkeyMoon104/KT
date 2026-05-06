@@ -7,7 +7,8 @@ import com.monkey.kt.effects.KillEffectFactory;
 import com.monkey.kt.effects.permission.EffectPermissionResolver;
 import com.monkey.kt.effects.list.skeleton.SkeletonEffect;
 import com.monkey.kt.storage.EffectStorage;
-import org.bukkit.ChatColor;
+import com.monkey.kt.utils.entity.EntityDataUtils;
+import com.monkey.kt.utils.text.TextUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.*;
@@ -58,7 +59,7 @@ public class KillEffectListener implements Listener {
             if (cooldownManager.isOnCooldown(killer, isMobKill, delay)) {
                 String msg = plugin.getConfig().getString("messages.cooldown_active", "&cWait %delay% seconds before using your KillEffect again!");
                 msg = msg.replace("%delay%", String.valueOf(delay));
-                killer.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
+                killer.sendMessage(TextUtils.legacySection(msg));
                 return;
             }
             cooldownManager.setCooldown(killer, isMobKill);
@@ -103,8 +104,8 @@ public class KillEffectListener implements Listener {
             }
         }
 
-        if (effectName.equalsIgnoreCase("sniper") && !victim.hasMetadata("kt_last_hit_arrow")) return;
-        if (effectName.equalsIgnoreCase("mace") && !victim.hasMetadata("kt_last_hit_mace")) return;
+        if (effectName.equalsIgnoreCase("sniper") && !EntityDataUtils.hasBoolean(victim, plugin, "kt_last_hit_arrow")) return;
+        if (effectName.equalsIgnoreCase("mace") && !EntityDataUtils.hasBoolean(victim, plugin, "kt_last_hit_mace")) return;
 
         KillEffect effect = KillEffectFactory.getEffect(effectName);
         if (effect == null) return;
@@ -121,7 +122,7 @@ public class KillEffectListener implements Listener {
     @EventHandler
     public void onPigDamage(EntityDamageEvent event) {
         Entity entity = event.getEntity();
-        if (entity instanceof Pig && entity.hasMetadata("kt_pigstep")) {
+        if (entity instanceof Pig && EntityDataUtils.hasBoolean(entity, plugin, "kt_pigstep")) {
             event.setCancelled(true);
         }
     }
@@ -129,10 +130,10 @@ public class KillEffectListener implements Listener {
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getCause() == EntityDamageEvent.DamageCause.FALL &&
-                event.getEntity().hasMetadata("no_fall_damage")) {
+                EntityDataUtils.hasBoolean(event.getEntity(), plugin, "no_fall_damage")) {
 
             event.setCancelled(true);
-            event.getEntity().removeMetadata("no_fall_damage", plugin);
+            EntityDataUtils.remove(event.getEntity(), plugin, "no_fall_damage");
         }
     }
 

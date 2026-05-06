@@ -3,6 +3,7 @@ package com.monkey.kt.effects.list.wither.animation.util;
 import com.monkey.kt.KT;
 import com.monkey.kt.utils.damage.DamageConfig;
 import com.monkey.kt.utils.damage.DamageUtils;
+import com.monkey.kt.utils.entity.EntityDataUtils;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -10,7 +11,6 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.WitherSkull;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
 public class WitherParticles {
@@ -70,7 +70,7 @@ public class WitherParticles {
             skull.setCharged(true);
             skull.setGravity(true);
             skull.setSilent(true);
-            skull.setMetadata("kt_wither_skull", new FixedMetadataValue(plugin, true));
+            EntityDataUtils.setBoolean(skull, plugin, "kt_wither_skull", true);
 
             final int[] burstTicks = {0};
             final boolean[] taskCompleted = {false};

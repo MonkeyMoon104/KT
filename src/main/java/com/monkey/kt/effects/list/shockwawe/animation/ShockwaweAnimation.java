@@ -3,6 +3,7 @@ package com.monkey.kt.effects.list.shockwawe.animation;
 import com.monkey.kt.KT;
 import com.monkey.kt.utils.damage.DamageConfig;
 import com.monkey.kt.utils.damage.DamageUtils;
+import com.monkey.kt.utils.potion.PotionEffectUtils;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -113,7 +114,7 @@ public class ShockwaweAnimation {
         int amplifier = plugin.getConfig().getInt("shockwawe.effectexplosion.amplifier", 1);
         int duration = plugin.getConfig().getInt("shockwawe.effectexplosion.duration", 3);
 
-        PotionEffectType effectType = PotionEffectType.getByName(typeName.toUpperCase());
+        PotionEffectType effectType = PotionEffectUtils.fromName(typeName);
         if (effectType == null) effectType = PotionEffectType.BLINDNESS;
 
         world.playSound(center, Sound.ENTITY_GENERIC_EXPLODE, 1.5f, 1.2f);
