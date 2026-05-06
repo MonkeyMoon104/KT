@@ -21,7 +21,6 @@ import com.monkey.kt.utils.KTStatusLogger;
 import com.monkey.kt.utils.SoundUtils;
 import com.monkey.kt.utils.WorldGuardUtils;
 import com.monkey.kt.utils.listener.CheckUpdate;
-import com.monkey.kt.utils.registration.RegistrationManager;
 import com.monkey.kt.utils.resourcepack.ResourcePack;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bstats.bukkit.Metrics;
@@ -156,9 +155,6 @@ public class KT extends JavaPlugin {
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new KTPlaceholder(getAuraBoostManager(), this).register();
         }
-
-        RegistrationManager registrationManager = new RegistrationManager(this);
-        registrationManager.setup();
 
         this.soundUtils = new SoundUtils(this);
     }

@@ -32,12 +32,9 @@ public class KillEffectTabCompleter implements TabCompleter {
 
         if (args.length == 1) {
             List<String> subcommands = new ArrayList<>(Arrays.asList(
-                    "reload", "set", "clear", "test", "killcoins", "review"
+                    "reload", "set", "clear", "test", "killcoins"
             ));
 
-            if (sender.hasPermission("kt.admin.suggestion") || sender.isOp()) {
-                subcommands.add("suggestion");
-            }
             if (sender.hasPermission("kt.guieditor") || sender.isOp()) {
                 subcommands.add("guieditor");
             }

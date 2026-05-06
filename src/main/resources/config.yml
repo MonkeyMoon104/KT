@@ -47,12 +47,12 @@ database:
 
 server-info: false
 
+disabled-worlds: []
+
 auto-update:
   enabled: true
 
 management-structure:
-  review-command:
-    enabled: true
   test_command:
     cooldown:
       enabled: true

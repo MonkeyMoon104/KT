@@ -22,8 +22,6 @@ public class KTCManager {
         registerSubCommand(new GuiEditorCommand(plugin));
         registerSubCommand(new TestCommand(plugin));
         registerSubCommand(new KillCoinsCommand(plugin, eco));
-        registerSubCommand(new SecureSuggestionCommand(plugin));
-        registerSubCommand(new SecureReviewCommand(plugin));
     }
 
     private void registerSubCommand(SubCommand command) {

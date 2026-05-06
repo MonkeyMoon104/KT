@@ -2,16 +2,13 @@ package com.monkey.kt.listener;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.cooldown.CooldownManager;
-import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.effects.KillEffect;
 import com.monkey.kt.effects.KillEffectFactory;
 import com.monkey.kt.effects.permission.EffectPermissionResolver;
 import com.monkey.kt.effects.list.skeleton.SkeletonEffect;
-import com.monkey.kt.events.EventManager;
 import com.monkey.kt.storage.EffectStorage;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.SoundCategory;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -35,7 +32,14 @@ public class KillEffectListener implements Listener {
         LivingEntity victim = event.getEntity();
         Player killer = victim.getKiller();
         if (killer == null || !killer.isOnline()) return;
+
         boolean bypass = killer.hasPermission("kt.admin.bypass");
+
+        boolean effectsDisabledInWorld = plugin.getConfig().getStringList("disabled-worlds").stream()
+                .anyMatch(worldName -> worldName.equalsIgnoreCase(victim.getWorld().getName()));
+        if (!bypass && effectsDisabledInWorld) {
+            return;
+        }
 
         boolean isMobKill = !(victim instanceof Player);
         String sectionKey = isMobKill ? "mobs" : "players";
