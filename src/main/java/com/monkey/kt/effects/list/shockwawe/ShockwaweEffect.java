@@ -3,7 +3,8 @@ package com.monkey.kt.effects.list.shockwawe;
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.KillEffect;
 import com.monkey.kt.effects.list.shockwawe.animation.ShockwaweAnimation;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 public class ShockwaweEffect implements KillEffect {

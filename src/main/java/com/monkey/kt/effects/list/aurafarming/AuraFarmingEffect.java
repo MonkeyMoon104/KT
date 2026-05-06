@@ -4,7 +4,6 @@ import com.monkey.kt.KT;
 import com.monkey.kt.effects.KillEffect;
 import com.monkey.kt.effects.list.aurafarming.animation.AuraTrailAnimation;
 import org.bukkit.Location;
-import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 
 public class AuraFarmingEffect implements KillEffect {

@@ -1,8 +1,8 @@
 package com.monkey.kt.effects.list.pigstep.animation;
 
+import com.destroystokyo.paper.entity.ai.MobGoals;
 import com.monkey.kt.KT;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
-import com.destroystokyo.paper.entity.ai.MobGoals;
 import org.bukkit.Color;
 import org.bukkit.Particle;
 import org.bukkit.entity.Pig;

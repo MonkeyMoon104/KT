@@ -2,9 +2,10 @@ package com.monkey.kt.effects.list.enchantcolumn;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.KillEffect;
-import com.monkey.kt.effects.list.enchantcolumn.animation.*;
+import com.monkey.kt.effects.list.enchantcolumn.animation.EnchantAnimation;
 import com.monkey.kt.utils.potion.PotionEffectUtils;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;

@@ -1,8 +1,8 @@
 package com.monkey.kt.commands.kt.manager;
 
-import com.monkey.kt.commands.kt.subcommands.list.*;
-import com.monkey.kt.commands.kt.subcommands.inter.SubCommand;
 import com.monkey.kt.KT;
+import com.monkey.kt.commands.kt.subcommands.inter.SubCommand;
+import com.monkey.kt.commands.kt.subcommands.list.*;
 import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.gui.GUIManager;
 

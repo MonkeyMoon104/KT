@@ -3,11 +3,10 @@ package com.monkey.kt.effects.list.enchantcolumn.animation;
 import com.monkey.kt.KT;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.*;
+import org.bukkit.Particle.DustOptions;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.bukkit.Particle.DustOptions;
 
 import java.util.List;
 

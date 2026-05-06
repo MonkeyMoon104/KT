@@ -4,7 +4,6 @@ import com.monkey.kt.KT;
 import com.monkey.kt.effects.custom.CustomEffectConfig;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 
 import java.util.List;
 
