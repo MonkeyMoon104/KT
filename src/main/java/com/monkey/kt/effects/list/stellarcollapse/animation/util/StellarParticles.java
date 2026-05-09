@@ -8,10 +8,12 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 public class StellarParticles {
+    private static final String EFFECT_ID = "stellarcollapse";
 
-    public static void spawnStellarSwirl(World world, Location center, double radius, int points) {
-        for (int i = 0; i < points; i++) {
-            double angle = 2 * Math.PI * i / points;
+    public static void spawnStellarSwirl(KT plugin, World world, Location center, double radius, int points) {
+        int scaledPoints = plugin.getParticlePerformanceManager().scaleLoopCount(EFFECT_ID, points, true);
+        for (int i = 0; i < scaledPoints; i++) {
+            double angle = 2 * Math.PI * i / scaledPoints;
             double x = Math.cos(angle) * radius;
             double z = Math.sin(angle) * radius;
             double y = Math.sin(angle * 3) * 0.5;
@@ -42,10 +44,27 @@ public class StellarParticles {
                 if (step[0] > 24) {
                     taskCompleted[0] = true;
 
-                    for (int y = 0; y < 50; y++) {
+                    int columnSteps = plugin.getParticlePerformanceManager().scaleLoopCount(EFFECT_ID, 50, true);
+                    for (int y = 0; y < columnSteps; y++) {
                         Location loc = center.clone().add(0, y * 0.3, 0);
-                        world.spawnParticle(Particle.END_ROD, loc, 4, 0.08, 0.08, 0.08, 0.01);
-                        world.spawnParticle(Particle.ENCHANT, loc, 5, 0.1, 0.1, 0.1, 0.0);
+                        world.spawnParticle(
+                                Particle.END_ROD,
+                                loc,
+                                plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 4, true),
+                                0.08,
+                                0.08,
+                                0.08,
+                                0.01
+                        );
+                        world.spawnParticle(
+                                Particle.ENCHANT,
+                                loc,
+                                plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 5, true),
+                                0.1,
+                                0.1,
+                                0.1,
+                                0.0
+                        );
                     }
 
                     world.spawnParticle(Particle.FLASH, center, 1);
@@ -54,8 +73,9 @@ public class StellarParticles {
                 }
 
                 double radius = 2.8 - step[0] * 0.1;
-                for (int i = 0; i < 70; i++) {
-                    double angle = 2 * Math.PI * i / 70 + step[0] * 0.3;
+                int ringPoints = plugin.getParticlePerformanceManager().scaleLoopCount(EFFECT_ID, 70, true);
+                for (int i = 0; i < ringPoints; i++) {
+                    double angle = 2 * Math.PI * i / ringPoints + step[0] * 0.3;
                     double x = Math.cos(angle) * radius;
                     double z = Math.sin(angle) * radius;
                     double y = (Math.sin(step[0] * 0.4 + i * 0.15)) * 0.4;
@@ -68,6 +88,6 @@ public class StellarParticles {
 
                 step[0]++;
             }
-        }, center, 0L, 1L);
+        }, center, 0L, plugin.getParticlePerformanceManager().scaleTickInterval(EFFECT_ID, 1L, true));
     }
 }

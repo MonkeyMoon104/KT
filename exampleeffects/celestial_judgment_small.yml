@@ -1,0 +1,146 @@
+# ========================================
+# KT Custom Effect - Celestial Judgment Small
+# Built for FFA / high-kill environments
+# ========================================
+
+effect:
+  id: "celestial_judgment_small"
+  name: "&e&lCelestial &f&lJudgment &7(Small)"
+  description:
+    - "&7Compact divine burst for"
+    - "&7fast-paced FFA combat"
+    - "&8Created by: Monkey"
+  icon: "END_ROD"
+  price: 3500
+  permission: ""
+
+sounds:
+  enabled: false
+
+particles:
+  enabled: false
+
+patterns:
+  enabled: false
+
+entities:
+  enabled: false
+
+projectiles:
+  enabled: false
+
+damage:
+  enabled: false
+
+potions:
+  enabled: false
+
+messages:
+  killer: "&eYou unleashed a compact celestial burst."
+  victim: "&7A flash from the heavens consumed you."
+  broadcast: ""
+  action_bar:
+    enabled: true
+    killer: "&eCelestial burst activated"
+    victim: ""
+
+cooldown: 8
+
+requirements:
+  weapon:
+    enabled: false
+    materials: []
+  kill_type:
+    enabled: false
+    type: "ANY"
+  worlds:
+    enabled: false
+    mode: "WHITELIST"
+    list: []
+
+sequence:
+  enabled: true
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_BEACON_POWER_SELECT"
+          volume: 1.0
+          pitch: 1.5
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 18
+        - type: "PARTICLE"
+          particle: "ENCHANTED_HIT"
+          count: 12
+
+    - tick: 3
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "CIRCLE"
+          particle: "END_ROD"
+          radius: 1.4
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 10
+
+    - tick: 6
+      actions:
+        - type: "PARTICLE"
+          particle: "DUST"
+          count: 20
+          color:
+            red: 255
+            green: 245
+            blue: 170
+          size: 1.1
+        - type: "PARTICLE_PATTERN"
+          pattern: "SPHERE"
+          particle: "ENCHANTED_HIT"
+          radius: 1.5
+
+    - tick: 10
+      actions:
+        - type: "SOUND"
+          sound: "ENTITY_PLAYER_LEVELUP"
+          volume: 0.9
+          pitch: 1.9
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 22
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 14
+
+    - tick: 14
+      actions:
+        - type: "SOUND"
+          sound: "ITEM_TOTEM_USE"
+          volume: 1.1
+          pitch: 1.4
+        - type: "PARTICLE"
+          particle: "FLASH"
+          count: 1
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 18
+        - type: "PARTICLE_PATTERN"
+          pattern: "RING"
+          particle: "END_ROD"
+          radius: 1.9
+
+performance:
+  max_players: 20
+  max_entities: 2
+  min_tps: 16.0
+
+advanced:
+  cancel_death: false
+  teleport_victim:
+    enabled: false
+    height: 0
+  custom_nbt: {}
+  commands:
+    enabled: false
+    as_console: []
+    as_player: []

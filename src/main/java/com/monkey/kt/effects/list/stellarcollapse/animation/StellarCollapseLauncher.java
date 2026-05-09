@@ -9,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 public class StellarCollapseLauncher {
+    private static final String EFFECT_ID = "stellarcollapse";
 
     public static void launch(KT plugin, Location center, Player killer) {
         World world = center.getWorld();
@@ -30,7 +31,9 @@ public class StellarCollapseLauncher {
                 }
 
                 double radius = 1 + (ticks[0] * 0.1);
-                StellarParticles.spawnStellarSwirl(world, center, radius, 80);
+                if (ticks[0] % plugin.getParticlePerformanceManager().scaleTickInterval(EFFECT_ID, 1L, true) == 0) {
+                    StellarParticles.spawnStellarSwirl(plugin, world, center, radius, 80);
+                }
                 if (ticks[0] % 5 == 0) {
                     world.playSound(center, Sound.BLOCK_BEACON_POWER_SELECT, 2.0f, 1.5f - ticks[0] * 0.03f);
                 }

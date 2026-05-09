@@ -1,0 +1,26 @@
+gui:
+  none: "&7None"
+  layout:
+    rows: 6
+    effect_slots:
+      start: 0
+      end: 44
+      list: []
+    buttons:
+      close:
+        slot: 48
+        material: GRAY_WOOL
+      current_effect:
+        slot: 49
+        material: OAK_SIGN
+      disable:
+        slot: 50
+        material: RED_WOOL
+      currency:
+        slot: 51
+        material: EMERALD
+  buttons:
+    close: "&cX Close"
+    current_effect: "&eCurrent Effect: %effect%"
+    disable: "&4> Disable Effect"
+    currency: "&7Your balance: &a%bal% %bal_symbol%"

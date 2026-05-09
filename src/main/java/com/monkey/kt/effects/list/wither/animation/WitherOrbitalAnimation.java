@@ -15,6 +15,7 @@ import org.bukkit.entity.WitherSkull;
 import org.bukkit.util.Vector;
 
 public class WitherOrbitalAnimation {
+    private static final String EFFECT_ID = "wither";
 
     private final KT plugin;
     private final Location center;
@@ -75,8 +76,26 @@ public class WitherOrbitalAnimation {
                     launchSkull(world, pos2, center);
                 }
 
-                world.spawnParticle(Particle.SOUL, pos1, 5, 0.2, 0.2, 0.2, 0.01);
-                world.spawnParticle(Particle.ASH, pos2, 5, 0.2, 0.2, 0.2, 0.01);
+                if (ticks[0] % plugin.getParticlePerformanceManager().scaleTickInterval(EFFECT_ID, 1L, true) == 0) {
+                    world.spawnParticle(
+                            Particle.SOUL,
+                            pos1,
+                            plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 5, true),
+                            0.2,
+                            0.2,
+                            0.2,
+                            0.01
+                    );
+                    world.spawnParticle(
+                            Particle.ASH,
+                            pos2,
+                            plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 5, true),
+                            0.2,
+                            0.2,
+                            0.2,
+                            0.01
+                    );
+                }
                 if (ticks[0] % 20 == 0) {
                     world.strikeLightningEffect(center.clone().add(Math.random() * 4 - 2, 0, Math.random() * 4 - 2));
                 }
@@ -137,9 +156,25 @@ public class WitherOrbitalAnimation {
                     taskCompleted[0] = true;
                     return;
                 }
-                world.spawnParticle(Particle.SOUL_FIRE_FLAME, skull.getLocation(), 2, 0, 0, 0, 0.01);
-                world.spawnParticle(Particle.LARGE_SMOKE, skull.getLocation(), 1, 0.05, 0.05, 0.05, 0.01);
+                world.spawnParticle(
+                        Particle.SOUL_FIRE_FLAME,
+                        skull.getLocation(),
+                        plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 2, true),
+                        0,
+                        0,
+                        0,
+                        0.01
+                );
+                world.spawnParticle(
+                        Particle.LARGE_SMOKE,
+                        skull.getLocation(),
+                        plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 1, true),
+                        0.05,
+                        0.05,
+                        0.05,
+                        0.01
+                );
             }
-        }, skull, 0L, 1L);
+        }, skull, 0L, plugin.getParticlePerformanceManager().scaleTickInterval(EFFECT_ID, 1L, true));
     }
 }

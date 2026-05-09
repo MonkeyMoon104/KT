@@ -83,7 +83,7 @@ public class SkeletonAnimation {
                 loc.subtract(0, 0.05, 0);
                 skeleton.teleportAsync(loc);
 
-                EffectUtils.playRepeatingParticle(plugin, loc, Particle.CLOUD, 10, 1.5, 1.5, 1.5, 0.02, 4L, 10);
+        EffectUtils.playRepeatingParticle(plugin, "skeleton", loc, Particle.CLOUD, 10, 1.5, 1.5, 1.5, 0.02, 4L, 10);
 
                 ticks[0]++;
             }

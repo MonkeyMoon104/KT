@@ -3,6 +3,7 @@ package com.monkey.kt.commands.kt.tab;
 import com.monkey.kt.KT;
 import com.monkey.kt.commands.kt.subcommands.list.KillCoinsCommand;
 import com.monkey.kt.effects.permission.EffectPermissionResolver;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -45,7 +46,7 @@ public class KillEffectTabCompleter implements TabCompleter {
                     .collect(Collectors.toList());
         }
 
-        if (args.length == 2 && (args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("test"))) {
+        if (args.length == 2 && args[0].equalsIgnoreCase("test")) {
             List<String> effects = plugin.getGuiManager().getEffects().keySet().stream()
                     .filter(effect -> {
                         if (!(sender instanceof org.bukkit.entity.Player)) {
@@ -74,6 +75,58 @@ public class KillEffectTabCompleter implements TabCompleter {
 
             return effects.stream()
                     .filter(effect -> effect.toLowerCase().startsWith(args[1].toLowerCase()))
+                    .sorted(String::compareToIgnoreCase)
+                    .collect(Collectors.toList());
+        }
+
+        if (args.length == 2 && args[0].equalsIgnoreCase("set")) {
+            List<String> suggestions = new ArrayList<>();
+
+            suggestions.addAll(Bukkit.getOnlinePlayers().stream()
+                    .map(player -> player.getName())
+                    .collect(Collectors.toList()));
+
+            List<String> effects = plugin.getGuiManager().getEffects().keySet().stream()
+                    .filter(effect -> {
+                        if (!(sender instanceof org.bukkit.entity.Player)) {
+                            return true;
+                        }
+
+                        org.bukkit.entity.Player player = (org.bukkit.entity.Player) sender;
+                        if (player.isOp()) {
+                            return true;
+                        }
+
+                        boolean hasPermission = EffectPermissionResolver.hasPermission(player, plugin, effect);
+                        boolean explicitPermissionRule = EffectPermissionResolver.hasExplicitPermissionRule(plugin, effect);
+
+                        if (explicitPermissionRule) {
+                            return hasPermission;
+                        }
+
+                        boolean hasBought = plugin.getEconomyManager().hasBoughtEffect(player, effect);
+                        boolean ecoEnabled = plugin.getEconomyManager().isEnabled();
+                        return hasPermission || (ecoEnabled && hasBought);
+                    })
+                    .collect(Collectors.toList());
+
+            effects.add("none");
+            suggestions.addAll(effects);
+
+            return suggestions.stream()
+                    .distinct()
+                    .filter(value -> value.toLowerCase().startsWith(args[1].toLowerCase()))
+                    .sorted(String::compareToIgnoreCase)
+                    .collect(Collectors.toList());
+        }
+
+        if (args.length == 3 && args[0].equalsIgnoreCase("set")) {
+            List<String> effects = plugin.getGuiManager().getEffects().keySet().stream()
+                    .collect(Collectors.toList());
+            effects.add("none");
+
+            return effects.stream()
+                    .filter(effect -> effect.toLowerCase().startsWith(args[2].toLowerCase()))
                     .sorted(String::compareToIgnoreCase)
                     .collect(Collectors.toList());
         }

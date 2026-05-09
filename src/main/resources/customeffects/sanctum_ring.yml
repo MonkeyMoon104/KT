@@ -1,0 +1,49 @@
+effect:
+  id: "sanctum_ring"
+  name: "&fSanctum Ring"
+  description:
+    - "&7A holy ring burst"
+    - "&7with a neat white-gold finish"
+  icon: "QUARTZ"
+  price: 3600
+
+messages:
+  killer: "&fSanctum Ring activated."
+  action_bar:
+    enabled: true
+    killer: "&fSanctum Ring"
+    victim: ""
+
+cooldown: 6
+
+sequence:
+  enabled: true
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_BEACON_ACTIVATE"
+          volume: 0.8
+          pitch: 1.7
+        - type: "PARTICLE"
+          particle: "FLASH"
+          count: 1
+    - tick: 2
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "RING"
+          particle: "END_ROD"
+          radius: 1.9
+        - type: "PARTICLE"
+          particle: "DUST"
+          count: 14
+          color: { red: 255, green: 245, blue: 205 }
+          size: 1.0
+    - tick: 7
+      actions:
+        - type: "PARTICLE"
+          particle: "ENCHANTED_HIT"
+          count: 12
+
+performance:
+  min_tps: 16.0

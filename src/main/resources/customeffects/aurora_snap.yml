@@ -1,0 +1,50 @@
+effect:
+  id: "aurora_snap"
+  name: "&aAurora Snap"
+  description:
+    - "&7A green-cyan aurora pulse"
+    - "&7kept tight for FFA"
+  icon: "EMERALD"
+  price: 3500
+
+messages:
+  killer: "&aAurora Snap activated."
+  action_bar:
+    enabled: true
+    killer: "&aAurora Snap"
+    victim: ""
+
+cooldown: 6
+
+sequence:
+  enabled: true
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_BEACON_AMBIENT"
+          volume: 0.7
+          pitch: 1.6
+        - type: "PARTICLE"
+          particle: "GLOW"
+          count: 12
+    - tick: 3
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "HELIX"
+          particle: "DUST"
+          radius: 1.2
+          color: { red: 100, green: 255, blue: 210 }
+          size: 0.95
+    - tick: 7
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "RING"
+          particle: "END_ROD"
+          radius: 1.7
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 8
+
+performance:
+  min_tps: 16.0

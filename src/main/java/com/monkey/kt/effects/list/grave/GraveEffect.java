@@ -20,8 +20,8 @@ public class GraveEffect implements KillEffect {
     public void play(Player killer, Location loc) {
         if (loc.getWorld() == null) return;
         loc.getWorld().playSound(loc, Sound.ENTITY_WITHER_BREAK_BLOCK, 2, 1);
-        EffectUtils.playRepeatingParticle(plugin, loc, Particle.LARGE_SMOKE, 10, 1, 1, 1, 0.02, 1L, 10);
-        EffectUtils.playRepeatingParticle(plugin, loc, Particle.SOUL, 20, 1, 1, 1, 0.02, 1L, 10);
+        EffectUtils.playRepeatingParticle(plugin, "grave", loc, Particle.LARGE_SMOKE, 10, 1, 1, 1, 0.02, 1L, 10);
+        EffectUtils.playRepeatingParticle(plugin, "grave", loc, Particle.SOUL, 20, 1, 1, 1, 0.02, 1L, 10);
 
         GraveLauncher.launch(plugin, loc.clone().add(0.5, 0, 0.5), killer);
     }

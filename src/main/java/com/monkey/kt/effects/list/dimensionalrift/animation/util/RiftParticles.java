@@ -1,5 +1,6 @@
 package com.monkey.kt.effects.list.dimensionalrift.animation.util;
 
+import com.monkey.kt.KT;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -10,11 +11,12 @@ import java.util.Random;
 
 public class RiftParticles {
 
+    private static final String EFFECT_ID = "dimensionalrift";
     private static final Random random = new Random();
 
-    public static void spawnHugeOpeningRing(World world, Location center, int tick) {
+    public static void spawnHugeOpeningRing(KT plugin, World world, Location center, int tick) {
         double radius = 3 + tick * 0.08;
-        int points = 140;
+        int points = plugin.getParticlePerformanceManager().scaleLoopCount(EFFECT_ID, 140, true);
         for (int i = 0; i < points; i++) {
             double angle = 2 * Math.PI * i / points + tick * 0.2;
             double x = Math.cos(angle) * radius + (random.nextDouble() - 0.5) * 0.6;
@@ -25,17 +27,34 @@ public class RiftParticles {
 
             world.spawnParticle(Particle.PORTAL, loc, 1, 0.07, 0.07, 0.07, 0.03);
             if (tick % 3 == 0) {
-                world.spawnParticle(Particle.BLOCK, loc, 2, 0.1, 0.1, 0.1, 0.02, Material.OBSIDIAN.createBlockData());
+                world.spawnParticle(
+                        Particle.BLOCK,
+                        loc,
+                        plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 2, true),
+                        0.1,
+                        0.1,
+                        0.1,
+                        0.02,
+                        Material.OBSIDIAN.createBlockData()
+                );
             }
             if (tick % 6 == 0 && i % 7 == 0) {
-                world.spawnParticle(Particle.FIREWORK, loc, 5, 0.05, 0.05, 0.05, 0.03);
+                world.spawnParticle(
+                        Particle.FIREWORK,
+                        loc,
+                        plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 5, true),
+                        0.05,
+                        0.05,
+                        0.05,
+                        0.03
+                );
             }
         }
     }
 
-    public static void spawnGlitchVortex(World world, Location center, int tick) {
+    public static void spawnGlitchVortex(KT plugin, World world, Location center, int tick) {
         double baseRadius = 1.5 + 0.6 * Math.sin(tick * 0.45);
-        int points = 80;
+        int points = plugin.getParticlePerformanceManager().scaleLoopCount(EFFECT_ID, 80, true);
         for (int i = 0; i < points; i++) {
             double angle = 2 * Math.PI * i / points + tick * 0.5;
             double x = Math.cos(angle) * baseRadius * (0.9 + 0.2 * Math.sin(tick * 0.7 + i));
@@ -44,16 +63,24 @@ public class RiftParticles {
 
             Location loc = center.clone().add(x, y, z);
 
-            world.spawnParticle(Particle.DRAGON_BREATH, loc, 2, 0.03, 0.03, 0.03, 0.015);
+            world.spawnParticle(
+                    Particle.DRAGON_BREATH,
+                    loc,
+                    plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 2, true),
+                    0.03,
+                    0.03,
+                    0.03,
+                    0.015
+            );
             if (tick % 5 == 0 && i % 15 == 0) {
                 world.spawnParticle(Particle.PORTAL, loc, 1, 0.1, 0.1, 0.1, 0.02);
             }
         }
     }
 
-    public static void spawnGlitchRingMovement(World world, Location center, int tick) {
+    public static void spawnGlitchRingMovement(KT plugin, World world, Location center, int tick) {
         double radius = 5.5 + 0.2 * Math.sin(tick * 0.7);
-        int points = 100;
+        int points = plugin.getParticlePerformanceManager().scaleLoopCount(EFFECT_ID, 100, true);
         for (int i = 0; i < points; i++) {
             double angle = 2 * Math.PI * i / points + tick * 0.45;
             double offsetX = (random.nextDouble() - 0.5) * 0.6;
@@ -66,9 +93,25 @@ public class RiftParticles {
 
             Location loc = center.clone().add(x, y, z);
 
-            world.spawnParticle(Particle.FIREWORK, loc, 2, 0.015, 0.015, 0.015, 0.015);
+            world.spawnParticle(
+                    Particle.FIREWORK,
+                    loc,
+                    plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 2, true),
+                    0.015,
+                    0.015,
+                    0.015,
+                    0.015
+            );
             if (tick % 3 == 0) {
-                world.spawnParticle(Particle.PORTAL, loc, 2, 0.07, 0.07, 0.07, 0.025);
+                world.spawnParticle(
+                        Particle.PORTAL,
+                        loc,
+                        plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 2, true),
+                        0.07,
+                        0.07,
+                        0.07,
+                        0.025
+                );
             }
             if (tick % 4 == 0 && i % 10 == 0) {
                 world.spawnParticle(Particle.FLASH, loc, 1);
@@ -76,8 +119,8 @@ public class RiftParticles {
         }
     }
 
-    public static void spawnEnergyBeams(World world, Location center, int tick) {
-        int beamCount = 20;
+    public static void spawnEnergyBeams(KT plugin, World world, Location center, int tick) {
+        int beamCount = plugin.getParticlePerformanceManager().scaleLoopCount(EFFECT_ID, 20, true);
         double maxHeight = 12.0;
         for (int i = 0; i < beamCount; i++) {
             double angle = 2 * Math.PI * i / beamCount + tick * 0.6;
@@ -85,13 +128,23 @@ public class RiftParticles {
             double x = Math.cos(angle) * radius;
             double z = Math.sin(angle) * radius;
 
-            for (double y = 0; y < maxHeight; y += 0.3) {
+            int segments = plugin.getParticlePerformanceManager().scaleLoopCount(EFFECT_ID, 40, true);
+            for (int segment = 0; segment < segments; segment++) {
+                double y = maxHeight * segment / Math.max(1, segments - 1);
                 Location loc = center.clone().add(x, y, z);
-                world.spawnParticle(Particle.END_ROD, loc, 3, 0.015, 0.015, 0.015, 0.015);
+                world.spawnParticle(
+                        Particle.END_ROD,
+                        loc,
+                        plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 3, true),
+                        0.015,
+                        0.015,
+                        0.015,
+                        0.015
+                );
                 if (y > maxHeight - 3) {
-                    world.spawnParticle(Particle.FLASH, loc, 2);
+                    world.spawnParticle(Particle.FLASH, loc, plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 2, true));
                 }
-                if (y % 1 < 0.3 && (tick + i) % 5 == 0) {
+                if (segment % 3 == 0 && (tick + i) % 5 == 0) {
                     Location jitter = loc.clone().add(
                             (random.nextDouble() - 0.5) * 0.2,
                             (random.nextDouble() - 0.5) * 0.2,
@@ -103,8 +156,8 @@ public class RiftParticles {
         }
     }
 
-    public static void spawnClosingSuction(World world, Location center, int tick) {
-        int points = 120;
+    public static void spawnClosingSuction(KT plugin, World world, Location center, int tick) {
+        int points = plugin.getParticlePerformanceManager().scaleLoopCount(EFFECT_ID, 120, true);
         double startRadius = 6.0;
         double progress = tick / 30.0;
         double radius = startRadius * (1 - progress);
@@ -120,12 +173,37 @@ public class RiftParticles {
             Vector direction = center.toVector().subtract(loc.toVector()).normalize().multiply(0.2 + progress * 0.5);
             loc.add(direction);
 
-            world.spawnParticle(Particle.PORTAL, loc, 3, 0.03, 0.03, 0.03, 0.015);
+            world.spawnParticle(
+                    Particle.PORTAL,
+                    loc,
+                    plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 3, true),
+                    0.03,
+                    0.03,
+                    0.03,
+                    0.015
+            );
             if (tick % 3 == 0) {
-                world.spawnParticle(Particle.BLOCK, loc, 2, 0.1, 0.1, 0.1, 0.03, Material.OBSIDIAN.createBlockData());
+                world.spawnParticle(
+                        Particle.BLOCK,
+                        loc,
+                        plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 2, true),
+                        0.1,
+                        0.1,
+                        0.1,
+                        0.03,
+                        Material.OBSIDIAN.createBlockData()
+                );
             }
             if (tick % 5 == 0 && i % 12 == 0) {
-                world.spawnParticle(Particle.FIREWORK, loc, 4, 0.05, 0.05, 0.05, 0.03);
+                world.spawnParticle(
+                        Particle.FIREWORK,
+                        loc,
+                        plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 4, true),
+                        0.05,
+                        0.05,
+                        0.05,
+                        0.03
+                );
             }
         }
     }

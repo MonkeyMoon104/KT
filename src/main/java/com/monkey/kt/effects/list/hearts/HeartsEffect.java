@@ -17,7 +17,7 @@ public class HeartsEffect implements KillEffect {
     @Override
     public void play(Player killer, Location loc) {
         loc.getWorld().playSound(loc, Sound.ENTITY_VILLAGER_CELEBRATE, 2, 1);
-        EffectUtils.playRepeatingParticle(plugin, loc, Particle.HEART, 20, 1, 1.5, 1, 0.1, 2L, 8);
+        EffectUtils.playRepeatingParticle(plugin, "hearts", loc, Particle.HEART, 20, 1, 1.5, 1, 0.1, 2L, 8);
         DamageConfig damageConfig = DamageUtils.getDamageConfig("hearts", plugin);
 
         if (damageConfig.isEnabled()) {

@@ -1,0 +1,55 @@
+effect:
+  id: "lunar_pulse"
+  name: "&bLunar Pulse"
+  description:
+    - "&7A pale moon pulse"
+    - "&7with cold blue accents"
+  icon: "SEA_LANTERN"
+  price: 3300
+
+messages:
+  killer: "&bLunar Pulse activated."
+  action_bar:
+    enabled: true
+    killer: "&bLunar Pulse"
+    victim: ""
+
+cooldown: 6
+
+sequence:
+  enabled: true
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_RESPAWN_ANCHOR_CHARGE"
+          volume: 0.7
+          pitch: 1.6
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 10
+    - tick: 3
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "CIRCLE"
+          particle: "DUST"
+          radius: 1.5
+          color: { red: 180, green: 225, blue: 255 }
+          size: 1.0
+        - type: "PARTICLE"
+          particle: "GLOW"
+          count: 12
+    - tick: 7
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "SPHERE"
+          particle: "ENCHANTED_HIT"
+          radius: 1.2
+        - type: "PARTICLE"
+          particle: "DUST"
+          count: 14
+          color: { red: 225, green: 240, blue: 255 }
+          size: 0.95
+
+performance:
+  min_tps: 16.0

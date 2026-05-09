@@ -1,0 +1,50 @@
+effect:
+  id: "prism_ring"
+  name: "&dPrism Ring"
+  description:
+    - "&7A colorful ring pop"
+    - "&7with a clean finish"
+  icon: "AMETHYST_SHARD"
+  price: 3600
+
+messages:
+  killer: "&dPrism Ring activated."
+  action_bar:
+    enabled: true
+    killer: "&dPrism Ring"
+    victim: ""
+
+cooldown: 6
+
+sequence:
+  enabled: true
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_AMETHYST_CLUSTER_BREAK"
+          volume: 0.8
+          pitch: 1.4
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 8
+    - tick: 3
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "RING"
+          particle: "DUST"
+          radius: 1.8
+          color: { red: 255, green: 140, blue: 230 }
+          size: 1.0
+        - type: "PARTICLE"
+          particle: "GLOW"
+          count: 10
+    - tick: 6
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "CIRCLE"
+          particle: "END_ROD"
+          radius: 2.0
+
+performance:
+  min_tps: 16.0

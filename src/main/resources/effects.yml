@@ -1,0 +1,292 @@
+effects:
+  firephoenix:
+    enabled: true
+    name: "&cFirePhoenix"
+    description: "&cBurn &7your enemies with &6firephoenix"
+    price: 1500
+    projectiles:
+      enabled: true
+      settings:
+        damage: true
+        rage: 200
+        delay: 3
+        value: 4
+    damage:
+      enabled: true
+      value: 2
+      radius: 3
+
+  lightning:
+    enabled: true
+    name: "&eLightning"
+    description: "&bSummon a &elightning bolt &bon your target"
+    price: 2500
+    damage:
+      enabled: true
+      value: 5
+      radius: 4
+
+  explosion:
+    enabled: true
+    name: "&4Explosion"
+    description: "&4Boom! &7A visual explosion effect"
+    price: 3000
+    projectiles:
+      damage: true
+      settings:
+        rage: 5
+        value: 4
+    damage:
+      enabled: true
+      value: 5
+      radius: 5
+
+  hearts:
+    enabled: true
+    name: "&dHearts"
+    description: "&dLove hearts &7when you kill"
+    price: 2000
+    damage:
+      enabled: false
+      value: 0
+      radius: 0
+
+  notes:
+    enabled: true
+    name: "&aNotes"
+    description: "&aMusical effect &ein the rhythm of death"
+    price: 1800
+    damage:
+      enabled: false
+      value: 0
+      radius: 0
+
+  cloud:
+    enabled: true
+    name: "&fCloud"
+    description: "&fMysterious &7and haunting fog"
+    price: 2200
+    damage:
+      enabled: true
+      value: 1
+      radius: 3
+
+  smoke:
+    enabled: true
+    name: "&8Smoke"
+    description: "&8Smoke &7and shadows in the air"
+    price: 2100
+    damage:
+      enabled: true
+      value: 2
+      radius: 3
+
+  totem:
+    enabled: true
+    name: "&6Totem"
+    description: "&6Epic &eparticles &6of the totem"
+    price: 4000
+    damage:
+      enabled: true
+      value: 4
+      radius: 5
+
+  end:
+    enabled: true
+    name: "&5End"
+    description: "&5Creepy &dEnderman &5effect"
+    price: 3500
+    damage:
+      enabled: true
+      value: 4
+      radius: 6
+
+  pigstep:
+    enabled: true
+    name: "&dPigStep"
+    description: "&dPig &bStep &eeffect"
+    price: 2750
+    damage:
+      enabled: false
+      value: 0
+      radius: 0
+
+  shockwawe:
+    enabled: true
+    name: "&ashockwawe"
+    description: "&aSoul fly up and down"
+    price: 700
+    effectexplosion:
+      enabled: true
+      type: BLINDNESS
+      amplifier: 1
+      duration: 3
+    damage:
+      enabled: true
+      value: 1
+      radius: 7
+
+  skeleton:
+    enabled: true
+    name: "&fSkeleton"
+    description: "&fThe victim into a skeleton"
+    price: 1000
+
+  warden:
+    enabled: true
+    name: "&3Warden"
+    description: "&3Warden &eeffect"
+    price: 7045
+    damage:
+      enabled: true
+      value: 7
+      radius: 6
+
+  glowmissile:
+    enabled: true
+    name: "&bGlowMissile"
+    description: "&bGlow missile &7effect"
+    price: 5300
+    damage:
+      enabled: true
+      value: 8
+      radius: 5
+
+  grave:
+    enabled: true
+    name: "&8Grave"
+    description: "&fPlace a cross for the victim."
+    price: 1000
+
+  sniper:
+    enabled: true
+    name: "&cSniper"
+    description:
+      - "&7Long Mortal Shot"
+      - "&8Only kill with bow"
+    price: 4250
+    damage:
+      enabled: true
+      value: 5
+      radius: 8
+
+  enchantcolumn:
+    enabled: true
+    name: "&rEnchant&7Column"
+    description: "&rEnchant&7Column &eExplosion!"
+    price: 6000
+    effectexplosion:
+      type: REGENERATION
+      amplifier: 2
+      duration: 10
+    damage:
+      enabled: true
+      value: 10
+      radius: 10
+
+  fireworks:
+    enabled: true
+    name: "&bFireworks"
+    description: "&cFire &fworks &7and explosions"
+    structure: true
+    price: 6345
+    damage:
+      enabled: true
+      value: 6
+      radius: 9
+
+  wither:
+    enabled: true
+    name: "&0Wither"
+    description: "&0Wither &8and &fflash"
+    price: 10500
+    damage:
+      enabled: true
+      value: 7
+      radius: 4
+
+  stellarcollapse:
+    enabled: true
+    name: "&eStellar Collapse"
+    description: "&cmini-supernova &ecollapse"
+    price: 7000
+    damage:
+      enabled: true
+      value: 2
+      radius: 3
+
+  dimensionalrift:
+    enabled: true
+    name: "&dDimensional &bRift"
+    description: "&4Glitched &ddimensional brift"
+    price: 8250
+    damage:
+      enabled: true
+      value: 6
+      radius: 7
+
+  cryocore:
+    enabled: true
+    name: "&bCryo &9Core"
+    description: "&9Cryo snow &bcore"
+    structure: true
+    price: 6250
+    duration-multiplier: 1
+    damage:
+      enabled: true
+      value: 1
+      radius: 16
+
+  aurafarming:
+    enabled: true
+    name: "&5Aura Farming"
+    description: "&5Aura Farming &8- &dDestroy players by destroying their aura"
+    price: 25000
+    aura-settings:
+      boost-perks:
+        damage:
+          amplifier: 2
+          duration: 20
+        potion:
+          type: REGENERATION
+          amplifier: 2
+          duration: 10
+        damage-message: "&b[+] You received a damage boost for {duration}s!"
+        potion-message: "&d[*] You received {potion} {amplifier} for {duration}s!"
+    damage:
+      enabled: true
+      value: 10
+      radius: 20
+    push-settings:
+      enabled: true
+      damage-per-seconds: 2
+
+  mace:
+    enabled: true
+    name: "&cMa&6ce"
+    description: "&5Destroy your enemy with &bMACE"
+    price: 11250
+    damage:
+      enabled: true
+      value: 5
+      radius: 16
+
+  prismaticnova:
+    enabled: true
+    name: "&dPrismatic &bNova"
+    description: "&fChromatic nova that collapses into a radiant blast"
+    price: 12800
+    damage:
+      enabled: true
+      value: 6
+      radius: 8
+
+  voidlotus:
+    enabled: true
+    name: "&5Void &dLotus"
+    description: "&8A dark lotus blooms and implodes the battlefield"
+    price: 13350
+    damage:
+      enabled: true
+      value: 7
+      radius: 9

@@ -2,8 +2,10 @@ package com.monkey.kt.effects.custom.executors;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.custom.CustomEffectConfig;
+import org.bukkit.Color;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 
 import java.util.List;
 
@@ -15,49 +17,61 @@ public class PatternExecutor {
         this.plugin = plugin;
     }
 
-    public void execute(List<CustomEffectConfig.PatternData> patterns, Location location) {
+    public void execute(String effectId, List<CustomEffectConfig.PatternData> patterns, Location location) {
         if (patterns == null || patterns.isEmpty()) {
             return;
         }
 
         for (CustomEffectConfig.PatternData pattern : patterns) {
-            executePattern(pattern, location);
+            executePattern(effectId, pattern, location);
         }
     }
 
-    public void executePattern(CustomEffectConfig.PatternData pattern, Location location) {
+    public void executePattern(String effectId, CustomEffectConfig.PatternData pattern, Location location) {
         String type = pattern.getType().toUpperCase();
+        Particle particle = pattern.getParticle();
+        if (particle == null) {
+            return;
+        }
+
+        Class<?> dataType = particle.getDataType();
+        if (!isSupportedParticle(particle, dataType)) {
+            plugin.getLogger().warning("Skipping unsupported pattern particle " + particle.name()
+                    + " because it requires data type " + dataType.getSimpleName());
+            return;
+        }
 
         switch (type) {
             case "CIRCLE":
-                createCircle(pattern, location);
+                createCircle(effectId, pattern, location);
                 break;
             case "SPHERE":
-                createSphere(pattern, location);
+                createSphere(effectId, pattern, location);
                 break;
             case "HELIX":
-                createHelix(pattern, location);
+                createHelix(effectId, pattern, location);
                 break;
             case "SPIRAL":
-                createSpiral(pattern, location);
+                createSpiral(effectId, pattern, location);
                 break;
             case "RING":
-                createRing(pattern, location);
+                createRing(effectId, pattern, location);
                 break;
             case "CUBE":
-                createCube(pattern, location);
+                createCube(effectId, pattern, location);
                 break;
             case "WAVE":
-                createWave(pattern, location);
+                createWave(effectId, pattern, location);
                 break;
             default:
                 plugin.getLogger().warning("Unknown pattern type: " + type);
         }
     }
 
-    private void createCircle(CustomEffectConfig.PatternData pattern, Location location) {
+    private void createCircle(String effectId, CustomEffectConfig.PatternData pattern, Location location) {
         final int[] tick = {0};
         int maxTicks = pattern.getDuration();
+        long interval = plugin.getParticlePerformanceManager().scaleTickInterval(effectId, 1L, false);
 
         SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             @Override
@@ -68,7 +82,7 @@ public class PatternExecutor {
                 }
 
                 double radius = pattern.getRadius();
-                int points = pattern.getPoints();
+                int points = plugin.getParticlePerformanceManager().scaleLoopCount(effectId, pattern.getPoints(), false);
                 double angleOffset = tick[0] * pattern.getSpeed();
 
                 for (int i = 0; i < points; i++) {
@@ -77,15 +91,16 @@ public class PatternExecutor {
                     double z = Math.sin(angle) * radius;
 
                     Location particleLoc = location.clone().add(x, pattern.getHeight(), z);
-                    location.getWorld().spawnParticle(pattern.getParticle(), particleLoc, 1, 0, 0, 0, 0);
+                    spawnPatternParticle(effectId, pattern, particleLoc);
                 }
             }
-        }, location, 0L, 1L);
+        }, location, 0L, interval);
     }
 
-    private void createSphere(CustomEffectConfig.PatternData pattern, Location location) {
+    private void createSphere(String effectId, CustomEffectConfig.PatternData pattern, Location location) {
         final int[] tick = {0};
         int maxTicks = pattern.getDuration();
+        long interval = plugin.getParticlePerformanceManager().scaleTickInterval(effectId, 2L, false);
 
         SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             @Override
@@ -96,7 +111,7 @@ public class PatternExecutor {
                 }
 
                 double radius = pattern.getRadius();
-                int points = pattern.getPoints();
+                int points = plugin.getParticlePerformanceManager().scaleLoopCount(effectId, pattern.getPoints(), false);
 
                 for (int i = 0; i < points; i++) {
                     double phi = Math.acos(1 - 2.0 * (i + 0.5) / points);
@@ -107,15 +122,16 @@ public class PatternExecutor {
                     double z = radius * Math.cos(phi);
 
                     Location particleLoc = location.clone().add(x, y + pattern.getHeight(), z);
-                    location.getWorld().spawnParticle(pattern.getParticle(), particleLoc, 1, 0, 0, 0, 0);
+                    spawnPatternParticle(effectId, pattern, particleLoc);
                 }
             }
-        }, location, 0L, 2L);
+        }, location, 0L, interval);
     }
 
-    private void createHelix(CustomEffectConfig.PatternData pattern, Location location) {
+    private void createHelix(String effectId, CustomEffectConfig.PatternData pattern, Location location) {
         final int[] tick = {0};
         int maxTicks = pattern.getDuration();
+        long interval = plugin.getParticlePerformanceManager().scaleTickInterval(effectId, 1L, false);
 
         SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             @Override
@@ -126,7 +142,7 @@ public class PatternExecutor {
                 }
 
                 double radius = pattern.getRadius();
-                int points = pattern.getPoints();
+                int points = plugin.getParticlePerformanceManager().scaleLoopCount(effectId, pattern.getPoints(), false);
                 double maxHeight = pattern.getHeight();
 
                 for (int i = 0; i < points; i++) {
@@ -138,15 +154,16 @@ public class PatternExecutor {
                     double z = Math.sin(angle) * radius;
 
                     Location particleLoc = location.clone().add(x, height, z);
-                    location.getWorld().spawnParticle(pattern.getParticle(), particleLoc, 1, 0, 0, 0, 0);
+                    spawnPatternParticle(effectId, pattern, particleLoc);
                 }
             }
-        }, location, 0L, 1L);
+        }, location, 0L, interval);
     }
 
-    private void createSpiral(CustomEffectConfig.PatternData pattern, Location location) {
+    private void createSpiral(String effectId, CustomEffectConfig.PatternData pattern, Location location) {
         final int[] tick = {0};
         int maxTicks = pattern.getDuration();
+        long interval = plugin.getParticlePerformanceManager().scaleTickInterval(effectId, 1L, false);
 
         SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             @Override
@@ -157,7 +174,7 @@ public class PatternExecutor {
                 }
 
                 double radius = pattern.getRadius();
-                int points = pattern.getPoints();
+                int points = plugin.getParticlePerformanceManager().scaleLoopCount(effectId, pattern.getPoints(), false);
                 double angleOffset = tick[0] * pattern.getSpeed();
 
                 for (int i = 0; i < points; i++) {
@@ -168,15 +185,15 @@ public class PatternExecutor {
                     double z = Math.sin(angle) * currentRadius;
 
                     Location particleLoc = location.clone().add(x, pattern.getHeight(), z);
-                    location.getWorld().spawnParticle(pattern.getParticle(), particleLoc, 1, 0, 0, 0, 0);
+                    spawnPatternParticle(effectId, pattern, particleLoc);
                 }
             }
-        }, location, 0L, 1L);
+        }, location, 0L, interval);
     }
 
-    private void createRing(CustomEffectConfig.PatternData pattern, Location location) {
+    private void createRing(String effectId, CustomEffectConfig.PatternData pattern, Location location) {
         double radius = pattern.getRadius();
-        int points = pattern.getPoints();
+        int points = plugin.getParticlePerformanceManager().scaleLoopCount(effectId, pattern.getPoints(), false);
 
         for (int i = 0; i < points; i++) {
             double angle = 2 * Math.PI * i / points;
@@ -184,19 +201,20 @@ public class PatternExecutor {
             double z = Math.sin(angle) * radius;
 
             Location particleLoc = location.clone().add(x, pattern.getHeight(), z);
-            location.getWorld().spawnParticle(pattern.getParticle(), particleLoc, 1, 0, 0, 0, 0);
+            spawnPatternParticle(effectId, pattern, particleLoc);
         }
     }
 
-    private void createCube(CustomEffectConfig.PatternData pattern, Location location) {
+    private void createCube(String effectId, CustomEffectConfig.PatternData pattern, Location location) {
         double size = pattern.getRadius();
-        int pointsPerEdge = pattern.getPoints() / 12;
+        int scaledPoints = plugin.getParticlePerformanceManager().scaleLoopCount(effectId, pattern.getPoints(), false);
+        int pointsPerEdge = Math.max(1, scaledPoints / 12);
 
         for (int edge = 0; edge < 12; edge++) {
             for (int i = 0; i <= pointsPerEdge; i++) {
                 double progress = (double) i / pointsPerEdge;
                 Location particleLoc = getCubeEdgePoint(location, size, edge, progress, pattern.getHeight());
-                location.getWorld().spawnParticle(pattern.getParticle(), particleLoc, 1, 0, 0, 0, 0);
+                spawnPatternParticle(effectId, pattern, particleLoc);
             }
         }
     }
@@ -223,9 +241,10 @@ public class PatternExecutor {
         return center.clone().add(x, y + heightOffset, z);
     }
 
-    private void createWave(CustomEffectConfig.PatternData pattern, Location location) {
+    private void createWave(String effectId, CustomEffectConfig.PatternData pattern, Location location) {
         final int[] tick = {0};
         int maxTicks = pattern.getDuration();
+        long interval = plugin.getParticlePerformanceManager().scaleTickInterval(effectId, 1L, false);
 
         SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             @Override
@@ -236,7 +255,7 @@ public class PatternExecutor {
                 }
 
                 double radius = pattern.getRadius();
-                int points = pattern.getPoints();
+                int points = plugin.getParticlePerformanceManager().scaleLoopCount(effectId, pattern.getPoints(), false);
                 double timeOffset = tick[0] * pattern.getSpeed();
 
                 for (int i = 0; i < points; i++) {
@@ -246,9 +265,82 @@ public class PatternExecutor {
                     double y = Math.sin(angle * 3 + timeOffset) * pattern.getHeight();
 
                     Location particleLoc = location.clone().add(x, y, z);
-                    location.getWorld().spawnParticle(pattern.getParticle(), particleLoc, 1, 0, 0, 0, 0);
+                    spawnPatternParticle(effectId, pattern, particleLoc);
                 }
             }
-        }, location, 0L, 1L);
+        }, location, 0L, interval);
+    }
+
+    private void spawnPatternParticle(String effectId, CustomEffectConfig.PatternData pattern, Location particleLoc) {
+        if (particleLoc.getWorld() == null) {
+            return;
+        }
+
+        Particle particle = pattern.getParticle();
+        if (particle == null) {
+            return;
+        }
+
+        try {
+            Class<?> dataType = particle.getDataType();
+            Color color = Color.fromRGB(pattern.getRed(), pattern.getGreen(), pattern.getBlue());
+
+            if (particle == Particle.DUST) {
+                particleLoc.getWorld().spawnParticle(
+                        particle,
+                        particleLoc,
+                        plugin.getParticlePerformanceManager().scaleParticleCount(effectId, 1, false),
+                        0,
+                        0,
+                        0,
+                        0,
+                        new Particle.DustOptions(color, (float) pattern.getSize())
+                );
+                return;
+            }
+
+            if (particle == Particle.DUST_COLOR_TRANSITION) {
+                particleLoc.getWorld().spawnParticle(
+                        particle,
+                        particleLoc,
+                        plugin.getParticlePerformanceManager().scaleParticleCount(effectId, 1, false),
+                        0,
+                        0,
+                        0,
+                        0,
+                        new Particle.DustTransition(color, color, (float) pattern.getSize())
+                );
+                return;
+            }
+
+            if (particle == Particle.ENTITY_EFFECT) {
+                particleLoc.getWorld().spawnParticle(
+                        particle,
+                        particleLoc,
+                        plugin.getParticlePerformanceManager().scaleParticleCount(effectId, 1, false),
+                        0, 0, 0, 0, color
+                );
+                return;
+            }
+
+            particleLoc.getWorld().spawnParticle(
+                    particle,
+                    particleLoc,
+                    plugin.getParticlePerformanceManager().scaleParticleCount(effectId, 1, false),
+                    0, 0, 0, 0
+            );
+        } catch (Exception e) {
+            plugin.getLogger().warning("Failed to spawn pattern particle " + particle.name() + ": " + e.getMessage());
+        }
+    }
+
+    private boolean isSupportedParticle(Particle particle, Class<?> dataType) {
+        if (dataType == Void.class) {
+            return true;
+        }
+
+        return particle == Particle.DUST
+                || particle == Particle.DUST_COLOR_TRANSITION
+                || particle == Particle.ENTITY_EFFECT;
     }
 }

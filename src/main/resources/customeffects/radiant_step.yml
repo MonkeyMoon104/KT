@@ -1,0 +1,52 @@
+effect:
+  id: "radiant_step"
+  name: "&eRadiant Step"
+  description:
+    - "&7A bright minimal snap"
+    - "&7with clean gold dust"
+  icon: "LIGHT_WEIGHTED_PRESSURE_PLATE"
+  price: 3400
+
+messages:
+  killer: "&eRadiant Step activated."
+  action_bar:
+    enabled: true
+    killer: "&eRadiant Step"
+    victim: ""
+
+cooldown: 6
+
+sequence:
+  enabled: true
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_AMETHYST_BLOCK_RESONATE"
+          volume: 0.7
+          pitch: 1.9
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 10
+    - tick: 3
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "CIRCLE"
+          particle: "DUST"
+          radius: 1.5
+          color: { red: 255, green: 230, blue: 120 }
+          size: 1.0
+        - type: "PARTICLE"
+          particle: "GLOW"
+          count: 10
+    - tick: 7
+      actions:
+        - type: "PARTICLE"
+          particle: "ENCHANTED_HIT"
+          count: 10
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 8
+
+performance:
+  min_tps: 16.0

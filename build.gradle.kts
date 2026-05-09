@@ -1,11 +1,11 @@
 plugins {
     java
-    id("com.gradleup.shadow") version "9.4.1"
+    alias(libs.plugins.shadow)
 }
 
 group = "com.monkey"
-version = "3.0.1"
 description = "KT"
+version = providers.gradleProperty("version").get()
 
 java {
     toolchain {
@@ -23,15 +23,15 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
-    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.16")
-    implementation("org.bstats:bstats-bukkit:3.2.1")
-    implementation("org.reflections:reflections:0.10.2")
-    compileOnly("net.luckperms:api:5.5")
-    compileOnly("org.json:json:20251224")
-    compileOnly("me.clip:placeholderapi:2.12.2")
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
-    compileOnly("com.zaxxer:HikariCP:7.0.2")
+    compileOnly(libs.paper.api)
+    compileOnly(libs.worldguard.bukkit)
+    implementation(libs.bstats.bukkit)
+    implementation(libs.reflections)
+    compileOnly(libs.luckperms.api)
+    compileOnly(libs.json)
+    compileOnly(libs.placeholderapi)
+    compileOnly(libs.vault.api)
+    compileOnly(libs.hikari)
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -41,8 +41,10 @@ tasks.withType<JavaCompile>().configureEach {
 
 tasks.processResources {
     filteringCharset = "UTF-8"
+    val pluginProperties = mapOf("version" to version.toString())
+    inputs.properties(pluginProperties)
     filesMatching("plugin.yml") {
-        expand("version" to project.version)
+        expand(pluginProperties)
     }
 }
 

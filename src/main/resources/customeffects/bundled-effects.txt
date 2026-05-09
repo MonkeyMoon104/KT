@@ -1,0 +1,22 @@
+# Bundled KT custom effects copied into plugins/KT/customeffects
+defaulteffect.yml
+celestial_judgment_small.yml
+astral_bloom.yml
+halo_burst.yml
+ember_sigil.yml
+sunflare_snap.yml
+lunar_pulse.yml
+comet_arc.yml
+soul_ripple.yml
+frostblink.yml
+prism_ring.yml
+voidflash.yml
+aurora_snap.yml
+sanctum_ring.yml
+echo_bloom.yml
+starspire.yml
+ember_crown.yml
+skythread.yml
+crystal_halo.yml
+ether_pop.yml
+radiant_step.yml

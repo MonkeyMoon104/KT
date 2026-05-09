@@ -31,19 +31,7 @@ public class ConfigService {
 
     public void updateAndReload() {
         try {
-            plugin.saveDefaultConfig();
-
-            File file = new File(plugin.getDataFolder(), fileName);
-            File defaultFile = extractDefaultConfig();
-
-            String mergedYaml = mergePreservingSpacing(file, defaultFile);
-
-            try (FileWriter writer = new FileWriter(file)) {
-                writer.write(mergedYaml);
-            }
-
-            Files.deleteIfExists(defaultFile.toPath());
-
+            updateFile();
             plugin.reloadConfig();
         } catch (Exception e) {
             plugin.getLogger().severe("Error during config update: " + e.getMessage());
@@ -51,13 +39,45 @@ public class ConfigService {
         }
     }
 
+    public void updateFile() throws Exception {
+        ensureFileExists();
+
+        File file = new File(plugin.getDataFolder(), fileName);
+        File defaultFile = extractDefaultConfig();
+
+        String mergedYaml = mergePreservingSpacing(file, defaultFile);
+
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write(mergedYaml);
+        }
+
+        Files.deleteIfExists(defaultFile.toPath());
+    }
+
+    private void ensureFileExists() {
+        File file = new File(plugin.getDataFolder(), fileName);
+        if (file.exists()) {
+            return;
+        }
+
+        if ("config.yml".equals(fileName)) {
+            plugin.saveDefaultConfig();
+            return;
+        }
+
+        plugin.saveResource(fileName, false);
+    }
+
     private File extractDefaultConfig() throws Exception {
-        File dest = new File(plugin.getDataFolder(), "dconfig.yml");
-        if (!dest.exists()) {
-            try (InputStream in = plugin.getResource("config.yml")) {
-                if (in == null) throw new Exception("Default config.yml not found in jar.");
-                Files.copy(in, dest.toPath());
-            }
+        String tempName = "default-" + fileName.replace('/', '_').replace('\\', '_');
+        File dest = new File(plugin.getDataFolder(), tempName);
+        if (dest.exists()) {
+            Files.delete(dest.toPath());
+        }
+
+        try (InputStream in = plugin.getResource(fileName)) {
+            if (in == null) throw new Exception("Default " + fileName + " not found in jar.");
+            Files.copy(in, dest.toPath());
         }
         return dest;
     }

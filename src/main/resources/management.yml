@@ -1,0 +1,15 @@
+management-structure:
+  test_command:
+    cooldown:
+      enabled: true
+      delay: 10 #In seconds
+  players:
+    enabled: true #For disable/active killeffect for players
+    cooldown:
+      enabled: false
+      delay: 5 #In seconds
+  mobs:
+    enabled: true #For disable/active killeffect for mobs
+    cooldown:
+      enabled: true
+      delay: 20 #In seconds

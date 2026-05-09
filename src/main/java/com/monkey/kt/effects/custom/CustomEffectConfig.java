@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -116,19 +117,13 @@ public class CustomEffectConfig {
         sounds = new ArrayList<>();
 
         if (soundsEnabled && config.contains("sounds.sounds")) {
-            List<?> soundList = config.getList("sounds.sounds");
-            if (soundList != null) {
-                for (Object obj : soundList) {
-                    if (obj instanceof ConfigurationSection) {
-                        ConfigurationSection section = (ConfigurationSection) obj;
-                        sounds.add(new SoundData(
-                                section.getString("sound"),
-                                section.getDouble("volume", 1.0),
-                                section.getDouble("pitch", 1.0),
-                                section.getInt("delay", 0)
-                        ));
-                    }
-                }
+            for (ConfigurationSection section : getSectionList("sounds.sounds")) {
+                sounds.add(new SoundData(
+                        section.getString("sound"),
+                        section.getDouble("volume", 1.0),
+                        section.getDouble("pitch", 1.0),
+                        section.getInt("delay", 0)
+                ));
             }
         }
     }
@@ -138,42 +133,24 @@ public class CustomEffectConfig {
         particles = new ArrayList<>();
 
         if (particlesEnabled && config.contains("particles.effects")) {
-            List<?> particleList = config.getList("particles.effects");
-            if (particleList != null) {
-                for (Object obj : particleList) {
-                    if (obj instanceof ConfigurationSection) {
-                        ConfigurationSection section = (ConfigurationSection) obj;
+            for (ConfigurationSection section : getSectionList("particles.effects")) {
+                ConfigurationSection offset = section.getConfigurationSection("offset");
+                double offsetX = offset != null ? offset.getDouble("x", 0) : 0;
+                double offsetY = offset != null ? offset.getDouble("y", 0) : 0;
+                double offsetZ = offset != null ? offset.getDouble("z", 0) : 0;
 
-                        ConfigurationSection offset = section.getConfigurationSection("offset");
-                        double offsetX = offset != null ? offset.getDouble("x", 0) : 0;
-                        double offsetY = offset != null ? offset.getDouble("y", 0) : 0;
-                        double offsetZ = offset != null ? offset.getDouble("z", 0) : 0;
+                ParticleData data = new ParticleData(
+                        section.getString("type"),
+                        section.getInt("count", 10),
+                        offsetX, offsetY, offsetZ,
+                        section.getDouble("speed", 0.01),
+                        section.getInt("delay", 0),
+                        section.getInt("duration", 20),
+                        section.getInt("interval", 2)
+                );
 
-                        ParticleData data = new ParticleData(
-                                section.getString("type"),
-                                section.getInt("count", 10),
-                                offsetX, offsetY, offsetZ,
-                                section.getDouble("speed", 0.01),
-                                section.getInt("delay", 0),
-                                section.getInt("duration", 20),
-                                section.getInt("interval", 2)
-                        );
-
-                        if (section.contains("color")) {
-                            ConfigurationSection color = section.getConfigurationSection("color");
-                            if (color != null) {
-                                data.setColor(
-                                        color.getInt("red", 255),
-                                        color.getInt("green", 255),
-                                        color.getInt("blue", 255)
-                                );
-                                data.setSize(section.getDouble("size", 1.0));
-                            }
-                        }
-
-                        particles.add(data);
-                    }
-                }
+                applyColorSettings(section, data);
+                particles.add(data);
             }
         }
     }
@@ -183,22 +160,19 @@ public class CustomEffectConfig {
         patterns = new ArrayList<>();
 
         if (patternsEnabled && config.contains("patterns.patterns")) {
-            List<?> patternList = config.getList("patterns.patterns");
-            if (patternList != null) {
-                for (Object obj : patternList) {
-                    if (obj instanceof ConfigurationSection) {
-                        ConfigurationSection section = (ConfigurationSection) obj;
-                        patterns.add(new PatternData(
-                                section.getString("type"),
-                                section.getString("particle"),
-                                section.getDouble("radius", 3.0),
-                                section.getInt("points", 30),
-                                section.getInt("duration", 60),
-                                section.getDouble("speed", 0.5),
-                                section.getDouble("height", 0)
-                        ));
-                    }
-                }
+            for (ConfigurationSection section : getSectionList("patterns.patterns")) {
+                PatternData patternData = new PatternData(
+                        section.getString("type"),
+                        section.getString("particle"),
+                        section.getDouble("radius", 3.0),
+                        section.getInt("points", 30),
+                        section.getInt("duration", 60),
+                        section.getDouble("speed", 0.5),
+                        section.getDouble("height", 0)
+                );
+
+                applyColorSettings(section, patternData);
+                patterns.add(patternData);
             }
         }
     }
@@ -217,18 +191,12 @@ public class CustomEffectConfig {
 
         if (potionsEnabled) {
             if (config.contains("potions.killer")) {
-                List<?> killerList = config.getList("potions.killer");
-                if (killerList != null) {
-                    for (Object obj : killerList) {
-                        if (obj instanceof ConfigurationSection) {
-                            ConfigurationSection section = (ConfigurationSection) obj;
-                            killerPotions.add(new PotionData(
-                                    section.getString("type"),
-                                    section.getInt("amplifier", 1),
-                                    section.getInt("duration", 100)
-                            ));
-                        }
-                    }
+                for (ConfigurationSection section : getSectionList("potions.killer")) {
+                    killerPotions.add(new PotionData(
+                            section.getString("type"),
+                            section.getInt("amplifier", 1),
+                            section.getInt("duration", 100)
+                    ));
                 }
             }
 
@@ -236,18 +204,12 @@ public class CustomEffectConfig {
                 ConfigurationSection nearby = config.getConfigurationSection("potions.nearby");
                 if (nearby != null) {
                     potionRadius = nearby.getDouble("radius", 5.0);
-                    List<?> nearbyList = nearby.getList("effects");
-                    if (nearbyList != null) {
-                        for (Object obj : nearbyList) {
-                            if (obj instanceof ConfigurationSection) {
-                                ConfigurationSection section = (ConfigurationSection) obj;
-                                nearbyPotions.add(new PotionData(
-                                        section.getString("type"),
-                                        section.getInt("amplifier", 1),
-                                        section.getInt("duration", 100)
-                                ));
-                            }
-                        }
+                    for (ConfigurationSection section : getSectionList(nearby, "effects")) {
+                        nearbyPotions.add(new PotionData(
+                                section.getString("type"),
+                                section.getInt("amplifier", 1),
+                                section.getInt("duration", 100)
+                        ));
                     }
                 }
             }
@@ -259,24 +221,18 @@ public class CustomEffectConfig {
         projectiles = new ArrayList<>();
 
         if (projectilesEnabled && config.contains("projectiles.launch")) {
-            List<?> projectileList = config.getList("projectiles.launch");
-            if (projectileList != null) {
-                for (Object obj : projectileList) {
-                    if (obj instanceof ConfigurationSection) {
-                        ConfigurationSection section = (ConfigurationSection) obj;
-                        projectiles.add(new ProjectileData(
-                                section.getString("type"),
-                                section.getInt("count", 1),
-                                section.getDouble("speed", 1.0),
-                                section.getInt("spread", 45),
-                                section.getBoolean("gravity", true),
-                                section.getDouble("damage", 0.0),
-                                section.getBoolean("remove_on_hit", true),
-                                section.getString("trail_particle", ""),
-                                section.getInt("delay", 0)
-                        ));
-                    }
-                }
+            for (ConfigurationSection section : getSectionList("projectiles.launch")) {
+                projectiles.add(new ProjectileData(
+                        section.getString("type"),
+                        section.getInt("count", 1),
+                        section.getDouble("speed", 1.0),
+                        section.getInt("spread", 45),
+                        section.getBoolean("gravity", true),
+                        section.getDouble("damage", 0.0),
+                        section.getBoolean("remove_on_hit", true),
+                        section.getString("trail_particle", ""),
+                        section.getInt("delay", 0)
+                ));
             }
         }
     }
@@ -288,21 +244,15 @@ public class CustomEffectConfig {
         blockPlacements = new ArrayList<>();
 
         if (blocksEnabled && config.contains("blocks.place")) {
-            List<?> blockList = config.getList("blocks.place");
-            if (blockList != null) {
-                for (Object obj : blockList) {
-                    if (obj instanceof ConfigurationSection) {
-                        ConfigurationSection section = (ConfigurationSection) obj;
-                        blockPlacements.add(new BlockData(
-                                section.getString("material"),
-                                section.getString("pattern", "SINGLE"),
-                                section.getDouble("radius", 0),
-                                section.getInt("offset.x", 0),
-                                section.getInt("offset.y", 0),
-                                section.getInt("offset.z", 0)
-                        ));
-                    }
-                }
+            for (ConfigurationSection section : getSectionList("blocks.place")) {
+                blockPlacements.add(new BlockData(
+                        section.getString("material"),
+                        section.getString("pattern", "SINGLE"),
+                        section.getDouble("radius", 0),
+                        section.getInt("offset.x", 0),
+                        section.getInt("offset.y", 0),
+                        section.getInt("offset.z", 0)
+                ));
             }
         }
     }
@@ -312,23 +262,17 @@ public class CustomEffectConfig {
         entities = new ArrayList<>();
 
         if (entitiesEnabled && config.contains("entities.spawn")) {
-            List<?> entityList = config.getList("entities.spawn");
-            if (entityList != null) {
-                for (Object obj : entityList) {
-                    if (obj instanceof ConfigurationSection) {
-                        ConfigurationSection section = (ConfigurationSection) obj;
-                        entities.add(new EntityData(
-                                section.getString("type"),
-                                section.getBoolean("effect_only", true),
-                                section.getInt("delay", 0),
-                                section.getInt("duration", 100),
-                                section.getString("custom_name", ""),
-                                section.getBoolean("visible", true),
-                                section.getBoolean("gravity", true),
-                                section.getBoolean("invulnerable", true)
-                        ));
-                    }
-                }
+            for (ConfigurationSection section : getSectionList("entities.spawn")) {
+                entities.add(new EntityData(
+                        section.getString("type"),
+                        section.getBoolean("effect_only", true),
+                        section.getInt("delay", 0),
+                        section.getInt("duration", 100),
+                        section.getString("custom_name", ""),
+                        section.getBoolean("visible", true),
+                        section.getBoolean("gravity", true),
+                        section.getBoolean("invulnerable", true)
+                ));
             }
         }
     }
@@ -398,6 +342,56 @@ public class CustomEffectConfig {
 
     public boolean isValid() {
         return id != null && !id.isEmpty() && icon != null;
+    }
+
+    private List<ConfigurationSection> getSectionList(String path) {
+        return getSectionList(config, path);
+    }
+
+    private List<ConfigurationSection> getSectionList(ConfigurationSection root, String path) {
+        List<?> rawList = root.getList(path);
+        if (rawList == null || rawList.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<ConfigurationSection> sections = new ArrayList<>();
+        for (Object obj : rawList) {
+            ConfigurationSection section = toSection(obj);
+            if (section != null) {
+                sections.add(section);
+            }
+        }
+        return sections;
+    }
+
+    private ConfigurationSection toSection(Object obj) {
+        if (obj instanceof ConfigurationSection section) {
+            return section;
+        }
+
+        if (obj instanceof Map<?, ?> map) {
+            YamlConfiguration tempConfig = new YamlConfiguration();
+            for (Map.Entry<?, ?> entry : map.entrySet()) {
+                tempConfig.set(String.valueOf(entry.getKey()), entry.getValue());
+            }
+            return tempConfig;
+        }
+
+        return null;
+    }
+
+    private void applyColorSettings(ConfigurationSection section, ColorConfigurable configurable) {
+        ConfigurationSection color = section.getConfigurationSection("color");
+        if (color == null) {
+            return;
+        }
+
+        configurable.setColor(
+                color.getInt("red", 255),
+                color.getInt("green", 255),
+                color.getInt("blue", 255)
+        );
+        configurable.setSize(section.getDouble("size", 1.0));
     }
 
     public String getId() { return id; }
@@ -487,7 +481,12 @@ public class CustomEffectConfig {
         public int getDelay() { return delay; }
     }
 
-    public static class ParticleData {
+    public interface ColorConfigurable {
+        void setColor(int red, int green, int blue);
+        void setSize(double size);
+    }
+
+    public static class ParticleData implements ColorConfigurable {
         private final String type;
         private final int count;
         private final double offsetX;
@@ -516,12 +515,14 @@ public class CustomEffectConfig {
             this.interval = interval;
         }
 
+        @Override
         public void setColor(int red, int green, int blue) {
             this.red = red;
             this.green = green;
             this.blue = blue;
         }
 
+        @Override
         public void setSize(double size) {
             this.size = size;
         }
@@ -548,7 +549,7 @@ public class CustomEffectConfig {
         public double getSize() { return size; }
     }
 
-    public static class PatternData {
+    public static class PatternData implements ColorConfigurable {
         private final String type;
         private final String particle;
         private final double radius;
@@ -556,6 +557,10 @@ public class CustomEffectConfig {
         private final int duration;
         private final double speed;
         private final double height;
+        private int red = 255;
+        private int green = 255;
+        private int blue = 255;
+        private double size = 1.0;
 
         public PatternData(String type, String particle, double radius, int points,
                            int duration, double speed, double height) {
@@ -576,11 +581,25 @@ public class CustomEffectConfig {
                 return Particle.FLAME;
             }
         }
+        @Override
+        public void setColor(int red, int green, int blue) {
+            this.red = red;
+            this.green = green;
+            this.blue = blue;
+        }
+        @Override
+        public void setSize(double size) {
+            this.size = size;
+        }
         public double getRadius() { return radius; }
         public int getPoints() { return points; }
         public int getDuration() { return duration; }
         public double getSpeed() { return speed; }
         public double getHeight() { return height; }
+        public int getRed() { return red; }
+        public int getGreen() { return green; }
+        public int getBlue() { return blue; }
+        public double getSize() { return size; }
     }
 
     public static class PotionData {

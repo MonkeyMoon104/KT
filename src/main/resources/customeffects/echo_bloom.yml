@@ -1,0 +1,50 @@
+effect:
+  id: "echo_bloom"
+  name: "&9Echo Bloom"
+  description:
+    - "&7A layered blue bloom"
+    - "&7with a soft pulse"
+  icon: "LAPIS_LAZULI"
+  price: 3300
+
+messages:
+  killer: "&9Echo Bloom activated."
+  action_bar:
+    enabled: true
+    killer: "&9Echo Bloom"
+    victim: ""
+
+cooldown: 6
+
+sequence:
+  enabled: true
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_NOTE_BLOCK_PLING"
+          volume: 0.8
+          pitch: 1.5
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 8
+    - tick: 3
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "SPHERE"
+          particle: "DUST"
+          radius: 1.2
+          color: { red: 120, green: 180, blue: 255 }
+          size: 1.0
+        - type: "PARTICLE"
+          particle: "GLOW"
+          count: 10
+    - tick: 7
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "CIRCLE"
+          particle: "ENCHANTED_HIT"
+          radius: 1.8
+
+performance:
+  min_tps: 16.0

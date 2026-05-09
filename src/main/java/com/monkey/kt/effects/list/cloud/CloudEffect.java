@@ -17,7 +17,7 @@ public class CloudEffect implements KillEffect {
     @Override
     public void play(Player killer, Location loc) {
         loc.getWorld().playSound(loc, Sound.BLOCK_END_PORTAL_SPAWN, 2, 1);
-        EffectUtils.playRepeatingParticle(plugin, loc, Particle.CLOUD, 100, 1.5, 1.5, 1.5, 0.02, 2L, 10);
+        EffectUtils.playRepeatingParticle(plugin, "cloud", loc, Particle.CLOUD, 100, 1.5, 1.5, 1.5, 0.02, 2L, 10);
         DamageConfig damageConfig = DamageUtils.getDamageConfig("cloud", plugin);
 
         if (damageConfig.isEnabled()) {

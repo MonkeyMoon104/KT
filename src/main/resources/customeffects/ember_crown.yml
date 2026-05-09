@@ -1,0 +1,49 @@
+effect:
+  id: "ember_crown"
+  name: "&6Ember Crown"
+  description:
+    - "&7A tiny crown-like flare"
+    - "&7hovering over the kill"
+  icon: "MAGMA_CREAM"
+  price: 3400
+
+messages:
+  killer: "&6Ember Crown activated."
+  action_bar:
+    enabled: true
+    killer: "&6Ember Crown"
+    victim: ""
+
+cooldown: 6
+
+sequence:
+  enabled: true
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "ENTITY_BLAZE_SHOOT"
+          volume: 0.7
+          pitch: 1.4
+        - type: "PARTICLE"
+          particle: "FLAME"
+          count: 10
+    - tick: 3
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "CIRCLE"
+          particle: "DUST"
+          radius: 1.4
+          color: { red: 255, green: 165, blue: 60 }
+          size: 0.95
+        - type: "PARTICLE"
+          particle: "LAVA"
+          count: 6
+    - tick: 7
+      actions:
+        - type: "PARTICLE"
+          particle: "ENCHANTED_HIT"
+          count: 10
+
+performance:
+  min_tps: 16.0

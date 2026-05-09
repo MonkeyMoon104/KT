@@ -1,0 +1,50 @@
+effect:
+  id: "comet_arc"
+  name: "&fComet Arc"
+  description:
+    - "&7A bright comet sweep"
+    - "&7with a clean pop"
+  icon: "NETHER_STAR"
+  price: 3600
+
+messages:
+  killer: "&fComet Arc activated."
+  action_bar:
+    enabled: true
+    killer: "&fComet Arc"
+    victim: ""
+
+cooldown: 6
+
+sequence:
+  enabled: true
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "ENTITY_FIREWORK_ROCKET_BLAST"
+          volume: 0.8
+          pitch: 1.4
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 12
+    - tick: 3
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "HELIX"
+          particle: "END_ROD"
+          radius: 1.2
+        - type: "PARTICLE"
+          particle: "DUST"
+          count: 12
+          color: { red: 255, green: 255, blue: 255 }
+          size: 0.9
+    - tick: 8
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "RING"
+          particle: "ENCHANTED_HIT"
+          radius: 1.8
+
+performance:
+  min_tps: 16.0

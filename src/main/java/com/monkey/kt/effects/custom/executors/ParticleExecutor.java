@@ -17,7 +17,7 @@ public class ParticleExecutor {
         this.plugin = plugin;
     }
 
-    public void execute(List<CustomEffectConfig.ParticleData> particles, Location location) {
+    public void execute(String effectId, List<CustomEffectConfig.ParticleData> particles, Location location) {
         if (particles == null || particles.isEmpty() || location.getWorld() == null) {
             return;
         }
@@ -25,23 +25,27 @@ public class ParticleExecutor {
         for (CustomEffectConfig.ParticleData particleData : particles) {
             if (particleData.getDelay() > 0) {
                 SchedulerWrapper.runTaskLater(plugin, () -> {
-                    startParticleEffect(particleData, location);
+                    startParticleEffect(effectId, particleData, location);
                 }, particleData.getDelay());
             } else {
-                startParticleEffect(particleData, location);
+                startParticleEffect(effectId, particleData, location);
             }
         }
     }
 
-    public void executeParticle(CustomEffectConfig.ParticleData particleData, Location location) {
-        spawnParticle(particleData, location);
+    public void executeParticle(String effectId, CustomEffectConfig.ParticleData particleData, Location location) {
+        spawnParticle(effectId, particleData, location);
     }
 
-    private void startParticleEffect(CustomEffectConfig.ParticleData particleData, Location location) {
-        int duration = particleData.getDuration();
-        int interval = particleData.getInterval();
+    private void startParticleEffect(String effectId, CustomEffectConfig.ParticleData particleData, Location location) {
+        int duration = Math.max(1, particleData.getDuration());
+        long interval = plugin.getParticlePerformanceManager().scaleTickInterval(
+                effectId,
+                Math.max(1, particleData.getInterval()),
+                false
+        );
 
-        final int[] ticksElapsed = {0};
+        final long[] ticksElapsed = {0};
 
         SchedulerWrapper.ScheduledTask task = SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
             @Override
@@ -51,52 +55,105 @@ public class ParticleExecutor {
                     return;
                 }
 
-                spawnParticle(particleData, location);
+                spawnParticle(effectId, particleData, location);
                 ticksElapsed[0] += interval;
             }
         }, location, 0L, interval);
     }
 
-    private void spawnParticle(CustomEffectConfig.ParticleData particleData, Location location) {
+    private void spawnParticle(String effectId, CustomEffectConfig.ParticleData particleData, Location location) {
         Particle particle = particleData.getParticle();
         if (particle == null || location.getWorld() == null) {
             return;
         }
 
         try {
-            if (particle == Particle.DUST) {
-                Particle.DustOptions dustOptions = new Particle.DustOptions(
-                        Color.fromRGB(
-                                particleData.getRed(),
-                                particleData.getGreen(),
-                                particleData.getBlue()
-                        ),
-                        (float) particleData.getSize()
-                );
+            Class<?> dataType = particle.getDataType();
+            Color color = Color.fromRGB(
+                    particleData.getRed(),
+                    particleData.getGreen(),
+                    particleData.getBlue()
+            );
 
+            if (!isSupportedParticle(particle, dataType)) {
+                plugin.getLogger().warning("Skipping unsupported custom particle " + particle.name()
+                        + " because it requires data type " + dataType.getSimpleName());
+                return;
+            }
+
+            if (particle == Particle.DUST) {
+                Particle.DustOptions dustOptions = new Particle.DustOptions(color, (float) particleData.getSize());
+                int scaledCount = plugin.getParticlePerformanceManager().scaleParticleCount(effectId, particleData.getCount(), false);
                 location.getWorld().spawnParticle(
                         particle,
                         location,
-                        particleData.getCount(),
+                        scaledCount,
                         particleData.getOffsetX(),
                         particleData.getOffsetY(),
                         particleData.getOffsetZ(),
                         particleData.getSpeed(),
                         dustOptions
                 );
-            } else {
+                return;
+            }
+
+            if (particle == Particle.DUST_COLOR_TRANSITION) {
+                Particle.DustTransition dustTransition = new Particle.DustTransition(
+                        color,
+                        color,
+                        (float) particleData.getSize()
+                );
+                int scaledCount = plugin.getParticlePerformanceManager().scaleParticleCount(effectId, particleData.getCount(), false);
                 location.getWorld().spawnParticle(
                         particle,
                         location,
-                        particleData.getCount(),
+                        scaledCount,
                         particleData.getOffsetX(),
                         particleData.getOffsetY(),
                         particleData.getOffsetZ(),
-                        particleData.getSpeed()
+                        particleData.getSpeed(),
+                        dustTransition
                 );
+                return;
             }
+
+            if (particle == Particle.ENTITY_EFFECT) {
+                int scaledCount = plugin.getParticlePerformanceManager().scaleParticleCount(effectId, particleData.getCount(), false);
+                location.getWorld().spawnParticle(
+                        particle,
+                        location,
+                        scaledCount,
+                        particleData.getOffsetX(),
+                        particleData.getOffsetY(),
+                        particleData.getOffsetZ(),
+                        particleData.getSpeed(),
+                        color
+                );
+                return;
+            }
+
+            int scaledCount = plugin.getParticlePerformanceManager().scaleParticleCount(effectId, particleData.getCount(), false);
+            location.getWorld().spawnParticle(
+                    particle,
+                    location,
+                    scaledCount,
+                    particleData.getOffsetX(),
+                    particleData.getOffsetY(),
+                    particleData.getOffsetZ(),
+                    particleData.getSpeed()
+            );
         } catch (Exception e) {
             plugin.getLogger().warning("Failed to spawn particle " + particle.name() + ": " + e.getMessage());
         }
+    }
+
+    private boolean isSupportedParticle(Particle particle, Class<?> dataType) {
+        if (dataType == Void.class) {
+            return true;
+        }
+
+        return particle == Particle.DUST
+                || particle == Particle.DUST_COLOR_TRANSITION
+                || particle == Particle.ENTITY_EFFECT;
     }
 }

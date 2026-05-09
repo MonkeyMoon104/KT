@@ -17,7 +17,7 @@ public class EndEffect implements KillEffect {
     @Override
     public void play(Player killer, Location loc) {
         loc.getWorld().playSound(loc, Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1);
-        EffectUtils.playRepeatingParticle(plugin, loc, Particle.PORTAL, 150, 1.5, 1.5, 1.5, 0.2, 2L, 10);
+        EffectUtils.playRepeatingParticle(plugin, "end", loc, Particle.PORTAL, 150, 1.5, 1.5, 1.5, 0.2, 2L, 10);
         DamageConfig damageConfig = DamageUtils.getDamageConfig("end", plugin);
 
         if (damageConfig.isEnabled()) {

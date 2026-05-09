@@ -1,0 +1,51 @@
+effect:
+  id: "frostblink"
+  name: "&bFrostblink"
+  description:
+    - "&7A small icy blink"
+    - "&7for crisp PvP feedback"
+  icon: "PACKED_ICE"
+  price: 3300
+
+messages:
+  killer: "&bFrostblink activated."
+  action_bar:
+    enabled: true
+    killer: "&bFrostblink"
+    victim: ""
+
+cooldown: 6
+
+sequence:
+  enabled: true
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_GLASS_BREAK"
+          volume: 0.7
+          pitch: 1.7
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 8
+    - tick: 2
+      actions:
+        - type: "PARTICLE"
+          particle: "DUST"
+          count: 16
+          color: { red: 185, green: 245, blue: 255 }
+          size: 1.0
+        - type: "PARTICLE_PATTERN"
+          pattern: "SPHERE"
+          particle: "DUST"
+          radius: 1.2
+          color: { red: 220, green: 255, blue: 255 }
+          size: 0.9
+    - tick: 6
+      actions:
+        - type: "PARTICLE"
+          particle: "ENCHANTED_HIT"
+          count: 12
+
+performance:
+  min_tps: 16.0

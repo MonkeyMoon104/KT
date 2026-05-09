@@ -17,7 +17,7 @@ public class NotesEffect implements KillEffect {
     @Override
     public void play(Player killer, Location loc) {
         loc.getWorld().playSound(loc, Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
-        EffectUtils.playRepeatingParticle(plugin, loc, Particle.NOTE, 40, 1.5, 1.5, 1.5, 1, 2L, 8);
+        EffectUtils.playRepeatingParticle(plugin, "notes", loc, Particle.NOTE, 40, 1.5, 1.5, 1.5, 1, 2L, 8);
         DamageConfig damageConfig = DamageUtils.getDamageConfig("notes", plugin);
 
         if (damageConfig.isEnabled()) {

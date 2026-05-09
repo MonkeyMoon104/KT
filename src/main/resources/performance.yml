@@ -1,0 +1,63 @@
+particle-performance:
+  enabled: true
+
+  # OFF = original effects
+  # LOW = strongest reduction
+  # BALANCED = good FPS / visuals balance
+  # HIGH = close to original
+  # CUSTOM = use the advanced values below
+  preset: BALANCED
+
+  adaptive:
+    # When enabled, particles are reduced more automatically if TPS drops
+    enabled: true
+    tps_19: 0.90
+    tps_17: 0.75
+    tps_15: 0.55
+
+  advanced:
+    # Used only when preset: CUSTOM
+    global-particle-multiplier: 0.75
+    global-loop-multiplier: 0.75
+    min-particle-count: 1
+
+    # Extra reduction applied to heavy effects
+    heavy-effects-particle-multiplier: 0.55
+    heavy-effects-loop-multiplier: 0.60
+
+    # Repeating particle tasks:
+    # 1 = original interval
+    # 2 = every 2 ticks
+    # 3 = every 3 ticks
+    repeating-tick-divider: 1
+
+    # Per-effect overrides
+    effects:
+      dimensionalrift:
+        particle-multiplier: 0.45
+        loop-multiplier: 0.45
+        tick-divider: 2
+      voidlotus:
+        particle-multiplier: 0.55
+        loop-multiplier: 0.60
+        tick-divider: 1
+      cryocore:
+        particle-multiplier: 0.60
+        loop-multiplier: 0.65
+        tick-divider: 1
+      wither:
+        particle-multiplier: 0.65
+        loop-multiplier: 0.70
+        tick-divider: 1
+      prismaticnova:
+        particle-multiplier: 0.60
+        loop-multiplier: 0.60
+        tick-divider: 1
+      stellarcollapse:
+        particle-multiplier: 0.60
+        loop-multiplier: 0.65
+        tick-divider: 1
+      firephoenix:
+        particle-multiplier: 0.70
+        loop-multiplier: 0.70
+        tick-divider: 1

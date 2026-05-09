@@ -1,0 +1,47 @@
+effect:
+  id: "skythread"
+  name: "&bSkythread"
+  description:
+    - "&7Thin sky-blue trails"
+    - "&7wrapped into a small ring"
+  icon: "LIGHT_BLUE_DYE"
+  price: 3400
+
+messages:
+  killer: "&bSkythread activated."
+  action_bar:
+    enabled: true
+    killer: "&bSkythread"
+    victim: ""
+
+cooldown: 6
+
+sequence:
+  enabled: true
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "ENTITY_ALLAY_ITEM_GIVEN"
+          volume: 0.8
+          pitch: 1.5
+        - type: "PARTICLE"
+          particle: "GLOW"
+          count: 10
+    - tick: 3
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "HELIX"
+          particle: "DUST"
+          radius: 1.15
+          color: { red: 120, green: 220, blue: 255 }
+          size: 0.9
+    - tick: 7
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "RING"
+          particle: "END_ROD"
+          radius: 1.7
+
+performance:
+  min_tps: 16.0

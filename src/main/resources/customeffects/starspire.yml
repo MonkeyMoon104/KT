@@ -1,0 +1,47 @@
+effect:
+  id: "starspire"
+  name: "&fStarspire"
+  description:
+    - "&7A vertical star pulse"
+    - "&7with a clean end-rod lift"
+  icon: "END_ROD"
+  price: 3500
+
+messages:
+  killer: "&fStarspire activated."
+  action_bar:
+    enabled: true
+    killer: "&fStarspire"
+    victim: ""
+
+cooldown: 6
+
+sequence:
+  enabled: true
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_ENCHANTMENT_TABLE_USE"
+          volume: 0.7
+          pitch: 1.8
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 10
+    - tick: 3
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "HELIX"
+          particle: "END_ROD"
+          radius: 1.0
+        - type: "PARTICLE"
+          particle: "ENCHANTED_HIT"
+          count: 8
+    - tick: 8
+      actions:
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 10
+
+performance:
+  min_tps: 16.0

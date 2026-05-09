@@ -1,0 +1,8 @@
+database:
+  type: "sqlite"
+  TYPE-OPTIONS: sqlite, mysql, mariadb, postgres, cockroachdb, sqlserver, oracle, h2, h2-server, hsqldb, derby
+  host: "localhost"
+  port: 3306
+  database: "kt"
+  username: "root"
+  password: "password"

@@ -8,6 +8,7 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 public final class PrismaticNovaAnimation {
+    private static final String EFFECT_ID = "prismaticnova";
 
     private PrismaticNovaAnimation() {
     }
@@ -38,8 +39,10 @@ public final class PrismaticNovaAnimation {
             double radius = 0.35 + (currentTick * 0.12);
             double yOffset = (Math.sin(currentTick * 0.35) * 0.4) + 0.15;
 
-            spawnRing(world, center.clone().add(0, yOffset, 0), radius, currentTick);
-            spawnHelix(world, center, radius * 0.6, currentTick);
+            if (currentTick % plugin.getParticlePerformanceManager().scaleTickInterval(EFFECT_ID, 1L, true) == 0) {
+                spawnRing(plugin, world, center.clone().add(0, yOffset, 0), radius, currentTick);
+                spawnHelix(plugin, world, center, radius * 0.6, currentTick);
+            }
 
             if (currentTick % 5 == 0) {
                 world.playSound(center, Sound.BLOCK_AMETHYST_BLOCK_CHIME, 0.9f, 0.8f + (currentTick * 0.02f));
@@ -47,7 +50,7 @@ public final class PrismaticNovaAnimation {
 
             if (currentTick >= 28 && !exploded[0]) {
                 exploded[0] = true;
-                explode(world, center);
+                explode(plugin, world, center);
                 if (damageConfig.isEnabled()) {
                     DamageUtils.applyDamageAround(killer, center, damageConfig.getRadius(), damageConfig.getValue());
                 }
@@ -55,8 +58,8 @@ public final class PrismaticNovaAnimation {
         }, center, 0L, 1L);
     }
 
-    private static void spawnRing(World world, Location center, double radius, int tick) {
-        int points = 42;
+    private static void spawnRing(KT plugin, World world, Location center, double radius, int tick) {
+        int points = plugin.getParticlePerformanceManager().scaleLoopCount(EFFECT_ID, 42, true);
         for (int i = 0; i < points; i++) {
             double angle = (Math.PI * 2 * i) / points;
             double x = Math.cos(angle) * radius;
@@ -80,11 +83,12 @@ public final class PrismaticNovaAnimation {
         }
     }
 
-    private static void spawnHelix(World world, Location center, double radius, int tick) {
+    private static void spawnHelix(KT plugin, World world, Location center, double radius, int tick) {
         for (int arm = 0; arm < 2; arm++) {
             double phase = arm * Math.PI;
-            for (int step = 0; step < 18; step++) {
-                double progress = step / 17.0;
+            int steps = plugin.getParticlePerformanceManager().scaleLoopCount(EFFECT_ID, 18, true);
+            for (int step = 0; step < steps; step++) {
+                double progress = step / (double) Math.max(1, steps - 1);
                 double angle = (tick * 0.32) + (progress * 3.3 * Math.PI) + phase;
                 double x = Math.cos(angle) * (radius * (0.4 + progress));
                 double z = Math.sin(angle) * (radius * (0.4 + progress));
@@ -94,10 +98,34 @@ public final class PrismaticNovaAnimation {
         }
     }
 
-    private static void explode(World world, Location center) {
-        world.spawnParticle(Particle.FIREWORK, center, 120, 1.2, 1.2, 1.2, 0.05);
-        world.spawnParticle(Particle.WAX_ON, center, 80, 1.0, 0.8, 1.0, 0.1);
-        world.spawnParticle(Particle.END_ROD, center, 40, 0.7, 0.7, 0.7, 0.05);
+    private static void explode(KT plugin, World world, Location center) {
+        world.spawnParticle(
+                Particle.FIREWORK,
+                center,
+                plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 120, true),
+                1.2,
+                1.2,
+                1.2,
+                0.05
+        );
+        world.spawnParticle(
+                Particle.WAX_ON,
+                center,
+                plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 80, true),
+                1.0,
+                0.8,
+                1.0,
+                0.1
+        );
+        world.spawnParticle(
+                Particle.END_ROD,
+                center,
+                plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 40, true),
+                0.7,
+                0.7,
+                0.7,
+                0.05
+        );
         world.playSound(center, Sound.ENTITY_FIREWORK_ROCKET_BLAST_FAR, 2.0f, 1.0f);
         world.playSound(center, Sound.ENTITY_GENERIC_EXPLODE, 1.2f, 1.35f);
     }

@@ -80,12 +80,12 @@ public class CustomKillEffect implements KillEffect {
 
         if (config.isParticlesEnabled()) {
             plugin.getLogger().info("[CustomKillEffect] Particles enabled, count: " + config.getParticles().size());
-            particleExecutor.execute(config.getParticles(), loc);
+            particleExecutor.execute(config.getId(), config.getParticles(), loc);
         }
 
         if (config.isPatternsEnabled()) {
             plugin.getLogger().info("[CustomKillEffect] Patterns enabled, count: " + config.getPatterns().size());
-            patternExecutor.execute(config.getPatterns(), loc);
+            patternExecutor.execute(config.getId(), config.getPatterns(), loc);
         }
 
         if (config.isDamageEnabled()) {
@@ -175,7 +175,7 @@ public class CustomKillEffect implements KillEffect {
     }
 
     public void executeParticle(CustomEffectConfig.ParticleData particle, Location loc) {
-        particleExecutor.executeParticle(particle, loc);
+        particleExecutor.executeParticle(config.getId(), particle, loc);
     }
 
     public void executeDamage(Player killer, Location loc, double damage, double radius) {
@@ -183,6 +183,6 @@ public class CustomKillEffect implements KillEffect {
     }
 
     public void executePattern(CustomEffectConfig.PatternData pattern, Location loc) {
-        patternExecutor.executePattern(pattern, loc);
+        patternExecutor.executePattern(config.getId(), pattern, loc);
     }
 }

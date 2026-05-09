@@ -16,7 +16,7 @@ public class FirePhoenixLauncher {
 
         SchedulerWrapper.ScheduledTask task = SchedulerWrapper.runTaskTimer(plugin, new Runnable() {
             int ticks = 0;
-            final int maxTicks = 60;
+            final int maxTicks = 10;
             final Color[] chargeColors = {
                     Color.fromRGB(255, 80, 0),
                     Color.fromRGB(255, 160, 0),
@@ -30,13 +30,13 @@ public class FirePhoenixLauncher {
                 if (ticks >= maxTicks) {
                     taskCompleted[0] = true;
                     FirePhoenixParticles.spawnPhoenixExplosion(plugin, center, killer);
-                    world.playSound(center, Sound.ENTITY_BLAZE_DEATH, 2.0f, 0.8f);
+                    world.playSound(center, Sound.ENTITY_BLAZE_DEATH, 1.2f, 1.0f);
                     SchedulerWrapper.safeCancelTask(this);
                     return;
                 }
 
-                double radius = 0.3 + (ticks * 0.05);
-                int particles = 15 + ticks * 2;
+                double radius = 0.25 + (ticks * 0.07);
+                int particles = 8 + ticks;
                 Color color = chargeColors[ticks % chargeColors.length];
 
                 for (int i = 0; i < particles; i++) {
@@ -49,14 +49,14 @@ public class FirePhoenixLauncher {
                     world.spawnParticle(Particle.DUST,
                             center.clone().add(x, y, z),
                             0, 0, 0, 0,
-                            new Particle.DustOptions(color, 1.5f));
+                            new Particle.DustOptions(color, 1.15f));
                     world.spawnParticle(Particle.FLAME,
                             center.clone().add(x * 0.8, y * 0.8, z * 0.8),
                             0, 0, 0, 0, 0.01);
                 }
 
-                if (ticks % 5 == 0) {
-                    world.playSound(center, Sound.ITEM_FIRECHARGE_USE, 1.5f, 1.2f - ticks * 0.02f);
+                if (ticks % 3 == 0) {
+                    world.playSound(center, Sound.ITEM_FIRECHARGE_USE, 0.8f, 1.3f - ticks * 0.03f);
                 }
 
                 ticks++;

@@ -1,0 +1,50 @@
+effect:
+  id: "soul_ripple"
+  name: "&3Soul Ripple"
+  description:
+    - "&7A teal ripple pulse"
+    - "&7with low visual noise"
+  icon: "SOUL_LANTERN"
+  price: 3400
+
+messages:
+  killer: "&3Soul Ripple activated."
+  action_bar:
+    enabled: true
+    killer: "&3Soul Ripple"
+    victim: ""
+
+cooldown: 6
+
+sequence:
+  enabled: true
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_SCULK_SENSOR_CLICKING"
+          volume: 0.8
+          pitch: 1.2
+        - type: "PARTICLE"
+          particle: "GLOW"
+          count: 10
+    - tick: 3
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "RING"
+          particle: "DUST"
+          radius: 1.7
+          color: { red: 80, green: 220, blue: 210 }
+          size: 1.0
+        - type: "PARTICLE"
+          particle: "ENCHANTED_HIT"
+          count: 8
+    - tick: 7
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "SPHERE"
+          particle: "END_ROD"
+          radius: 1.1
+
+performance:
+  min_tps: 16.0

@@ -6,11 +6,11 @@ import com.monkey.kt.utils.damage.DamageUtils;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 public class CryoCoreParticles {
+    private static final String EFFECT_ID = "cryocore";
 
-    public static void spawnIceExplosion(World world, Location center, int tick, int spiker, Plugin plugin, Player killer) {
+    public static void spawnIceExplosion(World world, Location center, int tick, int spiker, KT plugin, Player killer) {
 
         DamageConfig damageConfig = DamageUtils.getDamageConfig("cryocore", plugin);
 
@@ -18,7 +18,11 @@ public class CryoCoreParticles {
             DamageUtils.applyDamageAround(killer, center, damageConfig.getRadius(), damageConfig.getValue());
         }
 
-        int points = Math.min(15, 10 + tick / 4);
+        int points = plugin.getParticlePerformanceManager().scaleLoopCount(
+                EFFECT_ID,
+                Math.min(15, 10 + tick / 4),
+                true
+        );
         double progress = Math.min(tick / 30.0, 1.0);
 
         for (int i = 0; i < points; i++) {
@@ -34,7 +38,15 @@ public class CryoCoreParticles {
             Location pLoc = center.clone().add(x, y, z);
 
             if (tick % 3 == 0) {
-                world.spawnParticle(Particle.SNOWFLAKE, pLoc, 2, 0.1, 0.1, 0.1, 0.02);
+                world.spawnParticle(
+                        Particle.SNOWFLAKE,
+                        pLoc,
+                        plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 2, true),
+                        0.1,
+                        0.1,
+                        0.1,
+                        0.02
+                );
                 world.spawnParticle(Particle.DUST, pLoc, 1, 0, 0, 0,
                         new Particle.DustOptions(Color.fromRGB(180, 255, 255), 1.4f));
             }
@@ -60,7 +72,7 @@ public class CryoCoreParticles {
             int tick = 0;
             final int maxTicks = 10;
             final double maxRadius = spiker;
-            final int points = 16;
+            final int points = plugin.getParticlePerformanceManager().scaleLoopCount(EFFECT_ID, 16, true);
 
             @Override
             public void run() {
@@ -94,10 +106,10 @@ public class CryoCoreParticles {
 
                 tick++;
             }
-        }, center, 0L, 3L);
+        }, center, 0L, plugin.getParticlePerformanceManager().scaleTickInterval(EFFECT_ID, 3L, true));
     }
 
-    public static void spawnFinalCrystalFade(Plugin plugin, World world, Location center, int spiker) {
+    public static void spawnFinalCrystalFade(KT plugin, World world, Location center, int spiker) {
         final boolean[] taskCompleted = {false};
 
         SchedulerWrapper.runTaskTimerAtLocation(plugin, new Runnable() {
@@ -113,7 +125,8 @@ public class CryoCoreParticles {
                     return;
                 }
 
-                for (int i = 0; i < 10; i++) {
+                int points = plugin.getParticlePerformanceManager().scaleLoopCount(EFFECT_ID, 10, true);
+                for (int i = 0; i < points; i++) {
                     double angle = Math.random() * 2 * Math.PI;
                     double radius = Math.random() * maxRadius;
 
@@ -146,6 +159,6 @@ public class CryoCoreParticles {
 
                 tick++;
             }
-        }, center, 0L, 4L);
+        }, center, 0L, plugin.getParticlePerformanceManager().scaleTickInterval(EFFECT_ID, 4L, true));
     }
 }

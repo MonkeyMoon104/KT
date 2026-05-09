@@ -1,0 +1,54 @@
+effect:
+  id: "ember_sigil"
+  name: "&cEmber Sigil"
+  description:
+    - "&7A red-orange rune burst"
+    - "&7made for quick kills"
+  icon: "BLAZE_POWDER"
+  price: 3300
+
+messages:
+  killer: "&cEmber Sigil activated."
+  action_bar:
+    enabled: true
+    killer: "&cEmber Sigil"
+    victim: ""
+
+cooldown: 6
+
+sequence:
+  enabled: true
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "ITEM_FIRECHARGE_USE"
+          volume: 0.9
+          pitch: 1.2
+        - type: "PARTICLE"
+          particle: "FLAME"
+          count: 12
+    - tick: 3
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "CIRCLE"
+          particle: "DUST"
+          radius: 1.5
+          color: { red: 255, green: 115, blue: 40 }
+          size: 1.0
+        - type: "PARTICLE"
+          particle: "ENCHANTED_HIT"
+          count: 10
+    - tick: 7
+      actions:
+        - type: "PARTICLE"
+          particle: "LAVA"
+          count: 8
+        - type: "PARTICLE"
+          particle: "DUST"
+          count: 14
+          color: { red: 255, green: 180, blue: 70 }
+          size: 1.0
+
+performance:
+  min_tps: 16.0

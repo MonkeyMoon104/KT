@@ -154,8 +154,13 @@ public class GuiEditorCommand implements SubCommand {
     }
 
     private void saveAndReloadGui(CommandSender sender, String message) {
-        plugin.saveConfig();
-        plugin.reloadConfig();
+        if (plugin.getPluginConfigManager() != null) {
+            plugin.getPluginConfigManager().saveAll();
+            plugin.getPluginConfigManager().updateAndReload();
+        } else {
+            plugin.saveConfig();
+            plugin.reloadConfig();
+        }
         if (plugin.getEffectRegistry() != null) {
             plugin.getEffectRegistry().loadEffects(true);
         }

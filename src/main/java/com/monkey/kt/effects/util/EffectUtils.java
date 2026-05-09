@@ -1,15 +1,18 @@
 package com.monkey.kt.effects.util;
 
+import com.monkey.kt.KT;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.plugin.Plugin;
 
 public class EffectUtils {
 
-    public static void playRepeatingParticle(Plugin plugin, Location loc, Particle particle, int count,
+    public static void playRepeatingParticle(KT plugin, String effectId, Location loc, Particle particle, int count,
                                              double offsetX, double offsetY, double offsetZ, double extra,
                                              long intervalTicks, int repetitions) {
+        int scaledCount = plugin.getParticlePerformanceManager().scaleParticleCount(effectId, count, false);
+        long scaledInterval = plugin.getParticlePerformanceManager().scaleTickInterval(effectId, intervalTicks, false);
+        int scaledRepetitions = plugin.getParticlePerformanceManager().scaleLoopCount(effectId, repetitions, false);
 
         final boolean[] taskCompleted = {false};
 
@@ -27,12 +30,12 @@ public class EffectUtils {
 
                 try {
                     if (loc.getWorld() != null) {
-                        loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, extra);
+                        loc.getWorld().spawnParticle(particle, loc, scaledCount, offsetX, offsetY, offsetZ, extra);
                     }
                 } catch (Exception e) {
                     taskCompleted[0] = true;
                 }
             }
-        }, loc, 0L, intervalTicks);
+        }, loc, 0L, scaledInterval);
     }
 }

@@ -1,0 +1,25 @@
+[versions]
+shadow = "9.4.1"
+paper = "1.21.11-R0.1-SNAPSHOT"
+worldguard = "7.0.16"
+bstats = "3.2.1"
+reflections = "0.10.2"
+luckperms = "5.5"
+json = "20251224"
+placeholderapi = "2.12.2"
+vault = "1.7.1"
+hikari = "7.0.2"
+
+[libraries]
+paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
+worldguard-bukkit = { module = "com.sk89q.worldguard:worldguard-bukkit", version.ref = "worldguard" }
+bstats-bukkit = { module = "org.bstats:bstats-bukkit", version.ref = "bstats" }
+reflections = { module = "org.reflections:reflections", version.ref = "reflections" }
+luckperms-api = { module = "net.luckperms:api", version.ref = "luckperms" }
+json = { module = "org.json:json", version.ref = "json" }
+placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholderapi" }
+vault-api = { module = "com.github.MilkBowl:VaultAPI", version.ref = "vault" }
+hikari = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
+
+[plugins]
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }

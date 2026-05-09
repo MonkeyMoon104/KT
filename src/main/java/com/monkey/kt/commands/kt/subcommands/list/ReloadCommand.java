@@ -39,7 +39,14 @@ public class ReloadCommand implements SubCommand {
         boolean wasUsingInternal = currentEconomyManager != null ? currentEconomyManager.isUsingInternal() : true;
         String previousProvider = getEconomyProviderName(currentEconomyManager);
 
-        plugin.reloadConfig();
+        if (plugin.getPluginConfigManager() != null) {
+            plugin.getPluginConfigManager().updateAndReload();
+        } else {
+            plugin.reloadConfig();
+        }
+        if (plugin.getParticlePerformanceManager() != null) {
+            plugin.getParticlePerformanceManager().reload();
+        }
 
         if (plugin.getCustomEffectLoader() != null) {
             plugin.getCustomEffectLoader().reloadCustomEffects();

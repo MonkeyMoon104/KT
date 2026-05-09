@@ -1,0 +1,25 @@
+events:
+  enabled: true
+  broadcast:
+    players: "&e%killer% &akilled &b%deaded%&a and his luck started the &6lucky event &e%event%&a, go to his location to get the rewards too, it ends in: &e%end%"
+    finish_collected: "&aAll the money has been collected"
+    finish_not_collected: "&aThe event is ended"
+    money_pickup: "&aYou have collected money, %remaining% pieces are missing"
+  list:
+    money_fountain:
+      enabled: true
+      chance: 5
+      settings:
+        drop: 64
+        material: EMERALD
+        money_value: 20
+        duration: 90
+
+    meteor_shower:
+      enabled: true
+      chance: 2
+      settings:
+        meteor_count: 15
+        material: DIAMOND
+        money_value: 50
+        duration: 40

@@ -4,10 +4,11 @@ import com.monkey.kt.boost.AuraBoostManager;
 import com.monkey.kt.commands.kt.KTCommand;
 import com.monkey.kt.commands.kt.subcommands.list.KillCoinsCommand;
 import com.monkey.kt.commands.kt.tab.KillEffectTabCompleter;
-import com.monkey.kt.config.ConfigService;
+import com.monkey.kt.config.PluginConfigManager;
 import com.monkey.kt.cooldown.CooldownManager;
 import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.economy.KillCoinsEco;
+import com.monkey.kt.effects.performance.ParticlePerformanceManager;
 import com.monkey.kt.effects.KillEffectFactory;
 import com.monkey.kt.effects.custom.CustomEffectLoader;
 import com.monkey.kt.effects.register.EffectRegistry;
@@ -48,6 +49,8 @@ public class KT extends JavaPlugin {
     private KTCommand ktCommand;
     private EventManager eventManager;
     private CustomEffectLoader customEffectLoader;
+    private ParticlePerformanceManager particlePerformanceManager;
+    private PluginConfigManager pluginConfigManager;
 
     @Override
     public void onEnable() {
@@ -67,9 +70,9 @@ public class KT extends JavaPlugin {
         CheckUpdate checkUpdate = new CheckUpdate(this, spigotResourceId);
         getServer().getPluginManager().registerEvents(checkUpdate, this);
 
-        saveDefaultConfig();
-
-        new ConfigService(this).updateAndReload();
+        this.pluginConfigManager = new PluginConfigManager(this);
+        this.pluginConfigManager.updateAndReload();
+        this.particlePerformanceManager = new ParticlePerformanceManager(this);
 
         this.resourcePack = new ResourcePack(this);
 
@@ -146,6 +149,7 @@ public class KT extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new KillEffectListener(this), this);
         getServer().getPluginManager().registerEvents(new ProjectileProtListener(this), this);
         getServer().getPluginManager().registerEvents(new EntityByPassSpawn(this), this);
+        getServer().getPluginManager().registerEvents(new TempBlockProtectionListener(this), this);
 
         killRewardListener = new KillRewardListener(this, economyManager);
         getServer().getPluginManager().registerEvents(killRewardListener, this);
@@ -325,6 +329,12 @@ public class KT extends JavaPlugin {
     }
     public EventManager getEventManager() {
         return eventManager;
+    }
+    public ParticlePerformanceManager getParticlePerformanceManager() {
+        return particlePerformanceManager;
+    }
+    public PluginConfigManager getPluginConfigManager() {
+        return pluginConfigManager;
     }
     public static boolean isFolia() {
         return SchedulerWrapper.isFolia();

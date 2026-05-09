@@ -11,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 public class DimensionalRiftLauncher {
+    private static final String EFFECT_ID = "dimensionalrift";
 
     public static void launch(KT plugin, Location center, Player killer) {
         World world = center.getWorld();
@@ -25,19 +26,27 @@ public class DimensionalRiftLauncher {
                     world.playSound(center, Sound.ENTITY_ENDERMAN_STARE, 5f, 1f);
                 }
 
+                boolean renderFrame = tick % plugin.getParticlePerformanceManager().scaleTickInterval(EFFECT_ID, 1L, true) == 0;
+
                 if (tick < 60) {
-                    RiftParticles.spawnHugeOpeningRing(world, center, tick);
+                    if (renderFrame) {
+                        RiftParticles.spawnHugeOpeningRing(plugin, world, center, tick);
+                    }
                     if (tick % 8 == 0) {
                         world.playSound(center, Sound.BLOCK_PORTAL_AMBIENT, 2f + tick * 0.05f, 0.9f + (tick * 0.02f));
                     }
                 } else if (tick < 120) {
-                    RiftParticles.spawnGlitchVortex(world, center, tick - 60);
-                    RiftParticles.spawnGlitchRingMovement(world, center, tick - 60);
+                    if (renderFrame) {
+                        RiftParticles.spawnGlitchVortex(plugin, world, center, tick - 60);
+                        RiftParticles.spawnGlitchRingMovement(plugin, world, center, tick - 60);
+                    }
                     if (tick % 7 == 0) {
                         world.playSound(center, Sound.ENTITY_WITHER_SPAWN, 3f + (tick - 60) * 0.05f, 0.6f + (tick - 60) * 0.01f);
                     }
                 } else if (tick < 160) {
-                    RiftParticles.spawnEnergyBeams(world, center, tick - 120);
+                    if (renderFrame) {
+                        RiftParticles.spawnEnergyBeams(plugin, world, center, tick - 120);
+                    }
 
                     float progress = (tick - 120) / 40f;
                     float pitch = 0.8f + progress * 2.0f;
@@ -62,7 +71,9 @@ public class DimensionalRiftLauncher {
                     if (tick == 160) {
                         world.playSound(center, Sound.ENTITY_ENDER_DRAGON_DEATH, 7.5f, 4.5f);
                     }
-                    RiftParticles.spawnClosingSuction(world, center, tick - 160);
+                    if (renderFrame) {
+                        RiftParticles.spawnClosingSuction(plugin, world, center, tick - 160);
+                    }
                     if (tick % 7 == 0) {
                         world.playSound(center, Sound.ENTITY_ENDERMAN_TELEPORT, 2.5f, 0.5f);
                     }

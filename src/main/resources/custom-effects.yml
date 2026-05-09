@@ -1,0 +1,4 @@
+custom-effects:
+  permissions:
+    default-node: "kt.%effect%.use"
+    overrides: {}

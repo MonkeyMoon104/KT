@@ -14,10 +14,12 @@ import org.bukkit.entity.WitherSkull;
 import org.bukkit.util.Vector;
 
 public class WitherParticles {
+    private static final String EFFECT_ID = "wither";
 
-    public static void spawnDarkSphere(World world, Location center, double radius, int points) {
-        for (int i = 0; i < points; i++) {
-            double phi = Math.acos(1 - 2.0 * (i + 0.5) / points);
+    public static void spawnDarkSphere(KT plugin, World world, Location center, double radius, int points) {
+        int scaledPoints = plugin.getParticlePerformanceManager().scaleLoopCount(EFFECT_ID, points, true);
+        for (int i = 0; i < scaledPoints; i++) {
+            double phi = Math.acos(1 - 2.0 * (i + 0.5) / scaledPoints);
             double theta = Math.PI * (1 + Math.sqrt(5)) * (i + 0.5);
 
             double x = radius * Math.cos(theta) * Math.sin(phi);
@@ -29,21 +31,38 @@ public class WitherParticles {
         }
     }
 
-    public static void spawnWitherExplosion(Location center) {
+    public static void spawnWitherExplosion(KT plugin, Location center) {
         World world = center.getWorld();
         if (world == null) return;
 
         world.spawnParticle(Particle.FLASH, center, 1);
         world.spawnParticle(Particle.EXPLOSION, center, 1);
 
-        for (int i = 0; i < 360; i += 10) {
-            double radians = Math.toRadians(i);
+        int ringPoints = plugin.getParticlePerformanceManager().scaleLoopCount(EFFECT_ID, 36, true);
+        for (int i = 0; i < ringPoints; i++) {
+            double radians = (Math.PI * 2 * i) / ringPoints;
             double x = Math.cos(radians) * 4;
             double z = Math.sin(radians) * 4;
 
             Location ringLoc = center.clone().add(x, 0.5, z);
-            world.spawnParticle(Particle.WITCH, ringLoc, 5, 0.2, 0.2, 0.2, 0.01);
-            world.spawnParticle(Particle.PORTAL, ringLoc, 10, 0.2, 0.2, 0.2, 0.01);
+            world.spawnParticle(
+                    Particle.WITCH,
+                    ringLoc,
+                    plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 5, true),
+                    0.2,
+                    0.2,
+                    0.2,
+                    0.01
+            );
+            world.spawnParticle(
+                    Particle.PORTAL,
+                    ringLoc,
+                    plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 10, true),
+                    0.2,
+                    0.2,
+                    0.2,
+                    0.01
+            );
         }
     }
 
@@ -82,11 +101,27 @@ public class WitherParticles {
                         taskCompleted[0] = true;
                         return;
                     }
-                    world.spawnParticle(Particle.SOUL_FIRE_FLAME, skull.getLocation(), 2, 0, 0, 0, 0.01);
-                    world.spawnParticle(Particle.LARGE_SMOKE, skull.getLocation(), 1, 0.05, 0.05, 0.05, 0.01);
+                    world.spawnParticle(
+                            Particle.SOUL_FIRE_FLAME,
+                            skull.getLocation(),
+                            plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 2, true),
+                            0,
+                            0,
+                            0,
+                            0.01
+                    );
+                    world.spawnParticle(
+                            Particle.LARGE_SMOKE,
+                            skull.getLocation(),
+                            plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 1, true),
+                            0.05,
+                            0.05,
+                            0.05,
+                            0.01
+                    );
                     burstTicks[0]++;
                 }
-            }, skull, 0L, 1L);
+            }, skull, 0L, plugin.getParticlePerformanceManager().scaleTickInterval(EFFECT_ID, 1L, true));
         }
     }
 
@@ -104,23 +139,48 @@ public class WitherParticles {
                 if (taskCompleted[0]) return;
                 if (step[0] > 30) {
                     taskCompleted[0] = true;
-                    world.spawnParticle(Particle.EXPLOSION, center, 3);
-                    world.spawnParticle(Particle.FIREWORK, center, 20, 0.5, 0.5, 0.5, 0.1);
-                    world.spawnParticle(Particle.END_ROD, center, 40, 0.7, 0.7, 0.7, 0.01);
+                    world.spawnParticle(Particle.EXPLOSION, center, plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 3, true));
+                    world.spawnParticle(
+                            Particle.FIREWORK,
+                            center,
+                            plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 20, true),
+                            0.5,
+                            0.5,
+                            0.5,
+                            0.1
+                    );
+                    world.spawnParticle(
+                            Particle.END_ROD,
+                            center,
+                            plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 40, true),
+                            0.7,
+                            0.7,
+                            0.7,
+                            0.01
+                    );
                     world.playSound(center, org.bukkit.Sound.ENTITY_GENERIC_EXPLODE, 3f, 0.5f);
                     launchBurstSkulls(plugin, center, killer);
                     return;
                 }
 
                 double radius = 5 - (step[0] * 0.15);
-                for (int i = 0; i < 60; i++) {
-                    double angle = 2 * Math.PI * i / 60 + step[0] * 0.2;
+                int points = plugin.getParticlePerformanceManager().scaleLoopCount(EFFECT_ID, 60, true);
+                for (int i = 0; i < points; i++) {
+                    double angle = 2 * Math.PI * i / points + step[0] * 0.2;
                     double x = Math.cos(angle) * radius;
                     double z = Math.sin(angle) * radius;
                     double y = Math.sin(step[0] * 0.3 + i * 0.1) * 1.5;
 
                     Location pLoc = center.clone().add(x, 1.5 + y, z);
-                    world.spawnParticle(Particle.PORTAL, pLoc, 2, 0.05, 0.05, 0.05, 0.01);
+                    world.spawnParticle(
+                            Particle.PORTAL,
+                            pLoc,
+                            plugin.getParticlePerformanceManager().scaleParticleCount(EFFECT_ID, 2, true),
+                            0.05,
+                            0.05,
+                            0.05,
+                            0.01
+                    );
                     world.spawnParticle(Particle.SOUL_FIRE_FLAME, pLoc, 1, 0, 0, 0, 0.01);
                     world.spawnParticle(Particle.DUST, pLoc, 0, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(90, 0, 140), 1.2f));
                 }

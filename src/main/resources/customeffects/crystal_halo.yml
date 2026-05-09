@@ -1,0 +1,49 @@
+effect:
+  id: "crystal_halo"
+  name: "&dCrystal Halo"
+  description:
+    - "&7A polished crystal ring"
+    - "&7with purple shimmer"
+  icon: "GLASS"
+  price: 3600
+
+messages:
+  killer: "&dCrystal Halo activated."
+  action_bar:
+    enabled: true
+    killer: "&dCrystal Halo"
+    victim: ""
+
+cooldown: 6
+
+sequence:
+  enabled: true
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_GLASS_PLACE"
+          volume: 0.7
+          pitch: 1.7
+        - type: "PARTICLE"
+          particle: "FLASH"
+          count: 1
+    - tick: 3
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "RING"
+          particle: "DUST"
+          radius: 1.8
+          color: { red: 220, green: 170, blue: 255 }
+          size: 1.0
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 10
+    - tick: 7
+      actions:
+        - type: "PARTICLE"
+          particle: "ENCHANTED_HIT"
+          count: 10
+
+performance:
+  min_tps: 16.0

@@ -1,0 +1,13 @@
+economy:
+  enabled: true #If disabled check the permission for the effects
+  use_internal: true # If true use internal economy (killcoins) else use external eco like essentials etc.
+  starting-balance: 10 #After reset the user coins
+  reward:
+    enabled: true
+    settings:
+      player_kill: 10
+      mob_kill: 1
+  currency:
+    singular: "KillCoin"
+    plural: "KillCoins"
+    symbol: "KC"

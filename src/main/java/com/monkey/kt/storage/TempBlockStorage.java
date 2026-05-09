@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,6 +28,7 @@ public class TempBlockStorage {
 
     private static final ConcurrentLinkedQueue<TempBlockEntry> blocksToSave = new ConcurrentLinkedQueue<>();
     private static final ConcurrentLinkedQueue<Location> blocksToRemove = new ConcurrentLinkedQueue<>();
+    private static final java.util.Set<String> activeTempBlocks = ConcurrentHashMap.newKeySet();
 
     private static final int BATCH_SIZE = 500;
     private static final long BATCH_INTERVAL_TICKS = 100L;
@@ -52,6 +54,7 @@ public class TempBlockStorage {
             return;
         }
 
+        activeTempBlocks.add(toBlockKey(loc));
         blocksToSave.offer(new TempBlockEntry(loc.clone(), originalType));
 
         if (blocksToSave.size() >= BATCH_SIZE) {
@@ -65,6 +68,7 @@ public class TempBlockStorage {
             return;
         }
 
+        activeTempBlocks.remove(toBlockKey(loc));
         blocksToRemove.offer(loc.clone());
 
         if (blocksToRemove.size() >= BATCH_SIZE) {
@@ -311,6 +315,7 @@ public class TempBlockStorage {
              Statement stmt = connection.createStatement()) {
 
             int deleted = stmt.executeUpdate("DELETE FROM temp_blocks");
+            activeTempBlocks.clear();
             logger.info(ColorUtils.success("Temporary blocks database cleared successfully (" + deleted + " records)"));
 
         } catch (SQLException e) {
@@ -446,10 +451,21 @@ public class TempBlockStorage {
                 blocksToSave.size(), blocksToRemove.size());
     }
 
+    public static boolean isTempBlock(Location loc) {
+        if (loc == null || loc.getWorld() == null) {
+            return false;
+        }
+        return activeTempBlocks.contains(toBlockKey(loc));
+    }
+
     public static void forceFlushAll() {
         logger.info(ColorUtils.database("Force flushing all temp block operations..."));
         flush();
         logger.info(ColorUtils.success("Force flush completed"));
+    }
+
+    private static String toBlockKey(Location loc) {
+        return loc.getWorld().getName() + ":" + loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ();
     }
 
     private static class TempBlockData {

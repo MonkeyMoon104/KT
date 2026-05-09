@@ -1,0 +1,57 @@
+effect:
+  id: "astral_bloom"
+  name: "&dAstral Bloom"
+  description:
+    - "&7Soft astral petals"
+    - "&7burst around the kill"
+  icon: "CHORUS_FLOWER"
+  price: 3200
+
+messages:
+  killer: "&dAstral Bloom activated."
+  victim: ""
+  broadcast: ""
+  action_bar:
+    enabled: true
+    killer: "&dAstral Bloom"
+    victim: ""
+
+cooldown: 6
+
+sequence:
+  enabled: true
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_AMETHYST_BLOCK_CHIME"
+          volume: 0.9
+          pitch: 1.6
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 12
+    - tick: 3
+      actions:
+        - type: "PARTICLE"
+          particle: "DUST"
+          count: 18
+          color: { red: 240, green: 180, blue: 255 }
+          size: 1.1
+        - type: "PARTICLE_PATTERN"
+          pattern: "CIRCLE"
+          particle: "ENCHANTED_HIT"
+          radius: 1.4
+    - tick: 7
+      actions:
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 10
+        - type: "PARTICLE_PATTERN"
+          pattern: "SPHERE"
+          particle: "DUST"
+          radius: 1.2
+          color: { red: 255, green: 210, blue: 255 }
+          size: 0.9
+
+performance:
+  min_tps: 16.0

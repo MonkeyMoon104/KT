@@ -8,6 +8,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 public class WitherLauncher {
+    private static final String EFFECT_ID = "wither";
 
     public static void launch(KT plugin, Player killer, Location loc) {
         World world = loc.getWorld();
@@ -25,7 +26,7 @@ public class WitherLauncher {
                 if (taskCompleted[0]) return;
                 if (ticks[0] >= maxTicks) {
                     taskCompleted[0] = true;
-                    WitherParticles.spawnWitherExplosion(loc);
+                    WitherParticles.spawnWitherExplosion(plugin, loc);
                     world.playSound(loc, org.bukkit.Sound.ENTITY_WITHER_DEATH, 2.0f, 0.5f);
 
                     new WitherOrbitalAnimation(plugin, loc.clone(), killer).start();
@@ -34,7 +35,9 @@ public class WitherLauncher {
                 }
 
                 double radius = (maxRadius * ticks[0]) / maxTicks;
-                WitherParticles.spawnDarkSphere(world, loc, radius, 150);
+                if (ticks[0] % plugin.getParticlePerformanceManager().scaleTickInterval(EFFECT_ID, 1L, true) == 0) {
+                    WitherParticles.spawnDarkSphere(plugin, world, loc, radius, 150);
+                }
                 world.playSound(loc, org.bukkit.Sound.ENTITY_WITHER_SPAWN, 0.6f, 1.4f);
 
                 ticks[0]++;

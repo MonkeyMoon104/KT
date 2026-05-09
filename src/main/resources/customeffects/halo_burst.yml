@@ -1,0 +1,55 @@
+effect:
+  id: "halo_burst"
+  name: "&6Halo Burst"
+  description:
+    - "&7A clean golden halo"
+    - "&7snaps into view"
+  icon: "GOLD_INGOT"
+  price: 3200
+
+messages:
+  killer: "&6Halo Burst activated."
+  action_bar:
+    enabled: true
+    killer: "&6Halo Burst"
+    victim: ""
+
+cooldown: 6
+
+sequence:
+  enabled: true
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_BELL_USE"
+          volume: 0.8
+          pitch: 1.8
+        - type: "PARTICLE"
+          particle: "FLASH"
+          count: 1
+    - tick: 2
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "RING"
+          particle: "END_ROD"
+          radius: 1.8
+        - type: "PARTICLE"
+          particle: "DUST"
+          count: 16
+          color: { red: 255, green: 226, blue: 110 }
+          size: 1.0
+    - tick: 6
+      actions:
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 12
+        - type: "PARTICLE_PATTERN"
+          pattern: "CIRCLE"
+          particle: "DUST"
+          radius: 2.0
+          color: { red: 255, green: 240, blue: 150 }
+          size: 0.9
+
+performance:
+  min_tps: 16.0

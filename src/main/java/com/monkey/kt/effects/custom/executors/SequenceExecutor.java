@@ -124,6 +124,15 @@ public class SequenceExecutor {
                 0.01,
                 0, 1, 1
         );
+        ConfigurationSection color = action.getConfigurationSection("color");
+        if (color != null) {
+            particleData.setColor(
+                    color.getInt("red", 255),
+                    color.getInt("green", 255),
+                    color.getInt("blue", 255)
+            );
+            particleData.setSize(action.getDouble("size", 1.0));
+        }
         effect.executeParticle(particleData, location);
     }
 
@@ -134,6 +143,15 @@ public class SequenceExecutor {
                 action.getDouble("radius", 3.0),
                 30, 20, 0.5, 0
         );
+        ConfigurationSection color = action.getConfigurationSection("color");
+        if (color != null) {
+            patternData.setColor(
+                    color.getInt("red", 255),
+                    color.getInt("green", 255),
+                    color.getInt("blue", 255)
+            );
+            patternData.setSize(action.getDouble("size", 1.0));
+        }
         effect.executePattern(patternData, location);
     }
 

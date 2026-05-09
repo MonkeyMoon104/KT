@@ -1,0 +1,50 @@
+effect:
+  id: "voidflash"
+  name: "&5Voidflash"
+  description:
+    - "&7A dark flash ring"
+    - "&7that stays minimal"
+  icon: "OBSIDIAN"
+  price: 3500
+
+messages:
+  killer: "&5Voidflash activated."
+  action_bar:
+    enabled: true
+    killer: "&5Voidflash"
+    victim: ""
+
+cooldown: 6
+
+sequence:
+  enabled: true
+  steps:
+    - tick: 0
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_PORTAL_AMBIENT"
+          volume: 0.8
+          pitch: 1.5
+        - type: "PARTICLE"
+          particle: "FLASH"
+          count: 1
+    - tick: 3
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "RING"
+          particle: "DUST"
+          radius: 1.6
+          color: { red: 130, green: 60, blue: 220 }
+          size: 1.0
+        - type: "PARTICLE"
+          particle: "ENCHANTED_HIT"
+          count: 10
+    - tick: 7
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "SPHERE"
+          particle: "FIREWORK"
+          radius: 1.0
+
+performance:
+  min_tps: 16.0

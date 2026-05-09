@@ -4,9 +4,11 @@ import com.monkey.kt.KT;
 import com.monkey.kt.effects.KillEffectFactory;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -14,6 +16,8 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class CustomEffectLoader {
+
+    private static final String BUNDLED_EFFECTS_MANIFEST = "customeffects/bundled-effects.txt";
 
     private final KT plugin;
     private final File customEffectsFolder;
@@ -34,33 +38,54 @@ public class CustomEffectLoader {
             }
         }
 
-        File[] existingFiles = customEffectsFolder.listFiles((dir, name) ->
-                name.endsWith(".yml") && !name.equals("defaulteffect.yml")
-        );
-
-        if (existingFiles == null || existingFiles.length == 0) {
-            copyDefaultEffectFromResources();
+        for (String templateName : getBundledEffectTemplates()) {
+            copyBundledEffectFromResources(templateName);
         }
     }
 
-    private void copyDefaultEffectFromResources() {
-        File defaultEffectFile = new File(customEffectsFolder, "defaulteffect.yml");
+    private void copyBundledEffectFromResources(String resourceFileName) {
+        File effectFile = new File(customEffectsFolder, resourceFileName);
 
-        if (defaultEffectFile.exists()) {
-            plugin.getLogger().info("defaulteffect.yml already exists, skipping...");
+        if (effectFile.exists()) {
             return;
         }
 
-        try (InputStream in = plugin.getResource("customeffects/defaulteffect.yml")) {
+        try (InputStream in = plugin.getResource("customeffects/" + resourceFileName)) {
             if (in != null) {
-                Files.copy(in, defaultEffectFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                plugin.getLogger().info("Created defaulteffect.yml template from resources");
+                Files.copy(in, effectFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                plugin.getLogger().info("Created bundled custom effect template: " + resourceFileName);
             } else {
-                plugin.getLogger().warning("defaulteffect.yml not found in plugin resources!");
+                plugin.getLogger().warning(resourceFileName + " not found in plugin resources!");
             }
         } catch (IOException e) {
-            plugin.getLogger().log(Level.WARNING, "Failed to copy defaulteffect.yml from resources", e);
+            plugin.getLogger().log(Level.WARNING, "Failed to copy " + resourceFileName + " from resources", e);
         }
+    }
+
+    private List<String> getBundledEffectTemplates() {
+        List<String> templates = new ArrayList<>();
+
+        try (InputStream in = plugin.getResource(BUNDLED_EFFECTS_MANIFEST)) {
+            if (in == null) {
+                plugin.getLogger().warning("Bundled custom effects manifest not found: " + BUNDLED_EFFECTS_MANIFEST);
+                return templates;
+            }
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String trimmed = line.trim();
+                    if (trimmed.isEmpty() || trimmed.startsWith("#")) {
+                        continue;
+                    }
+                    templates.add(trimmed);
+                }
+            }
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.WARNING, "Failed to read bundled custom effects manifest", e);
+        }
+
+        return templates;
     }
 
     public void loadAllCustomEffects() {
