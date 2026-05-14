@@ -7,7 +7,6 @@ import com.monkey.kt.storage.TempBlockStorage;
 import com.monkey.kt.utils.SensitiveBlockUtils;
 import com.monkey.kt.utils.WorldGuardUtils;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
-import io.papermc.paper.datacomponent.item.ResolvableProfile;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -123,7 +122,7 @@ public class GraveLauncher {
 
         if (headBlock.getState() instanceof Skull) {
             Skull skull = (Skull) headBlock.getState();
-            skull.setProfile(ResolvableProfile.resolvableProfile(killer.getPlayerProfile()));
+            skull.setOwningPlayer(killer);
             skull.update(true, false);
         }
 
@@ -196,7 +195,7 @@ public class GraveLauncher {
             holder.originalBlocks.put(loc, block.getType());
         }
         WorldGuardUtils.runWithWorldGuardBypass(loc, () -> block.setType(newType, true));
-        TempBlockStorage.saveTempBlock(loc, holder.originalBlocks.get(loc));
+        TempBlockStorage.saveTempBlock(loc, holder.originalBlocks.get(loc), false);
     }
 
     private static void setGroundToCoarseDirt(BlockStateHolder holder, Block groundBlock) {

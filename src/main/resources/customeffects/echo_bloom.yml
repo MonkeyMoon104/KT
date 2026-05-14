@@ -2,8 +2,8 @@ effect:
   id: "echo_bloom"
   name: "&9Echo Bloom"
   description:
-    - "&7A layered blue bloom"
-    - "&7with a soft pulse"
+    - "&7Two soft blue ripples"
+    - "&7that pulse out one after another"
   icon: "LAPIS_LAZULI"
   price: 3300
 
@@ -23,28 +23,30 @@ sequence:
       actions:
         - type: "SOUND"
           sound: "BLOCK_NOTE_BLOCK_PLING"
-          volume: 0.8
-          pitch: 1.5
+          volume: 0.75
+          pitch: 1.55
         - type: "PARTICLE"
-          particle: "END_ROD"
-          count: 8
+          particle: "GLOW"
+          count: 7
     - tick: 3
       actions:
         - type: "PARTICLE_PATTERN"
-          pattern: "SPHERE"
+          pattern: "RING"
           particle: "DUST"
           radius: 1.2
           color: { red: 120, green: 180, blue: 255 }
           size: 1.0
-        - type: "PARTICLE"
-          particle: "GLOW"
-          count: 10
     - tick: 7
       actions:
         - type: "PARTICLE_PATTERN"
-          pattern: "CIRCLE"
-          particle: "ENCHANTED_HIT"
+          pattern: "RING"
+          particle: "DUST"
           radius: 1.8
+          color: { red: 180, green: 220, blue: 255 }
+          size: 0.9
+        - type: "PARTICLE"
+          particle: "ENCHANTED_HIT"
+          count: 8
 
 performance:
   min_tps: 16.0

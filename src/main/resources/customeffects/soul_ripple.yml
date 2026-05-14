@@ -2,8 +2,8 @@ effect:
   id: "soul_ripple"
   name: "&3Soul Ripple"
   description:
-    - "&7A teal ripple pulse"
-    - "&7with low visual noise"
+    - "&7A low teal soul wave"
+    - "&7that ripples outward across the floor"
   icon: "SOUL_LANTERN"
   price: 3400
 
@@ -16,6 +16,19 @@ messages:
 
 cooldown: 6
 
+patterns:
+  enabled: true
+  patterns:
+    - type: "WAVE"
+      particle: "DUST"
+      radius: 1.35
+      points: 20
+      duration: 8
+      speed: 0.5
+      height: 0.15
+      color: { red: 80, green: 220, blue: 210 }
+      size: 0.9
+
 sequence:
   enabled: true
   steps:
@@ -24,27 +37,21 @@ sequence:
         - type: "SOUND"
           sound: "BLOCK_SCULK_SENSOR_CLICKING"
           volume: 0.8
-          pitch: 1.2
+          pitch: 1.15
         - type: "PARTICLE"
           particle: "GLOW"
-          count: 10
-    - tick: 3
+          count: 6
+    - tick: 5
       actions:
         - type: "PARTICLE_PATTERN"
           pattern: "RING"
-          particle: "DUST"
-          radius: 1.7
-          color: { red: 80, green: 220, blue: 210 }
-          size: 1.0
-        - type: "PARTICLE"
           particle: "ENCHANTED_HIT"
-          count: 8
-    - tick: 7
+          radius: 1.8
+    - tick: 9
       actions:
-        - type: "PARTICLE_PATTERN"
-          pattern: "SPHERE"
+        - type: "PARTICLE"
           particle: "END_ROD"
-          radius: 1.1
+          count: 8
 
 performance:
   min_tps: 16.0

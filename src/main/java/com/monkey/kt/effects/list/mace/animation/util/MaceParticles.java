@@ -44,6 +44,9 @@ public class MaceParticles {
 
         world.spawnParticle(Particle.EXPLOSION, center, 1);
         world.spawnParticle(Particle.FLASH, center, 1);
+
+        Particle.DustOptions goldDust = new Particle.DustOptions(Color.fromRGB(255, 215, 0), 1.5f);
+
         for (int i = 0; i < 80; i++) {
             double angle = Math.random() * Math.PI * 2;
             double y = (Math.random() - 0.5) * 2;
@@ -53,6 +56,9 @@ public class MaceParticles {
 
             Location pLoc = center.clone().add(x, y, z);
             world.spawnParticle(Particle.END_ROD, pLoc, 1, 0, 0, 0, 0.01);
+            if (i % 3 == 0) {
+                world.spawnParticle(Particle.DUST, pLoc, 1, 0, 0, 0, 0, goldDust);
+            }
         }
     }
 }

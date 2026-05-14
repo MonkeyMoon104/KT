@@ -2,8 +2,8 @@ effect:
   id: "skythread"
   name: "&bSkythread"
   description:
-    - "&7Thin sky-blue trails"
-    - "&7wrapped into a small ring"
+    - "&7A thin vertical thread"
+    - "&7that twists upward in blue light"
   icon: "LIGHT_BLUE_DYE"
   price: 3400
 
@@ -16,6 +16,19 @@ messages:
 
 cooldown: 6
 
+patterns:
+  enabled: true
+  patterns:
+    - type: "HELIX"
+      particle: "DUST"
+      radius: 0.55
+      points: 16
+      duration: 10
+      speed: 0.38
+      height: 2.5
+      color: { red: 120, green: 220, blue: 255 }
+      size: 0.85
+
 sequence:
   enabled: true
   steps:
@@ -24,24 +37,15 @@ sequence:
         - type: "SOUND"
           sound: "ENTITY_ALLAY_ITEM_GIVEN"
           volume: 0.8
-          pitch: 1.5
+          pitch: 1.55
         - type: "PARTICLE"
           particle: "GLOW"
-          count: 10
-    - tick: 3
-      actions:
-        - type: "PARTICLE_PATTERN"
-          pattern: "HELIX"
-          particle: "DUST"
-          radius: 1.15
-          color: { red: 120, green: 220, blue: 255 }
-          size: 0.9
+          count: 8
     - tick: 7
       actions:
-        - type: "PARTICLE_PATTERN"
-          pattern: "RING"
+        - type: "PARTICLE"
           particle: "END_ROD"
-          radius: 1.7
+          count: 8
 
 performance:
   min_tps: 16.0

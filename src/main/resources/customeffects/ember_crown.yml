@@ -2,8 +2,8 @@ effect:
   id: "ember_crown"
   name: "&6Ember Crown"
   description:
-    - "&7A tiny crown-like flare"
-    - "&7hovering over the kill"
+    - "&7A hovering ember crown"
+    - "&7with flame points above the body"
   icon: "MAGMA_CREAM"
   price: 3400
 
@@ -16,6 +16,19 @@ messages:
 
 cooldown: 6
 
+patterns:
+  enabled: true
+  patterns:
+    - type: "CIRCLE"
+      particle: "DUST"
+      radius: 1.15
+      points: 14
+      duration: 8
+      speed: 0.36
+      height: 1.25
+      color: { red: 255, green: 165, blue: 60 }
+      size: 0.95
+
 sequence:
   enabled: true
   steps:
@@ -23,27 +36,25 @@ sequence:
       actions:
         - type: "SOUND"
           sound: "ENTITY_BLAZE_SHOOT"
-          volume: 0.7
-          pitch: 1.4
+          volume: 0.75
+          pitch: 1.35
         - type: "PARTICLE"
           particle: "FLAME"
-          count: 10
-    - tick: 3
+          count: 8
+    - tick: 4
       actions:
-        - type: "PARTICLE_PATTERN"
-          pattern: "CIRCLE"
-          particle: "DUST"
-          radius: 1.4
-          color: { red: 255, green: 165, blue: 60 }
-          size: 0.95
         - type: "PARTICLE"
           particle: "LAVA"
-          count: 6
-    - tick: 7
+          count: 5
+        - type: "PARTICLE_PATTERN"
+          pattern: "SPHERE"
+          particle: "FLAME"
+          radius: 0.9
+    - tick: 8
       actions:
         - type: "PARTICLE"
-          particle: "ENCHANTED_HIT"
-          count: 10
+          particle: "FLAME"
+          count: 8
 
 performance:
   min_tps: 16.0

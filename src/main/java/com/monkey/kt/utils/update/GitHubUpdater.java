@@ -7,6 +7,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class GitHubUpdater {
 
@@ -33,8 +34,19 @@ public class GitHubUpdater {
             String latestVersion = extract(jsonStr, "\"tag_name\":\"", "\"");
             String currentVersion = plugin.getPluginMeta().getVersion();
 
-            if (!latestVersion.equalsIgnoreCase("v" + currentVersion)) {
-                Bukkit.getLogger().info("[KT AutoUpdater] New version found: " + latestVersion);
+            if (latestVersion == null || latestVersion.isBlank()) {
+                Bukkit.getLogger().warning("[KT AutoUpdater] Could not resolve latest GitHub version.");
+                return;
+            }
+
+            int versionComparison = compareVersions(latestVersion, currentVersion);
+            if (versionComparison <= 0) {
+                Bukkit.getLogger().info("[KT AutoUpdater] Skipping GitHub release " + latestVersion
+                        + " because it is not newer than current version " + currentVersion + ".");
+                return;
+            }
+
+            Bukkit.getLogger().info("[KT AutoUpdater] New version found: " + latestVersion);
                 String downloadUrl = findJarDownloadUrl(jsonStr);
                 if (downloadUrl == null) {
                     Bukkit.getLogger().warning("[KT AutoUpdater] No .jar asset found in release.");
@@ -48,9 +60,6 @@ public class GitHubUpdater {
                 downloadFile(downloadUrl, destination);
 
                 Bukkit.getLogger().info("[KT AutoUpdater] Download complete. Update saved in /plugins/update. Please restart the server to apply the update.");
-            } else {
-                Bukkit.getLogger().info("[KT AutoUpdater] Plugin is up to date.");
-            }
         } catch (Exception e) {
             Bukkit.getLogger().warning("[KT AutoUpdater] Update check failed: " + e.getMessage());
         }
@@ -83,7 +92,54 @@ public class GitHubUpdater {
         conn.setRequestProperty("User-Agent", "Mozilla/5.0");
 
         try (InputStream in = conn.getInputStream()) {
-            Files.copy(in, destination.toPath());
+            Files.copy(in, destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
+    private int compareVersions(String left, String right) {
+        String[] leftParts = normalizeVersion(left).split("\\.");
+        String[] rightParts = normalizeVersion(right).split("\\.");
+        int maxParts = Math.max(leftParts.length, rightParts.length);
+
+        for (int i = 0; i < maxParts; i++) {
+            int leftValue = i < leftParts.length ? parseIntSafe(leftParts[i]) : 0;
+            int rightValue = i < rightParts.length ? parseIntSafe(rightParts[i]) : 0;
+
+            if (leftValue != rightValue) {
+                return Integer.compare(leftValue, rightValue);
+            }
+        }
+
+        return 0;
+    }
+
+    private String normalizeVersion(String version) {
+        if (version == null) {
+            return "";
+        }
+
+        String normalized = version.trim().toLowerCase();
+        if (normalized.startsWith("v")) {
+            normalized = normalized.substring(1);
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (char c : normalized.toCharArray()) {
+            if ((c >= '0' && c <= '9') || c == '.') {
+                builder.append(c);
+            } else {
+                break;
+            }
+        }
+
+        return builder.toString();
+    }
+
+    private int parseIntSafe(String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return 0;
         }
     }
 }

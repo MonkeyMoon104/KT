@@ -2,8 +2,8 @@ effect:
   id: "voidflash"
   name: "&5Voidflash"
   description:
-    - "&7A dark flash ring"
-    - "&7that stays minimal"
+    - "&7A dark implosion ring"
+    - "&7that collapses into a violent purple pop"
   icon: "OBSIDIAN"
   price: 3500
 
@@ -24,27 +24,27 @@ sequence:
         - type: "SOUND"
           sound: "BLOCK_PORTAL_AMBIENT"
           volume: 0.8
-          pitch: 1.5
-        - type: "PARTICLE"
-          particle: "FLASH"
-          count: 1
-    - tick: 3
-      actions:
+          pitch: 1.45
         - type: "PARTICLE_PATTERN"
           pattern: "RING"
           particle: "DUST"
-          radius: 1.6
+          radius: 1.95
           color: { red: 130, green: 60, blue: 220 }
-          size: 1.0
+          size: 0.95
+    - tick: 4
+      actions:
         - type: "PARTICLE"
           particle: "ENCHANTED_HIT"
-          count: 10
-    - tick: 7
+          count: 8
+    - tick: 8
       actions:
+        - type: "PARTICLE"
+          particle: "FLASH"
+          count: 1
         - type: "PARTICLE_PATTERN"
           pattern: "SPHERE"
           particle: "FIREWORK"
-          radius: 1.0
+          radius: 0.9
 
 performance:
   min_tps: 16.0

@@ -87,7 +87,7 @@ public class GravePlacer {
 
                             if (!holder.originalBlocks.containsKey(loc)) {
                                 holder.originalBlocks.put(loc, originalMat);
-                                TempBlockStorage.saveTempBlock(loc, originalMat);
+                                TempBlockStorage.saveTempBlock(loc, originalMat, false);
                             }
 
                             if (originalMat != Material.COARSE_DIRT) {

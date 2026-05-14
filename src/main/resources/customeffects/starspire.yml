@@ -2,8 +2,8 @@ effect:
   id: "starspire"
   name: "&fStarspire"
   description:
-    - "&7A vertical star pulse"
-    - "&7with a clean end-rod lift"
+    - "&7A vertical star column"
+    - "&7that rises and ends in a bright cap"
   icon: "END_ROD"
   price: 3500
 
@@ -16,6 +16,17 @@ messages:
 
 cooldown: 6
 
+patterns:
+  enabled: true
+  patterns:
+    - type: "HELIX"
+      particle: "END_ROD"
+      radius: 0.7
+      points: 16
+      duration: 9
+      speed: 0.33
+      height: 2.2
+
 sequence:
   enabled: true
   steps:
@@ -24,24 +35,21 @@ sequence:
         - type: "SOUND"
           sound: "BLOCK_ENCHANTMENT_TABLE_USE"
           volume: 0.7
-          pitch: 1.8
-        - type: "PARTICLE"
-          particle: "END_ROD"
-          count: 10
-    - tick: 3
+          pitch: 1.85
+    - tick: 5
       actions:
-        - type: "PARTICLE_PATTERN"
-          pattern: "HELIX"
-          particle: "END_ROD"
-          radius: 1.0
         - type: "PARTICLE"
           particle: "ENCHANTED_HIT"
           count: 8
-    - tick: 8
+    - tick: 9
       actions:
-        - type: "PARTICLE"
+        - type: "PARTICLE_PATTERN"
+          pattern: "SPHERE"
           particle: "FIREWORK"
-          count: 10
+          radius: 1.0
+        - type: "PARTICLE"
+          particle: "FLASH"
+          count: 1
 
 performance:
   min_tps: 16.0

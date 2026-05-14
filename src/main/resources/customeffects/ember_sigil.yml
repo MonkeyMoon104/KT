@@ -2,8 +2,8 @@ effect:
   id: "ember_sigil"
   name: "&cEmber Sigil"
   description:
-    - "&7A red-orange rune burst"
-    - "&7made for quick kills"
+    - "&7A rune-like ember seal"
+    - "&7that ignites close to the ground"
   icon: "BLAZE_POWDER"
   price: 3300
 
@@ -16,6 +16,19 @@ messages:
 
 cooldown: 6
 
+patterns:
+  enabled: true
+  patterns:
+    - type: "RING"
+      particle: "DUST"
+      radius: 1.25
+      points: 20
+      duration: 7
+      speed: 0.22
+      height: 0.0
+      color: { red: 255, green: 110, blue: 40 }
+      size: 0.9
+
 sequence:
   enabled: true
   steps:
@@ -23,32 +36,26 @@ sequence:
       actions:
         - type: "SOUND"
           sound: "ITEM_FIRECHARGE_USE"
-          volume: 0.9
-          pitch: 1.2
+          volume: 0.85
+          pitch: 1.15
         - type: "PARTICLE"
           particle: "FLAME"
-          count: 12
-    - tick: 3
+          count: 10
+    - tick: 4
       actions:
-        - type: "PARTICLE_PATTERN"
-          pattern: "CIRCLE"
-          particle: "DUST"
-          radius: 1.5
-          color: { red: 255, green: 115, blue: 40 }
-          size: 1.0
         - type: "PARTICLE"
           particle: "ENCHANTED_HIT"
-          count: 10
-    - tick: 7
-      actions:
-        - type: "PARTICLE"
-          particle: "LAVA"
           count: 8
         - type: "PARTICLE"
           particle: "DUST"
-          count: 14
-          color: { red: 255, green: 180, blue: 70 }
-          size: 1.0
+          count: 12
+          color: { red: 255, green: 175, blue: 70 }
+          size: 0.95
+    - tick: 8
+      actions:
+        - type: "PARTICLE"
+          particle: "LAVA"
+          count: 6
 
 performance:
   min_tps: 16.0

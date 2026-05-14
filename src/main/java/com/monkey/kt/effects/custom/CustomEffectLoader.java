@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -28,17 +29,21 @@ public class CustomEffectLoader {
         this.customEffectsFolder = new File(plugin.getDataFolder(), "customeffects");
         this.loadedEffects = new ArrayList<>();
 
-        setupCustomEffectsFolder();
+        ensureBundledEffectsPresent();
     }
 
-    private void setupCustomEffectsFolder() {
+    private void ensureBundledEffectsPresent() {
         if (!customEffectsFolder.exists()) {
             if (customEffectsFolder.mkdirs()) {
                 plugin.getLogger().info("Created customeffects folder");
             }
         }
 
-        for (String templateName : getBundledEffectTemplates()) {
+        List<String> bundledTemplates = getBundledEffectTemplates();
+        plugin.getLogger().info("Ensuring " + bundledTemplates.size() + " bundled custom effects in "
+                + customEffectsFolder.getAbsolutePath());
+
+        for (String templateName : bundledTemplates) {
             copyBundledEffectFromResources(templateName);
         }
     }
@@ -71,7 +76,7 @@ public class CustomEffectLoader {
                 return templates;
             }
 
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     String trimmed = line.trim();
@@ -89,10 +94,13 @@ public class CustomEffectLoader {
     }
 
     public void loadAllCustomEffects() {
+        ensureBundledEffectsPresent();
+
         int previousCount = loadedEffects.size();
         loadedEffects.clear();
 
         plugin.getLogger().info("Previous custom effects count: " + previousCount);
+        plugin.getLogger().info("Loading custom effects from: " + customEffectsFolder.getAbsolutePath());
 
         File[] files = customEffectsFolder.listFiles((dir, name) ->
                 name.endsWith(".yml") && !name.equals("defaulteffect.yml")
@@ -102,6 +110,8 @@ public class CustomEffectLoader {
             plugin.getLogger().info("No custom effects found in customeffects folder");
             return;
         }
+
+        plugin.getLogger().info("Found " + files.length + " custom effect file(s) in folder");
 
         int loaded = 0;
         int failed = 0;

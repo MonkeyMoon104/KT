@@ -2,8 +2,8 @@ effect:
   id: "prism_ring"
   name: "&dPrism Ring"
   description:
-    - "&7A colorful ring pop"
-    - "&7with a clean finish"
+    - "&7A prismatic frame"
+    - "&7that forms as a bright crystal box"
   icon: "AMETHYST_SHARD"
   price: 3600
 
@@ -16,6 +16,17 @@ messages:
 
 cooldown: 6
 
+patterns:
+  enabled: true
+  patterns:
+    - type: "CUBE"
+      particle: "END_ROD"
+      radius: 1.0
+      points: 16
+      duration: 8
+      speed: 0.34
+      height: 0.9
+
 sequence:
   enabled: true
   steps:
@@ -27,24 +38,23 @@ sequence:
           pitch: 1.4
         - type: "PARTICLE"
           particle: "FIREWORK"
+          count: 6
+    - tick: 4
+      actions:
+        - type: "PARTICLE"
+          particle: "DUST"
+          count: 14
+          color: { red: 255, green: 140, blue: 230 }
+          size: 0.95
+        - type: "PARTICLE"
+          particle: "GLOW"
           count: 8
-    - tick: 3
+    - tick: 8
       actions:
         - type: "PARTICLE_PATTERN"
           pattern: "RING"
-          particle: "DUST"
-          radius: 1.8
-          color: { red: 255, green: 140, blue: 230 }
-          size: 1.0
-        - type: "PARTICLE"
-          particle: "GLOW"
-          count: 10
-    - tick: 6
-      actions:
-        - type: "PARTICLE_PATTERN"
-          pattern: "CIRCLE"
-          particle: "END_ROD"
-          radius: 2.0
+          particle: "FIREWORK"
+          radius: 1.7
 
 performance:
   min_tps: 16.0

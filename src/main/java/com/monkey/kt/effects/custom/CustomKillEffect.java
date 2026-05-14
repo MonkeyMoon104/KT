@@ -38,13 +38,13 @@ public class CustomKillEffect implements KillEffect {
         this.entityExecutor = new EntityExecutor(plugin);
         this.sequenceExecutor = new SequenceExecutor(plugin, this);
 
-        plugin.getLogger().info("[CustomKillEffect] Created effect: " + config.getId());
+        plugin.getLogger().fine("[CustomKillEffect] Created effect: " + config.getId());
     }
 
     @Override
     public void play(Player killer, Location loc) {
-        plugin.getLogger().info("[CustomKillEffect] Playing effect: " + config.getId());
-        plugin.getLogger().info("[CustomKillEffect] Sequence enabled: " + config.isSequenceEnabled());
+        plugin.getLogger().fine("[CustomKillEffect] Playing effect: " + config.getId());
+        plugin.getLogger().fine("[CustomKillEffect] Sequence enabled: " + config.isSequenceEnabled());
 
         LivingEntity victim = null;
         if (loc.getWorld() != null) {
@@ -59,37 +59,37 @@ public class CustomKillEffect implements KillEffect {
         sendMessages(killer, victim);
 
         if (config.isSequenceEnabled()) {
-            plugin.getLogger().info("[CustomKillEffect] Starting sequence execution...");
-            plugin.getLogger().info("[CustomKillEffect] Sequence steps: " +
+            plugin.getLogger().fine("[CustomKillEffect] Starting sequence execution...");
+            plugin.getLogger().fine("[CustomKillEffect] Sequence steps: " +
                     (config.getSequenceSteps() != null ? config.getSequenceSteps().size() : "null"));
 
             sequenceExecutor.execute(config.getSequenceSteps(), killer, loc);
         } else {
-            plugin.getLogger().info("[CustomKillEffect] Executing all features (no sequence)");
+            plugin.getLogger().fine("[CustomKillEffect] Executing all features (no sequence)");
             executeAllFeatures(killer, loc);
         }
     }
 
     private void executeAllFeatures(Player killer, Location loc) {
-        plugin.getLogger().info("[CustomKillEffect] Executing all features for: " + config.getId());
+        plugin.getLogger().fine("[CustomKillEffect] Executing all features for: " + config.getId());
 
         if (config.isSoundsEnabled()) {
-            plugin.getLogger().info("[CustomKillEffect] Sounds enabled, count: " + config.getSounds().size());
+            plugin.getLogger().fine("[CustomKillEffect] Sounds enabled, count: " + config.getSounds().size());
             soundExecutor.execute(config.getSounds(), loc);
         }
 
         if (config.isParticlesEnabled()) {
-            plugin.getLogger().info("[CustomKillEffect] Particles enabled, count: " + config.getParticles().size());
+            plugin.getLogger().fine("[CustomKillEffect] Particles enabled, count: " + config.getParticles().size());
             particleExecutor.execute(config.getId(), config.getParticles(), loc);
         }
 
         if (config.isPatternsEnabled()) {
-            plugin.getLogger().info("[CustomKillEffect] Patterns enabled, count: " + config.getPatterns().size());
+            plugin.getLogger().fine("[CustomKillEffect] Patterns enabled, count: " + config.getPatterns().size());
             patternExecutor.execute(config.getId(), config.getPatterns(), loc);
         }
 
         if (config.isDamageEnabled()) {
-            plugin.getLogger().info("[CustomKillEffect] Damage enabled");
+            plugin.getLogger().fine("[CustomKillEffect] Damage enabled");
             int delay = config.getDamageDelay();
             if (delay > 0) {
                 SchedulerWrapper.runTaskLater(plugin, () -> {
@@ -101,23 +101,23 @@ public class CustomKillEffect implements KillEffect {
         }
 
         if (config.isPotionsEnabled()) {
-            plugin.getLogger().info("[CustomKillEffect] Potions enabled");
+            plugin.getLogger().fine("[CustomKillEffect] Potions enabled");
             potionExecutor.execute(killer, loc, config);
         }
 
         if (config.isProjectilesEnabled()) {
-            plugin.getLogger().info("[CustomKillEffect] Projectiles enabled");
+            plugin.getLogger().fine("[CustomKillEffect] Projectiles enabled");
             projectileExecutor.execute(config.getProjectiles(), killer, loc);
         }
 
         if (config.isBlocksEnabled()) {
-            plugin.getLogger().info("[CustomKillEffect] Blocks enabled");
+            plugin.getLogger().fine("[CustomKillEffect] Blocks enabled");
             blockExecutor.execute(config.getBlockPlacements(), loc,
                     config.isBlocksTemporary(), config.getBlocksRestoreDelay());
         }
 
         if (config.isEntitiesEnabled()) {
-            plugin.getLogger().info("[CustomKillEffect] Entities enabled");
+            plugin.getLogger().fine("[CustomKillEffect] Entities enabled");
             entityExecutor.execute(config.getEntities(), loc);
         }
     }

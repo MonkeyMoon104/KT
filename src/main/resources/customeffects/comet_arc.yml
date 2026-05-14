@@ -2,8 +2,8 @@ effect:
   id: "comet_arc"
   name: "&fComet Arc"
   description:
-    - "&7A bright comet sweep"
-    - "&7with a clean pop"
+    - "&7A bright comet trail"
+    - "&7that curves upward and detonates cleanly"
   icon: "NETHER_STAR"
   price: 3600
 
@@ -16,35 +16,88 @@ messages:
 
 cooldown: 6
 
+patterns:
+  enabled: true
+  patterns:
+    - type: "HELIX"
+      particle: "END_ROD"
+      radius: 1.15
+      points: 26
+      duration: 10
+      speed: 0.42
+      height: 1.9
+
 sequence:
   enabled: true
   steps:
     - tick: 0
       actions:
         - type: "SOUND"
-          sound: "ENTITY_FIREWORK_ROCKET_BLAST"
-          volume: 0.8
-          pitch: 1.4
+          sound: "ENTITY_FIREWORK_ROCKET_TWINKLE_FAR"
+          volume: 0.85
+          pitch: 1.7
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 20
         - type: "PARTICLE"
           particle: "FIREWORK"
-          count: 12
-    - tick: 3
+          count: 16
+    - tick: 4
       actions:
+        - type: "SOUND"
+          sound: "ITEM_TRIDENT_RIPTIDE_1"
+          volume: 0.65
+          pitch: 1.55
         - type: "PARTICLE_PATTERN"
-          pattern: "HELIX"
-          particle: "END_ROD"
-          radius: 1.2
+          pattern: "CIRCLE"
+          particle: "ENCHANTED_HIT"
+          radius: 1.15
         - type: "PARTICLE"
-          particle: "DUST"
-          count: 12
-          color: { red: 255, green: 255, blue: 255 }
-          size: 0.9
+          particle: "END_ROD"
+          count: 22
     - tick: 8
       actions:
         - type: "PARTICLE_PATTERN"
-          pattern: "RING"
+          pattern: "SPIRAL"
+          particle: "FIREWORK"
+          radius: 1.35
+        - type: "PARTICLE"
           particle: "ENCHANTED_HIT"
-          radius: 1.8
+          count: 20
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 22
+    - tick: 12
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_AMETHYST_BLOCK_CHIME"
+          volume: 0.8
+          pitch: 1.9
+        - type: "PARTICLE_PATTERN"
+          pattern: "RING"
+          particle: "END_ROD"
+          radius: 1.95
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 18
+    - tick: 16
+      actions:
+        - type: "SOUND"
+          sound: "ENTITY_FIREWORK_ROCKET_BLAST"
+          volume: 0.9
+          pitch: 1.55
+        - type: "PARTICLE"
+          particle: "FLASH"
+          count: 1
+        - type: "PARTICLE"
+          particle: "ENCHANTED_HIT"
+          count: 26
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 34
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 24
 
 performance:
   min_tps: 16.0

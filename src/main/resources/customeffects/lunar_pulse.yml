@@ -2,8 +2,8 @@ effect:
   id: "lunar_pulse"
   name: "&bLunar Pulse"
   description:
-    - "&7A pale moon pulse"
-    - "&7with cold blue accents"
+    - "&7A cold moon pulse"
+    - "&7with a second delayed echo"
   icon: "SEA_LANTERN"
   price: 3300
 
@@ -24,32 +24,29 @@ sequence:
         - type: "SOUND"
           sound: "BLOCK_RESPAWN_ANCHOR_CHARGE"
           volume: 0.7
-          pitch: 1.6
+          pitch: 1.55
         - type: "PARTICLE"
-          particle: "END_ROD"
-          count: 10
+          particle: "GLOW"
+          count: 8
     - tick: 3
       actions:
         - type: "PARTICLE_PATTERN"
-          pattern: "CIRCLE"
+          pattern: "SPHERE"
           particle: "DUST"
-          radius: 1.5
-          color: { red: 180, green: 225, blue: 255 }
-          size: 1.0
-        - type: "PARTICLE"
-          particle: "GLOW"
-          count: 12
-    - tick: 7
+          radius: 1.0
+          color: { red: 195, green: 230, blue: 255 }
+          size: 0.95
+    - tick: 8
       actions:
         - type: "PARTICLE_PATTERN"
-          pattern: "SPHERE"
-          particle: "ENCHANTED_HIT"
-          radius: 1.2
+          pattern: "RING"
+          particle: "END_ROD"
+          radius: 1.8
         - type: "PARTICLE"
           particle: "DUST"
-          count: 14
-          color: { red: 225, green: 240, blue: 255 }
-          size: 0.95
+          count: 12
+          color: { red: 230, green: 242, blue: 255 }
+          size: 0.85
 
 performance:
   min_tps: 16.0

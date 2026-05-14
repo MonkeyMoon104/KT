@@ -2,8 +2,8 @@ effect:
   id: "sanctum_ring"
   name: "&fSanctum Ring"
   description:
-    - "&7A holy ring burst"
-    - "&7with a neat white-gold finish"
+    - "&7A holy seal that appears wide"
+    - "&7then collapses inward into light"
   icon: "QUARTZ"
   price: 3600
 
@@ -33,17 +33,21 @@ sequence:
         - type: "PARTICLE_PATTERN"
           pattern: "RING"
           particle: "END_ROD"
-          radius: 1.9
+          radius: 2.1
         - type: "PARTICLE"
           particle: "DUST"
-          count: 14
+          count: 10
           color: { red: 255, green: 245, blue: 205 }
-          size: 1.0
-    - tick: 7
+          size: 0.95
+    - tick: 6
       actions:
-        - type: "PARTICLE"
+        - type: "PARTICLE_PATTERN"
+          pattern: "SPHERE"
           particle: "ENCHANTED_HIT"
-          count: 12
+          radius: 0.95
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 6
 
 performance:
   min_tps: 16.0

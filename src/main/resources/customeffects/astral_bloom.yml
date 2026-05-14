@@ -2,8 +2,8 @@ effect:
   id: "astral_bloom"
   name: "&dAstral Bloom"
   description:
-    - "&7Soft astral petals"
-    - "&7burst around the kill"
+    - "&7A soft violet bloom"
+    - "&7that opens upward in layers"
   icon: "CHORUS_FLOWER"
   price: 3200
 
@@ -18,6 +18,19 @@ messages:
 
 cooldown: 6
 
+patterns:
+  enabled: true
+  patterns:
+    - type: "SPHERE"
+      particle: "DUST"
+      radius: 0.9
+      points: 18
+      duration: 8
+      speed: 0.28
+      height: 0.6
+      color: { red: 230, green: 170, blue: 255 }
+      size: 0.9
+
 sequence:
   enabled: true
   steps:
@@ -25,33 +38,31 @@ sequence:
       actions:
         - type: "SOUND"
           sound: "BLOCK_AMETHYST_BLOCK_CHIME"
-          volume: 0.9
-          pitch: 1.6
+          volume: 0.8
+          pitch: 1.7
         - type: "PARTICLE"
           particle: "END_ROD"
-          count: 12
-    - tick: 3
+          count: 8
+    - tick: 4
       actions:
         - type: "PARTICLE"
           particle: "DUST"
           count: 18
-          color: { red: 240, green: 180, blue: 255 }
-          size: 1.1
+          color: { red: 255, green: 205, blue: 255 }
+          size: 1.05
         - type: "PARTICLE_PATTERN"
           pattern: "CIRCLE"
           particle: "ENCHANTED_HIT"
-          radius: 1.4
-    - tick: 7
+          radius: 1.0
+    - tick: 9
       actions:
         - type: "PARTICLE"
           particle: "FIREWORK"
-          count: 10
+          count: 6
         - type: "PARTICLE_PATTERN"
           pattern: "SPHERE"
-          particle: "DUST"
-          radius: 1.2
-          color: { red: 255, green: 210, blue: 255 }
-          size: 0.9
+          particle: "END_ROD"
+          radius: 1.4
 
 performance:
   min_tps: 16.0

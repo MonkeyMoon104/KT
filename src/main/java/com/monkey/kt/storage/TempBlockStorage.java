@@ -29,6 +29,7 @@ public class TempBlockStorage {
     private static final ConcurrentLinkedQueue<TempBlockEntry> blocksToSave = new ConcurrentLinkedQueue<>();
     private static final ConcurrentLinkedQueue<Location> blocksToRemove = new ConcurrentLinkedQueue<>();
     private static final java.util.Set<String> activeTempBlocks = ConcurrentHashMap.newKeySet();
+    private static final java.util.Set<String> protectedTempBlocks = ConcurrentHashMap.newKeySet();
 
     private static final int BATCH_SIZE = 500;
     private static final long BATCH_INTERVAL_TICKS = 100L;
@@ -49,12 +50,19 @@ public class TempBlockStorage {
     }
 
     public static void saveTempBlock(Location loc, Material originalType) {
+        saveTempBlock(loc, originalType, true);
+    }
+
+    public static void saveTempBlock(Location loc, Material originalType, boolean protectBlock) {
         if (loc.getWorld() == null || originalType == null) {
             logger.warning(ColorUtils.warning("Attempted to save temp block with null world or material"));
             return;
         }
 
         activeTempBlocks.add(toBlockKey(loc));
+        if (protectBlock) {
+            protectedTempBlocks.add(toBlockKey(loc));
+        }
         blocksToSave.offer(new TempBlockEntry(loc.clone(), originalType));
 
         if (blocksToSave.size() >= BATCH_SIZE) {
@@ -69,6 +77,7 @@ public class TempBlockStorage {
         }
 
         activeTempBlocks.remove(toBlockKey(loc));
+        protectedTempBlocks.remove(toBlockKey(loc));
         blocksToRemove.offer(loc.clone());
 
         if (blocksToRemove.size() >= BATCH_SIZE) {
@@ -316,6 +325,7 @@ public class TempBlockStorage {
 
             int deleted = stmt.executeUpdate("DELETE FROM temp_blocks");
             activeTempBlocks.clear();
+            protectedTempBlocks.clear();
             logger.info(ColorUtils.success("Temporary blocks database cleared successfully (" + deleted + " records)"));
 
         } catch (SQLException e) {
@@ -455,7 +465,7 @@ public class TempBlockStorage {
         if (loc == null || loc.getWorld() == null) {
             return false;
         }
-        return activeTempBlocks.contains(toBlockKey(loc));
+        return protectedTempBlocks.contains(toBlockKey(loc));
     }
 
     public static void forceFlushAll() {

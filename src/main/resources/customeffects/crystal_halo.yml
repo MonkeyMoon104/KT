@@ -2,8 +2,8 @@ effect:
   id: "crystal_halo"
   name: "&dCrystal Halo"
   description:
-    - "&7A polished crystal ring"
-    - "&7with purple shimmer"
+    - "&7A crystalline frame"
+    - "&7that forms around the kill and fractures outward"
   icon: "GLASS"
   price: 3600
 
@@ -16,34 +16,93 @@ messages:
 
 cooldown: 6
 
+patterns:
+  enabled: true
+  patterns:
+    - type: "CUBE"
+      particle: "DUST"
+      radius: 1.35
+      points: 36
+      duration: 10
+      speed: 0.24
+      height: 1.0
+      color: { red: 215, green: 180, blue: 255 }
+      size: 1.05
+    - type: "RING"
+      particle: "END_ROD"
+      radius: 1.15
+      points: 24
+      duration: 8
+      speed: 0.34
+      height: 0.95
+
 sequence:
   enabled: true
   steps:
     - tick: 0
       actions:
         - type: "SOUND"
-          sound: "BLOCK_GLASS_PLACE"
-          volume: 0.7
+          sound: "BLOCK_AMETHYST_CLUSTER_BREAK"
+          volume: 0.8
           pitch: 1.7
         - type: "PARTICLE"
-          particle: "FLASH"
-          count: 1
-    - tick: 3
+          particle: "END_ROD"
+          count: 16
+        - type: "PARTICLE"
+          particle: "ENCHANTED_HIT"
+          count: 12
+    - tick: 4
       actions:
         - type: "PARTICLE_PATTERN"
-          pattern: "RING"
+          pattern: "CIRCLE"
           particle: "DUST"
-          radius: 1.8
-          color: { red: 220, green: 170, blue: 255 }
+          radius: 1.25
+          color: { red: 235, green: 205, blue: 255 }
           size: 1.0
         - type: "PARTICLE"
           particle: "END_ROD"
-          count: 10
-    - tick: 7
+          count: 18
+    - tick: 8
       actions:
+        - type: "SOUND"
+          sound: "BLOCK_GLASS_PLACE"
+          volume: 0.7
+          pitch: 1.95
+        - type: "PARTICLE_PATTERN"
+          pattern: "CUBE"
+          particle: "DUST"
+          radius: 1.55
+          color: { red: 210, green: 185, blue: 255 }
+          size: 1.05
         - type: "PARTICLE"
           particle: "ENCHANTED_HIT"
-          count: 10
+          count: 18
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 14
+    - tick: 12
+      actions:
+        - type: "PARTICLE"
+          particle: "END_ROD"
+          count: 16
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 16
+    - tick: 16
+      actions:
+        - type: "SOUND"
+          sound: "BLOCK_GLASS_BREAK"
+          volume: 0.85
+          pitch: 1.65
+        - type: "PARTICLE"
+          particle: "FLASH"
+          count: 1
+        - type: "PARTICLE"
+          particle: "ENCHANTED_HIT"
+          count: 24
+        - type: "PARTICLE"
+          particle: "FIREWORK"
+          count: 24
 
 performance:
   min_tps: 16.0

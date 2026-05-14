@@ -2,8 +2,8 @@ effect:
   id: "ether_pop"
   name: "&fEther Pop"
   description:
-    - "&7A tiny white-cyan pop"
-    - "&7that stays very clean"
+    - "&7A sharp white blink"
+    - "&7followed by a tiny fade bubble"
   icon: "GHAST_TEAR"
   price: 3200
 
@@ -24,26 +24,28 @@ sequence:
         - type: "SOUND"
           sound: "ENTITY_PLAYER_LEVELUP"
           volume: 0.7
-          pitch: 1.8
+          pitch: 1.9
         - type: "PARTICLE"
           particle: "FLASH"
           count: 1
-    - tick: 2
+    - tick: 1
       actions:
         - type: "PARTICLE"
-          particle: "DUST"
-          count: 14
-          color: { red: 225, green: 255, blue: 255 }
-          size: 0.95
+          particle: "END_ROD"
+          count: 10
+    - tick: 4
+      actions:
         - type: "PARTICLE_PATTERN"
           pattern: "SPHERE"
-          particle: "END_ROD"
-          radius: 1.1
-    - tick: 6
+          particle: "DUST"
+          radius: 1.0
+          color: { red: 225, green: 255, blue: 255 }
+          size: 0.85
+    - tick: 7
       actions:
         - type: "PARTICLE"
           particle: "FIREWORK"
-          count: 8
+          count: 5
 
 performance:
   min_tps: 16.0

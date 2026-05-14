@@ -2,8 +2,8 @@ effect:
   id: "sunflare_snap"
   name: "&eSunflare Snap"
   description:
-    - "&7A bright solar flash"
-    - "&7with a fast finish"
+    - "&7A hot solar flash"
+    - "&7with a short expanding flare"
   icon: "SUNFLOWER"
   price: 3400
 
@@ -24,30 +24,31 @@ sequence:
         - type: "SOUND"
           sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
           volume: 0.8
-          pitch: 1.9
+          pitch: 1.95
         - type: "PARTICLE"
           particle: "FLASH"
           count: 1
+    - tick: 2
+      actions:
         - type: "PARTICLE"
           particle: "FIREWORK"
-          count: 8
-    - tick: 3
-      actions:
-        - type: "PARTICLE_PATTERN"
-          pattern: "SPHERE"
-          particle: "END_ROD"
-          radius: 1.3
+          count: 10
         - type: "PARTICLE"
           particle: "DUST"
-          count: 16
+          count: 14
           color: { red: 255, green: 244, blue: 150 }
           size: 1.05
     - tick: 6
       actions:
         - type: "PARTICLE_PATTERN"
-          pattern: "RING"
+          pattern: "SPHERE"
+          particle: "END_ROD"
+          radius: 1.45
+    - tick: 9
+      actions:
+        - type: "PARTICLE"
           particle: "ENCHANTED_HIT"
-          radius: 1.9
+          count: 10
 
 performance:
   min_tps: 16.0

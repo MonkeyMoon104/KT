@@ -2,8 +2,8 @@ effect:
   id: "frostblink"
   name: "&bFrostblink"
   description:
-    - "&7A small icy blink"
-    - "&7for crisp PvP feedback"
+    - "&7An icy blink with"
+    - "&7crisp shard-like fragments"
   icon: "PACKED_ICE"
   price: 3300
 
@@ -16,6 +16,19 @@ messages:
 
 cooldown: 6
 
+patterns:
+  enabled: true
+  patterns:
+    - type: "CUBE"
+      particle: "DUST"
+      radius: 0.9
+      points: 16
+      duration: 7
+      speed: 0.25
+      height: 0.7
+      color: { red: 210, green: 250, blue: 255 }
+      size: 0.85
+
 sequence:
   enabled: true
   steps:
@@ -27,25 +40,23 @@ sequence:
           pitch: 1.7
         - type: "PARTICLE"
           particle: "END_ROD"
-          count: 8
-    - tick: 2
+          count: 6
+    - tick: 4
       actions:
         - type: "PARTICLE"
-          particle: "DUST"
-          count: 16
-          color: { red: 185, green: 245, blue: 255 }
-          size: 1.0
-        - type: "PARTICLE_PATTERN"
-          pattern: "SPHERE"
-          particle: "DUST"
-          radius: 1.2
-          color: { red: 220, green: 255, blue: 255 }
-          size: 0.9
-    - tick: 6
-      actions:
+          particle: "SNOWFLAKE"
+          count: 10
         - type: "PARTICLE"
           particle: "ENCHANTED_HIT"
-          count: 12
+          count: 8
+    - tick: 8
+      actions:
+        - type: "PARTICLE_PATTERN"
+          pattern: "RING"
+          particle: "DUST"
+          radius: 1.4
+          color: { red: 185, green: 245, blue: 255 }
+          size: 0.85
 
 performance:
   min_tps: 16.0
