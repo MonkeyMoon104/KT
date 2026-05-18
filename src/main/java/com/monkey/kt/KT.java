@@ -6,6 +6,7 @@ import com.monkey.kt.commands.kt.subcommands.list.KillCoinsCommand;
 import com.monkey.kt.commands.kt.tab.KillEffectTabCompleter;
 import com.monkey.kt.config.PluginConfigManager;
 import com.monkey.kt.cooldown.CooldownManager;
+import com.monkey.kt.effects.EffectIdMapper;
 import com.monkey.kt.economy.EconomyManager;
 import com.monkey.kt.economy.KillCoinsEco;
 import com.monkey.kt.effects.performance.ParticlePerformanceManager;
@@ -51,6 +52,7 @@ public class KT extends JavaPlugin {
     private CustomEffectLoader customEffectLoader;
     private ParticlePerformanceManager particlePerformanceManager;
     private PluginConfigManager pluginConfigManager;
+    private final EffectIdMapper effectIdMapper = new EffectIdMapper();
 
     @Override
     public void onEnable() {
@@ -216,6 +218,17 @@ public class KT extends JavaPlugin {
                 int removed = 0;
                 for (java.util.Map.Entry<java.util.UUID, String> entry : allEffects.entrySet()) {
                     String effectName = entry.getValue();
+                    String canonicalEffect = resolveEffectId(effectName);
+
+                    if (validEffects.contains(canonicalEffect)) {
+                        if (!canonicalEffect.equalsIgnoreCase(effectName)) {
+                            com.monkey.kt.storage.EffectStorage.setEffect(entry.getKey(), canonicalEffect);
+                            getLogger().info("Migrated effect id '" + effectName + "' to '" + canonicalEffect
+                                    + "' for player " + entry.getKey());
+                        }
+                        continue;
+                    }
+
                     if (!validEffects.contains(effectName.toLowerCase())) {
                         com.monkey.kt.storage.EffectStorage.removeEffect(entry.getKey());
                         removed++;
@@ -248,7 +261,7 @@ public class KT extends JavaPlugin {
                     storage.getAllPurchases();
 
             databaseManager.getExecutor().executeTransaction(connection -> {
-                String deleteSql = "DELETE FROM killcoins_purchases WHERE effect = ?";
+                String deleteSql = "DELETE FROM killcoins_purchases WHERE uuid = ? AND effect = ?";
                 try (java.sql.PreparedStatement ps = connection.prepareStatement(deleteSql)) {
 
                     int totalRemoved = 0;
@@ -256,10 +269,23 @@ public class KT extends JavaPlugin {
                         java.util.Set<String> playerPurchases = entry.getValue();
 
                         for (String effectName : playerPurchases) {
+                            String canonicalEffect = resolveEffectId(effectName);
+
+                            if (validEffects.contains(canonicalEffect)) {
+                                if (!canonicalEffect.equalsIgnoreCase(effectName)) {
+                                    storage.migratePurchaseId(entry.getKey(), effectName, canonicalEffect);
+                                    getLogger().info("Migrated purchase id '" + effectName + "' to '" + canonicalEffect
+                                            + "' for player " + entry.getKey());
+                                }
+                                continue;
+                            }
+
                             if (!validEffects.contains(effectName.toLowerCase())) {
-                                ps.setString(1, effectName);
+                                ps.setString(1, entry.getKey().toString());
+                                ps.setString(2, effectName);
                                 int removed = ps.executeUpdate();
                                 totalRemoved += removed;
+                                storage.removePurchaseId(entry.getKey(), effectName);
 
                                 getLogger().info("Removed obsolete purchase '" + effectName +
                                         "' from player " + entry.getKey());
@@ -276,9 +302,6 @@ public class KT extends JavaPlugin {
                     throw e;
                 }
             });
-
-            storage.getAllPurchases().clear();
-
         } catch (Exception e) {
             getLogger().warning("Error cleaning up obsolete purchases: " + e.getMessage());
             e.printStackTrace();
@@ -341,5 +364,17 @@ public class KT extends JavaPlugin {
     }
     public CustomEffectLoader getCustomEffectLoader() {
         return customEffectLoader;
+    }
+    public EffectIdMapper getEffectIdMapper() {
+        return effectIdMapper;
+    }
+    public String resolveEffectId(String effectId) {
+        return effectIdMapper.resolve(effectId);
+    }
+    public String getEffectConfigKey(String effectId) {
+        return effectIdMapper.getConfigKey(effectId);
+    }
+    public java.util.Set<String> getAcceptedEffectIds(String effectId) {
+        return effectIdMapper.getAcceptedIds(effectId);
     }
 }

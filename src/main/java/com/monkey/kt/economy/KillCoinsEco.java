@@ -63,22 +63,26 @@ public class KillCoinsEco {
     }
 
     public double getEffectPrice(String effectKey) {
-        return plugin.getConfig().getDouble("effects." + effectKey + ".price", 0D);
+        String canonicalEffect = plugin.resolveEffectId(effectKey);
+        String configKey = plugin.getEffectConfigKey(canonicalEffect);
+        return plugin.getConfig().getDouble("effects." + configKey + ".price", 0D);
     }
 
     public boolean hasBoughtEffect(Player player, String effectKey) {
-        return storage.hasBought(player.getUniqueId(), effectKey);
+        String canonicalEffect = plugin.resolveEffectId(effectKey);
+        return storage.hasBought(player.getUniqueId(), plugin.getAcceptedEffectIds(canonicalEffect));
     }
 
     public boolean tryBuyEffect(Player player, String effectKey) {
-        double price = getEffectPrice(effectKey);
+        String canonicalEffect = plugin.resolveEffectId(effectKey);
+        double price = getEffectPrice(canonicalEffect);
         if (price <= 0) {
-            storage.markBought(player.getUniqueId(), effectKey);
+            storage.markBought(player.getUniqueId(), canonicalEffect);
             return true;
         }
         if (!has(player, price)) return false;
         if (withdraw(player, price)) {
-            storage.markBought(player.getUniqueId(), effectKey);
+            storage.markBought(player.getUniqueId(), canonicalEffect);
             return true;
         }
         return false;

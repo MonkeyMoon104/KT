@@ -1,7 +1,6 @@
 package com.monkey.kt.effects.custom;
 
 import com.monkey.kt.KT;
-import com.monkey.kt.effects.KillEffectFactory;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.BufferedReader;
@@ -98,6 +97,7 @@ public class CustomEffectLoader {
 
         int previousCount = loadedEffects.size();
         loadedEffects.clear();
+        plugin.getEffectIdMapper().clear();
 
         plugin.getLogger().info("Previous custom effects count: " + previousCount);
         plugin.getLogger().info("Loading custom effects from: " + customEffectsFolder.getAbsolutePath());
@@ -123,9 +123,7 @@ public class CustomEffectLoader {
 
                 if (effectConfig.isValid()) {
                     loadedEffects.add(effectConfig);
-
-                    CustomKillEffect effect = new CustomKillEffect(plugin, effectConfig);
-                    KillEffectFactory.registerEffect(effectConfig.getId(), effect);
+                    plugin.getEffectIdMapper().registerCustom(effectConfig.getId(), effectConfig.getAliases());
 
                     plugin.getLogger().info("Loaded custom effect: " + effectConfig.getId() +
                             " from " + file.getName());
@@ -150,19 +148,15 @@ public class CustomEffectLoader {
     }
 
     public CustomEffectConfig getEffectConfig(String id) {
+        String canonicalId = plugin.resolveEffectId(id);
         return loadedEffects.stream()
-                .filter(config -> config.getId().equalsIgnoreCase(id))
+                .filter(config -> config.getId().equalsIgnoreCase(canonicalId))
                 .findFirst()
                 .orElse(null);
     }
 
     public void reloadCustomEffects() {
         plugin.getLogger().info("Reloading custom effects...");
-
-        for (CustomEffectConfig config : loadedEffects) {
-            com.monkey.kt.effects.KillEffectFactory.getRegisteredEffects().remove(config.getId().toLowerCase());
-        }
-
         loadAllCustomEffects();
     }
 }

@@ -167,33 +167,38 @@ public class EconomyManager {
     }
 
     public double getEffectPrice(String effectKey) {
+        String canonicalEffect = plugin.resolveEffectId(effectKey);
+
         if (plugin.getCustomEffectLoader() != null) {
             com.monkey.kt.effects.custom.CustomEffectConfig customConfig =
-                    plugin.getCustomEffectLoader().getEffectConfig(effectKey);
+                    plugin.getCustomEffectLoader().getEffectConfig(canonicalEffect);
 
             if (customConfig != null) {
                 return customConfig.getPrice();
             }
         }
 
-        return plugin.getConfig().getDouble("effects." + effectKey + ".price", 0D);
+        String configKey = plugin.getEffectConfigKey(canonicalEffect);
+        return plugin.getConfig().getDouble("effects." + configKey + ".price", 0D);
     }
 
     public boolean hasBoughtEffect(Player player, String effectKey) {
+        String canonicalEffect = plugin.resolveEffectId(effectKey);
         if (useInternal) {
-            return internalEconomy.hasBoughtEffect(player, effectKey);
+            return internalEconomy.hasBoughtEffect(player, canonicalEffect);
         } else {
-            return internalEconomy.getStorage().hasBought(player.getUniqueId(), effectKey);
+            return internalEconomy.getStorage().hasBought(player.getUniqueId(), plugin.getAcceptedEffectIds(canonicalEffect));
         }
     }
 
     public boolean tryBuyEffect(Player player, String effectKey) {
-        double price = getEffectPrice(effectKey);
+        String canonicalEffect = plugin.resolveEffectId(effectKey);
+        double price = getEffectPrice(canonicalEffect);
         if (price <= 0) {
             if (useInternal) {
-                internalEconomy.getStorage().markBought(player.getUniqueId(), effectKey);
+                internalEconomy.getStorage().markBought(player.getUniqueId(), canonicalEffect);
             } else {
-                internalEconomy.getStorage().markBought(player.getUniqueId(), effectKey);
+                internalEconomy.getStorage().markBought(player.getUniqueId(), canonicalEffect);
             }
             return true;
         }
@@ -202,9 +207,9 @@ public class EconomyManager {
 
         if (withdraw(player, price)) {
             if (useInternal) {
-                internalEconomy.getStorage().markBought(player.getUniqueId(), effectKey);
+                internalEconomy.getStorage().markBought(player.getUniqueId(), canonicalEffect);
             } else {
-                internalEconomy.getStorage().markBought(player.getUniqueId(), effectKey);
+                internalEconomy.getStorage().markBought(player.getUniqueId(), canonicalEffect);
             }
             return true;
         }

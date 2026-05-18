@@ -9,6 +9,10 @@ effect:
   # Unique identifier (use only lowercase letters, numbers, and underscores)
   id: "my_custom_effect"
 
+  # Optional legacy IDs / aliases that should still resolve to this effect
+  aliases:
+    - "my_old_effect_id"
+
   # Display name (supports color codes with &)
   name: "&bMy Custom Effect"
 

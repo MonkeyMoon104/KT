@@ -70,6 +70,7 @@ public class KillEffectListener implements Listener {
 
         String effectName = EffectStorage.getEffect(killer);
         if (effectName == null) return;
+        effectName = plugin.resolveEffectId(effectName);
 
         if (!killer.isOp()) {
             boolean hasPermission = EffectPermissionResolver.hasPermission(killer, plugin, effectName);
@@ -107,8 +108,8 @@ public class KillEffectListener implements Listener {
             }
         }
 
-        if (effectName.equalsIgnoreCase("sniper") && !EntityDataUtils.hasBoolean(victim, plugin, "kt_last_hit_arrow")) return;
-        if (effectName.equalsIgnoreCase("mace") && !EntityDataUtils.hasBoolean(victim, plugin, "kt_last_hit_mace")) return;
+        if (effectName.equalsIgnoreCase(plugin.resolveEffectId("sniper")) && !EntityDataUtils.hasBoolean(victim, plugin, "kt_last_hit_arrow")) return;
+        if (effectName.equalsIgnoreCase(plugin.resolveEffectId("mace")) && !EntityDataUtils.hasBoolean(victim, plugin, "kt_last_hit_mace")) return;
 
         KillEffect effect = KillEffectFactory.getEffect(effectName);
         if (effect == null) return;

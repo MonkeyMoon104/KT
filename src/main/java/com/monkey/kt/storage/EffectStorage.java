@@ -10,6 +10,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Locale;
 
 public class EffectStorage {
 
@@ -34,7 +35,7 @@ public class EffectStorage {
                 while (rs.next()) {
                     try {
                         UUID uuid = UUID.fromString(rs.getString("uuid"));
-                        String effect = rs.getString("effect");
+                        String effect = normalizeEffect(rs.getString("effect"));
                         playerEffects.put(uuid, effect);
                         loaded++;
                     } catch (IllegalArgumentException e) {
@@ -68,9 +69,10 @@ public class EffectStorage {
             return;
         }
 
-        playerEffects.put(uuid, effect);
+        String normalizedEffect = normalizeEffect(effect);
+        playerEffects.put(uuid, normalizedEffect);
 
-        saveEffectToDbAsync(uuid, effect);
+        saveEffectToDbAsync(uuid, normalizedEffect);
     }
 
     private static void saveEffectToDbAsync(UUID uuid, String effect) {
@@ -119,11 +121,12 @@ public class EffectStorage {
 
                 try (PreparedStatement ps = connection.prepareStatement(dialect.getUpsertKillEffectQuery())) {
                     for (java.util.Map.Entry<UUID, String> entry : effects.entrySet()) {
+                        String normalizedEffect = normalizeEffect(entry.getValue());
                         ps.setString(1, entry.getKey().toString());
-                        ps.setString(2, entry.getValue());
+                        ps.setString(2, normalizedEffect);
                         ps.addBatch();
 
-                        playerEffects.put(entry.getKey(), entry.getValue());
+                        playerEffects.put(entry.getKey(), normalizedEffect);
                     }
 
                     ps.executeBatch();
@@ -218,7 +221,7 @@ public class EffectStorage {
             try (PreparedStatement ps = connection.prepareStatement(dialect.getUpsertKillEffectQuery())) {
                 for (java.util.Map.Entry<UUID, String> entry : playerEffects.entrySet()) {
                     ps.setString(1, entry.getKey().toString());
-                    ps.setString(2, entry.getValue());
+                    ps.setString(2, normalizeEffect(entry.getValue()));
                     ps.addBatch();
                 }
 
@@ -236,5 +239,12 @@ public class EffectStorage {
         } catch (SQLException e) {
             logger.log(Level.SEVERE, ColorUtils.error("Error during force sync of effects"), e);
         }
+    }
+
+    private static String normalizeEffect(String effect) {
+        if (effect == null) {
+            return "";
+        }
+        return effect.trim().toLowerCase(Locale.ROOT);
     }
 }

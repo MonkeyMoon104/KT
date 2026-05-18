@@ -28,32 +28,35 @@ public class EffectLoader {
         Collections.sort(sortedKeys);
 
         for (String key : sortedKeys) {
+            String canonicalKey = plugin.resolveEffectId(key);
             if (plugin.getCustomEffectLoader() != null) {
                 com.monkey.kt.effects.custom.CustomEffectConfig customConfig =
-                        plugin.getCustomEffectLoader().getEffectConfig(key);
+                        plugin.getCustomEffectLoader().getEffectConfig(canonicalKey);
 
                 if (customConfig != null) {
                     Material material = customConfig.getIcon();
                     String name = customConfig.getName();
-                    effects.put(key, EffectItemBuilder.buildItem(material, name, new ArrayList<>(customConfig.getDescription())));
+                    effects.put(canonicalKey, EffectItemBuilder.buildItem(material, name, new ArrayList<>(customConfig.getDescription())));
                     continue;
                 }
             }
 
-            String matName = EffectIconMap.ICONS.getOrDefault(key, "STONE");
+            String configKey = plugin.getEffectConfigKey(canonicalKey);
+            String matName = plugin.getConfig().getString("effects." + configKey + ".icon",
+                    EffectIconMap.ICONS.getOrDefault(configKey, "STONE"));
             Material material = Material.matchMaterial(matName);
 
             if (material == null) {
                 int idx = ThreadLocalRandom.current().nextInt(fallbackMaterials.size());
                 material = fallbackMaterials.get(idx);
-                Bukkit.getLogger().warning("[KT] Material for effect '" + key +
+                Bukkit.getLogger().warning("[KT] Material for effect '" + canonicalKey +
                         "' not found, using fallback: " + material.name());
             }
 
-            String name = plugin.getConfig().getString("effects." + key + ".name");
-            if (name == null) name = capitalize(key);
+            String name = plugin.getConfig().getString("effects." + configKey + ".name");
+            if (name == null) name = capitalize(canonicalKey);
 
-            Object descObj = plugin.getConfig().get("effects." + key + ".description");
+            Object descObj = plugin.getConfig().get("effects." + configKey + ".description");
             List<String> lore = new ArrayList<>();
 
             if (descObj instanceof List<?>) {
@@ -65,10 +68,10 @@ public class EffectLoader {
             } else if (descObj instanceof String) {
                 lore.add((String) descObj);
             } else {
-                lore.add(capitalize(key));
+                lore.add(capitalize(canonicalKey));
             }
 
-            effects.put(key, EffectItemBuilder.buildItem(material, name, lore));
+            effects.put(canonicalKey, EffectItemBuilder.buildItem(material, name, lore));
         }
 
         return effects;

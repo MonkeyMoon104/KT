@@ -146,6 +146,16 @@ public class ReloadCommand implements SubCommand {
             int removed = 0;
             for (java.util.Map.Entry<java.util.UUID, String> entry : allEffects.entrySet()) {
                 String effectName = entry.getValue();
+                String canonicalEffect = plugin.resolveEffectId(effectName);
+                if (validEffects.contains(canonicalEffect)) {
+                    if (!canonicalEffect.equalsIgnoreCase(effectName)) {
+                        com.monkey.kt.storage.EffectStorage.setEffect(entry.getKey(), canonicalEffect);
+                        plugin.getLogger().info("Migrated effect id '" + effectName + "' to '" + canonicalEffect
+                                + "' for player " + entry.getKey());
+                    }
+                    continue;
+                }
+
                 if (!validEffects.contains(effectName.toLowerCase())) {
                     com.monkey.kt.storage.EffectStorage.removeEffect(entry.getKey());
                     removed++;
@@ -174,7 +184,7 @@ public class ReloadCommand implements SubCommand {
                     eco.getInternalEconomy().getStorage();
 
             plugin.getDatabaseManager().getExecutor().executeTransaction(connection -> {
-                String deleteSql = "DELETE FROM killcoins_purchases WHERE effect = ?";
+                String deleteSql = "DELETE FROM killcoins_purchases WHERE uuid = ? AND effect = ?";
                 try (java.sql.PreparedStatement ps = connection.prepareStatement(deleteSql)) {
 
                     java.util.Map<java.util.UUID, java.util.Set<String>> allPurchases =
@@ -183,9 +193,21 @@ public class ReloadCommand implements SubCommand {
                     int totalRemoved = 0;
                     for (java.util.Map.Entry<java.util.UUID, java.util.Set<String>> entry : allPurchases.entrySet()) {
                         for (String effectName : entry.getValue()) {
+                            String canonicalEffect = plugin.resolveEffectId(effectName);
+                            if (validEffects.contains(canonicalEffect)) {
+                                if (!canonicalEffect.equalsIgnoreCase(effectName)) {
+                                    storage.migratePurchaseId(entry.getKey(), effectName, canonicalEffect);
+                                    plugin.getLogger().info("Migrated purchase id '" + effectName + "' to '" + canonicalEffect
+                                            + "' for player " + entry.getKey());
+                                }
+                                continue;
+                            }
+
                             if (!validEffects.contains(effectName.toLowerCase())) {
-                                ps.setString(1, effectName);
+                                ps.setString(1, entry.getKey().toString());
+                                ps.setString(2, effectName);
                                 totalRemoved += ps.executeUpdate();
+                                storage.removePurchaseId(entry.getKey(), effectName);
                             }
                         }
                     }

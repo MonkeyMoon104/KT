@@ -87,6 +87,7 @@ public class InventoryClickListener implements Listener {
         if (effect == null) {
             return;
         }
+        effect = plugin.resolveEffectId(effect);
 
         String permission = EffectPermissionResolver.resolvePermission(plugin, effect);
         boolean hasPermission = EffectPermissionResolver.hasPermission(player, plugin, effect);
@@ -142,7 +143,8 @@ public class InventoryClickListener implements Listener {
         }
 
         String current = EffectStorage.getEffect(player);
-        if (effect.equalsIgnoreCase(current)) {
+        String canonicalCurrent = plugin.resolveEffectId(current);
+        if (effect.equalsIgnoreCase(canonicalCurrent)) {
             player.sendMessage(color(plugin.getConfig().getString("messages.effect_already_set")));
             return;
         }

@@ -43,7 +43,7 @@ public class KTPlaceholder extends PlaceholderExpansion {
         int mobKill = (int) plugin.getConfig().getDouble("economy.reward.settings.mob_kill", 0D);
         int effectsize = eco.getInternalEconomy().getStorage().getBoughtEffects(player.getUniqueId()).size();
         int effects = KillEffectFactory.getRegisteredEffects().size();
-        String current = EffectStorage.getEffect(player);
+        String current = plugin.resolveEffectId(EffectStorage.getEffect(player));
         int amplifier = auraBoostManager.getDamageAmplifier(player);
         int bal = (int) eco.getBalance(player);
 

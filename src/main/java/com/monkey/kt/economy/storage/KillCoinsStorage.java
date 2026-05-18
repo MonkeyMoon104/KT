@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -73,7 +74,7 @@ public class KillCoinsStorage {
                 while (rs.next()) {
                     try {
                         UUID uuid = UUID.fromString(rs.getString("uuid"));
-                        String effect = rs.getString("effect");
+                        String effect = normalizeEffect(rs.getString("effect"));
 
                         purchaseCache.computeIfAbsent(uuid, k -> new HashSet<>()).add(effect);
                         loaded++;
@@ -156,38 +157,74 @@ public class KillCoinsStorage {
 
     public boolean hasBought(UUID uuid, String effect) {
         Set<String> userPurchases = purchaseCache.get(uuid);
-        return userPurchases != null && userPurchases.contains(effect);
+        return userPurchases != null && userPurchases.contains(normalizeEffect(effect));
+    }
+
+    public boolean hasBought(UUID uuid, Set<String> acceptedEffects) {
+        Set<String> userPurchases = purchaseCache.get(uuid);
+        if (userPurchases == null || acceptedEffects == null || acceptedEffects.isEmpty()) {
+            return false;
+        }
+
+        for (String effect : acceptedEffects) {
+            if (userPurchases.contains(normalizeEffect(effect))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void markBought(UUID uuid, String effect) {
-        purchaseCache.computeIfAbsent(uuid, k -> new HashSet<>()).add(effect);
-        savePurchaseAsync(uuid, effect);
+        String normalizedEffect = normalizeEffect(effect);
+        purchaseCache.computeIfAbsent(uuid, k -> new HashSet<>()).add(normalizedEffect);
+        savePurchaseAsync(uuid, normalizedEffect);
+    }
+
+    public void removePurchaseId(UUID uuid, String effect) {
+        String normalizedEffect = normalizeEffect(effect);
+        Set<String> purchases = purchaseCache.get(uuid);
+        if (purchases != null) {
+            purchases.remove(normalizedEffect);
+        }
+
+        CompletableFuture.runAsync(() ->
+                executor.executeUpdate(
+                        "DELETE FROM killcoins_purchases WHERE uuid = ? AND effect = ?",
+                        uuid.toString(), normalizedEffect
+                )
+        );
+    }
+
+    public void migratePurchaseId(UUID uuid, String oldEffect, String newEffect) {
+        String normalizedOldEffect = normalizeEffect(oldEffect);
+        String normalizedNewEffect = normalizeEffect(newEffect);
+
+        if (normalizedNewEffect.isEmpty()) {
+            removePurchaseId(uuid, normalizedOldEffect);
+            return;
+        }
+
+        if (normalizedOldEffect.equals(normalizedNewEffect)) {
+            markBought(uuid, normalizedNewEffect);
+            return;
+        }
+
+        Set<String> purchases = purchaseCache.computeIfAbsent(uuid, key -> new HashSet<>());
+        purchases.remove(normalizedOldEffect);
+        purchases.add(normalizedNewEffect);
+
+        CompletableFuture.runAsync(() -> {
+            executor.executeUpdate(
+                    "DELETE FROM killcoins_purchases WHERE uuid = ? AND effect = ?",
+                    uuid.toString(), normalizedOldEffect
+            );
+            savePurchaseSync(uuid, normalizedNewEffect);
+        });
     }
 
     private void savePurchaseAsync(UUID uuid, String effect) {
         CompletableFuture.runAsync(() -> {
-            String sql = getInsertOrIgnorePurchaseQuery();
-
-            if (dialect == DatabaseDialect.SQLSERVER || dialect == DatabaseDialect.ORACLE) {
-                executor.executeStatement(sql, statement -> {
-                    statement.setString(1, uuid.toString());
-                    statement.setString(2, effect);
-                    if (dialect == DatabaseDialect.SQLSERVER) {
-                        statement.setString(3, uuid.toString());
-                        statement.setString(4, effect);
-                    } else {
-                        statement.setString(3, uuid.toString());
-                        statement.setString(4, effect);
-                    }
-                    statement.executeUpdate();
-                });
-            } else {
-                executor.executeStatement(sql, statement -> {
-                    statement.setString(1, uuid.toString());
-                    statement.setString(2, effect);
-                    statement.executeUpdate();
-                });
-            }
+            savePurchaseSync(uuid, effect);
         });
     }
 
@@ -224,23 +261,24 @@ public class KillCoinsStorage {
                     for (java.util.Map.Entry<UUID, Set<String>> entry : purchases.entrySet()) {
                         UUID uuid = entry.getKey();
                         for (String effect : entry.getValue()) {
+                            String normalizedEffect = normalizeEffect(effect);
                             if (dialect == DatabaseDialect.SQLSERVER || dialect == DatabaseDialect.ORACLE) {
                                 ps.setString(1, uuid.toString());
-                                ps.setString(2, effect);
+                                ps.setString(2, normalizedEffect);
                                 if (dialect == DatabaseDialect.SQLSERVER) {
                                     ps.setString(3, uuid.toString());
-                                    ps.setString(4, effect);
+                                    ps.setString(4, normalizedEffect);
                                 } else {
                                     ps.setString(3, uuid.toString());
-                                    ps.setString(4, effect);
+                                    ps.setString(4, normalizedEffect);
                                 }
                             } else {
                                 ps.setString(1, uuid.toString());
-                                ps.setString(2, effect);
+                                ps.setString(2, normalizedEffect);
                             }
                             ps.addBatch();
 
-                            purchaseCache.computeIfAbsent(uuid, k -> new HashSet<>()).add(effect);
+                            purchaseCache.computeIfAbsent(uuid, k -> new HashSet<>()).add(normalizedEffect);
                         }
                     }
                     ps.executeBatch();
@@ -315,5 +353,33 @@ public class KillCoinsStorage {
 
     public java.util.Map<UUID, Set<String>> getAllPurchases() {
         return new java.util.HashMap<>(purchaseCache);
+    }
+
+    private void savePurchaseSync(UUID uuid, String effect) {
+        String normalizedEffect = normalizeEffect(effect);
+        String sql = getInsertOrIgnorePurchaseQuery();
+
+        if (dialect == DatabaseDialect.SQLSERVER || dialect == DatabaseDialect.ORACLE) {
+            executor.executeStatement(sql, statement -> {
+                statement.setString(1, uuid.toString());
+                statement.setString(2, normalizedEffect);
+                statement.setString(3, uuid.toString());
+                statement.setString(4, normalizedEffect);
+                statement.executeUpdate();
+            });
+        } else {
+            executor.executeStatement(sql, statement -> {
+                statement.setString(1, uuid.toString());
+                statement.setString(2, normalizedEffect);
+                statement.executeUpdate();
+            });
+        }
+    }
+
+    private String normalizeEffect(String effect) {
+        if (effect == null) {
+            return "";
+        }
+        return effect.trim().toLowerCase(Locale.ROOT);
     }
 }

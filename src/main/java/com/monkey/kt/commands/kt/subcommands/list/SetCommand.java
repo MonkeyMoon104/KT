@@ -53,6 +53,7 @@ public class SetCommand implements SubCommand {
             sender.sendMessage(TextUtils.legacySection(plugin.getConfig().getString("messages.effect_removed")));
             return;
         }
+        effect = plugin.resolveEffectId(effect);
 
         if (!plugin.getGuiManager().getEffects().containsKey(effect)) {
             sender.sendMessage(TextUtils.legacySection(plugin.getConfig().getString("messages.effect_not_found")));
@@ -75,7 +76,8 @@ public class SetCommand implements SubCommand {
         }
 
         String current = EffectStorage.getEffect(player);
-        if (effect.equalsIgnoreCase(current)) {
+        String canonicalCurrent = plugin.resolveEffectId(current);
+        if (effect.equalsIgnoreCase(canonicalCurrent)) {
             player.sendMessage(TextUtils.legacySection(plugin.getConfig().getString("messages.effect_already_set")));
             return;
         }
@@ -102,6 +104,7 @@ public class SetCommand implements SubCommand {
             notifyTarget(target, sender, plugin.getConfig().getString("messages.effect_removed_by_admin"), null);
             return;
         }
+        effect = plugin.resolveEffectId(effect);
 
         if (!plugin.getGuiManager().getEffects().containsKey(effect)) {
             sender.sendMessage(TextUtils.legacySection(plugin.getConfig().getString("messages.effect_not_found")));

@@ -16,10 +16,8 @@ public final class EffectPermissionResolver {
             return "";
         }
 
-        String normalized = normalize(effectId);
-
-        String overridePath = "custom-effects.permissions.overrides." + normalized;
-        String overridePermission = plugin.getConfig().getString(overridePath, "");
+        String normalized = plugin.resolveEffectId(normalize(effectId));
+        String overridePermission = resolveOverridePermission(plugin, normalized);
         if (isUsablePermission(overridePermission)) {
             return overridePermission.trim();
         }
@@ -46,9 +44,8 @@ public final class EffectPermissionResolver {
             return false;
         }
 
-        String normalized = normalize(effectId);
-        String overridePath = "custom-effects.permissions.overrides." + normalized;
-        String overridePermission = plugin.getConfig().getString(overridePath, "");
+        String normalized = plugin.resolveEffectId(normalize(effectId));
+        String overridePermission = resolveOverridePermission(plugin, normalized);
         if (isUsablePermission(overridePermission)) {
             return true;
         }
@@ -71,6 +68,17 @@ public final class EffectPermissionResolver {
 
     public static String normalize(String effectId) {
         return effectId.toLowerCase(Locale.ROOT).trim();
+    }
+
+    private static String resolveOverridePermission(KT plugin, String effectId) {
+        for (String acceptedId : plugin.getAcceptedEffectIds(effectId)) {
+            String overridePermission = plugin.getConfig()
+                    .getString("custom-effects.permissions.overrides." + acceptedId, "");
+            if (isUsablePermission(overridePermission)) {
+                return overridePermission;
+            }
+        }
+        return "";
     }
 
     private static boolean isUsablePermission(String value) {

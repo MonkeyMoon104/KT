@@ -9,8 +9,11 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 public class CustomEffectConfig {
 
@@ -19,6 +22,7 @@ public class CustomEffectConfig {
     private final KT plugin;
 
     private String id;
+    private List<String> aliases;
     private String name;
     private List<String> description;
     private Material icon;
@@ -78,7 +82,8 @@ public class CustomEffectConfig {
     }
 
     private void load() {
-        this.id = config.getString("effect.id", "unknown");
+        this.id = normalizeEffectId(config.getString("effect.id", "unknown"));
+        this.aliases = loadAliases();
         this.name = config.getString("effect.name", "&7Unknown Effect");
         this.description = config.getStringList("effect.description");
 
@@ -344,6 +349,25 @@ public class CustomEffectConfig {
         return id != null && !id.isEmpty() && icon != null;
     }
 
+    private List<String> loadAliases() {
+        Set<String> collectedAliases = new LinkedHashSet<>();
+        collectedAliases.addAll(normalizeEffectIds(config.getStringList("effect.aliases")));
+        collectedAliases.addAll(normalizeEffectIds(config.getStringList("effect.legacy_ids")));
+
+        String baseFileName = fileName;
+        if (baseFileName != null && baseFileName.toLowerCase(Locale.ROOT).endsWith(".yml")) {
+            baseFileName = baseFileName.substring(0, baseFileName.length() - 4);
+        }
+
+        String normalizedFileName = normalizeEffectId(baseFileName);
+        if (!normalizedFileName.isEmpty() && !normalizedFileName.equals(id)) {
+            collectedAliases.add(normalizedFileName);
+        }
+
+        collectedAliases.remove(id);
+        return new ArrayList<>(collectedAliases);
+    }
+
     private List<ConfigurationSection> getSectionList(String path) {
         return getSectionList(config, path);
     }
@@ -394,7 +418,26 @@ public class CustomEffectConfig {
         configurable.setSize(section.getDouble("size", 1.0));
     }
 
+    private List<String> normalizeEffectIds(List<String> rawValues) {
+        List<String> normalizedValues = new ArrayList<>();
+        for (String rawValue : rawValues) {
+            String normalized = normalizeEffectId(rawValue);
+            if (!normalized.isEmpty()) {
+                normalizedValues.add(normalized);
+            }
+        }
+        return normalizedValues;
+    }
+
+    private String normalizeEffectId(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value.trim().toLowerCase(Locale.ROOT);
+    }
+
     public String getId() { return id; }
+    public List<String> getAliases() { return aliases; }
     public String getName() { return name; }
     public List<String> getDescription() { return description; }
     public Material getIcon() { return icon; }

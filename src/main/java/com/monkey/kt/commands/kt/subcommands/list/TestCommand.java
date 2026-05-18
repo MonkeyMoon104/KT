@@ -41,7 +41,7 @@ public class TestCommand implements SubCommand {
             return;
         }
 
-        String effectName = args[1].toLowerCase();
+        String effectName = plugin.resolveEffectId(args[1]);
         KillEffect effect = KillEffectFactory.getEffect(effectName);
         if (effect == null) {
             sender.sendMessage(TextUtils.legacySection(plugin.getConfig().getString("messages.effect_not_found")));
