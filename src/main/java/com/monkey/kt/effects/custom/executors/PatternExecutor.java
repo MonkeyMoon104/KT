@@ -2,8 +2,8 @@ package com.monkey.kt.effects.custom.executors;
 
 import com.monkey.kt.KT;
 import com.monkey.kt.effects.custom.CustomEffectConfig;
-import org.bukkit.Color;
 import com.monkey.kt.utils.scheduler.SchedulerWrapper;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 

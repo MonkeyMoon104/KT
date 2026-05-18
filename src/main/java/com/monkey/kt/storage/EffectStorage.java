@@ -5,12 +5,12 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.entity.Player;
 
 import java.sql.*;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.Locale;
 
 public class EffectStorage {
 

@@ -41,9 +41,24 @@ public class MaceParticles {
     public static void spawnFinalBurst(Location center) {
         World world = center.getWorld();
         if (world == null) return;
-
-        world.spawnParticle(Particle.EXPLOSION, center, 1);
-        world.spawnParticle(Particle.FLASH, center, 1);
+        try {
+            Class<?> dataType = Particle.FLASH.getDataType();
+            if (dataType == Void.class) {
+                world.spawnParticle(Particle.FLASH, center, 1);
+            } else if (dataType == Color.class) {
+                world.spawnParticle(Particle.FLASH, center, 1, 0, 0, 0, 0,
+                        Color.fromRGB(255, 215, 0));
+            }
+        } catch (Exception e) {
+            world.spawnParticle(Particle.FIREWORK, center, 6, 0.2, 0.2, 0.2, 0.05);
+        }
+        try {
+            Class<?> dataType = Particle.EXPLOSION.getDataType();
+            if (dataType == Void.class) {
+                world.spawnParticle(Particle.EXPLOSION, center, 1);
+            }
+        } catch (Exception e) {
+        }
 
         Particle.DustOptions goldDust = new Particle.DustOptions(Color.fromRGB(255, 215, 0), 1.5f);
 
