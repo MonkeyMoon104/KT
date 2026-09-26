@@ -397,6 +397,15 @@ public final class ConfigSnapshot {
         return Math.max(0L, Math.round(seconds * 1000.0D));
     }
 
+    public boolean delayDropsUntilEffectEnd(String id) {
+        boolean globalDefault = main.getBoolean("drops.delay-until-effect-end", false);
+        ConfigurationSection section = effectSection(id);
+        if (section == null) {
+            return globalDefault;
+        }
+        return section.getBoolean("drops.delay-until-effect-end", globalDefault);
+    }
+
     public double effectDurationMultiplier(String id) {
         ConfigurationSection section = effectSection(id);
         if (section == null) {
@@ -447,5 +456,9 @@ public final class ConfigSnapshot {
             return Collections.emptyList();
         }
         return Collections.unmodifiableList(new ArrayList<String>(raw));
+    }
+
+    public boolean turnOffPlayerParticles() {
+        return main.getBoolean("ParticlePlus.turn-off-player-particles", true);
     }
 }

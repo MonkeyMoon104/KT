@@ -2,6 +2,10 @@ pluginManagement {
     includeBuild("build-logic")
     repositories {
         gradlePluginPortal()
+        maven {
+            name = "particleplusReleases"
+            url = uri("https://repo.particleplus.best/releases")
+        }
         maven("https://repo.papermc.io/repository/maven-public/")
     }
 }
