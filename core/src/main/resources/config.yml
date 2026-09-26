@@ -19,9 +19,6 @@ worldguard:
 luckperms:
   grant-permission-on-purchase: true
 
-ParticlePlus:
-  turn-off-player-particles: true
-
 schematics:
   default-fallback: STONE
   log-unresolved: true

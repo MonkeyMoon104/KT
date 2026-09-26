@@ -10,7 +10,6 @@ softdepend:
   - LuckPerms
   - WorldGuard
   - PlaceholderAPI
-  - ParticlePlus
 libraries:
   - com.fasterxml.jackson.core:jackson-databind:${jackson}
   - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jackson}

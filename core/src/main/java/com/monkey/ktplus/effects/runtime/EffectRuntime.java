@@ -9,7 +9,6 @@ import com.monkey.ktplus.effects.list.fireworks.animation.FireworksSettings;
 import com.monkey.ktplus.effects.visual.VisualEffectService;
 import com.monkey.ktplus.effects.runtime.block.BlockChangeGuard;
 import com.monkey.ktplus.effects.runtime.block.TemporaryBlockService;
-import com.monkey.ktplus.hook.particleplus.ParticlePlusHook;
 import com.monkey.ktplus.lang.LangService;
 import com.monkey.ktplus.platform.ServerLoadProbe;
 import com.monkey.ktplus.scheduler.PlatformScheduler;
@@ -22,8 +21,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -39,7 +36,6 @@ public final class EffectRuntime {
     private final AtomicInteger heavySessions = new AtomicInteger();
     private final EffectEntityRegistry entityRegistry = new EffectEntityRegistry();
     private final FireworksFinaleService fireworksFinale;
-    private final ParticlePlusHook particlePlusHook;
     private ConfigSnapshot config;
     private LangService lang;
 
@@ -57,7 +53,6 @@ public final class EffectRuntime {
         this.temporaryBlocks = Objects.requireNonNull(temporaryBlocks, "temporaryBlocks");
         this.blockChangeGuard = Objects.requireNonNull(blockChangeGuard, "blockChangeGuard");
         this.fireworksFinale = new FireworksFinaleService(scheduler, entityRegistry, blockChangeGuard);
-        this.particlePlusHook = ParticlePlusHook.create(Logger.getLogger("KTPlus-Hooks"));
     }
 
     public void reload(ConfigSnapshot config, LangService lang, BlockChangeGuard blockChangeGuard) {
@@ -75,15 +70,6 @@ public final class EffectRuntime {
     }
 
     public boolean start(Player killer, Entity victim, Location location, KillEffect effect) {
-        return start(killer, victim, location, effect, null);
-    }
-
-    public boolean start(
-            Player killer,
-            Entity victim,
-            Location location,
-            KillEffect effect,
-            @org.jspecify.annotations.Nullable Runnable onSessionEnd) {
         Set<UUID> playerSessions =
                 sessionsByPlayer.computeIfAbsent(killer.getUniqueId(), ignored -> ConcurrentHashMap.newKeySet());
         if (playerSessions.size() >= config.maxSessionsPerPlayer()) {
@@ -111,23 +97,10 @@ public final class EffectRuntime {
         if (heavy) {
             heavySessions.incrementAndGet();
         }
-        boolean[] sessionEndRan = new boolean[1];
-        if (onSessionEnd != null) {
-            session.onCleanup(() -> {
-                sessionEndRan[0] = true;
-                onSessionEnd.run();
-            });
-        }
-        if (config.turnOffPlayerParticles()) {
-            particlePlusHook.suspendKillerParticle(killer);
-        }
         try {
             effect.execute(new EffectContext(killer, victim, location.clone(), config, lang), session);
             if (!session.active()) {
-                if (config.turnOffPlayerParticles()) {
-                    particlePlusHook.resumeKillerParticle(killer);
-                }
-                return sessionEndRan[0];
+                return false;
             }
             session.resetDeadline(effect.definition().maxDurationTicks());
             return true;
@@ -229,10 +202,6 @@ public final class EffectRuntime {
             if (playerSessions.isEmpty()) {
                 sessionsByPlayer.remove(session.playerId());
             }
-        }
-        Player killer = Bukkit.getPlayer(session.playerId());
-        if (killer != null && config.turnOffPlayerParticles()) {
-            particlePlusHook.resumeKillerParticle(killer);
         }
     }
 

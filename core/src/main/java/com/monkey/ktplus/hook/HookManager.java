@@ -39,7 +39,6 @@ public final class HookManager {
         updatePresence("LuckPerms");
         updatePresence("WorldGuard");
         updatePresence("PlaceholderAPI");
-        updatePresence("ParticlePlus-Reloaded");
         worldGuard = WorldGuardHook.create(worldGuardMode, worldGuardBypassPermission, logger);
         luckPerms = LuckPermsHook.create(luckPermsGrantOnPurchase, logger);
         placeholders.unregister();
