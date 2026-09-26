@@ -448,4 +448,8 @@ public final class ConfigSnapshot {
         }
         return Collections.unmodifiableList(new ArrayList<String>(raw));
     }
+
+    public boolean turnOffPlayerParticles() {
+        return main.getBoolean("ParticlePlus.turn-off-player-particles", true);
+    }
 }
