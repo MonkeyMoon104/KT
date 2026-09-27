@@ -22,9 +22,11 @@ class MigrationConnectionSupportTest {
     @Test
     void mysqlConfirmationUsesHostPortDatabaseToken() {
         MigrationEndpoint endpoint = MigrationEndpoint.mysql("DB.Example.COM", 3307, "KtPlus");
-        assertEquals("db.example.com:3307/ktplus", endpoint.confirmationToken());
+        assertEquals("db.example.com/3307/ktplus", endpoint.confirmationToken());
+        assertTrue(endpoint.matchesConfirmation("db.example.com/3307/ktplus"));
         assertTrue(endpoint.matchesConfirmation("db.example.com:3307/ktplus"));
         assertFalse(endpoint.matchesConfirmation("mysql"));
+        assertTrue(endpoint.displaySummary().contains("db.example.com:3307/ktplus"));
     }
 
     @Test

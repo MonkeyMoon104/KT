@@ -51,10 +51,12 @@ public final class MigrationEndpoint {
         Objects.requireNonNull(databaseName, "databaseName");
         String normalizedHost = host.trim().toLowerCase(Locale.ROOT);
         String normalizedDatabase = databaseName.trim().toLowerCase(Locale.ROOT);
-        String token = normalizedHost + ":" + port + "/" + normalizedDatabase;
+        // Avoid ':' in the token — Brigadier/Lamp treat it as an argument separator in chat.
+        String token = normalizedHost + "/" + port + "/" + normalizedDatabase;
+        String display = normalizedHost + ":" + port + "/" + normalizedDatabase;
         return new MigrationEndpoint(
                 MigrationDialect.MYSQL,
-                "MySQL " + token,
+                "MySQL " + display,
                 token,
                 null,
                 normalizedHost,
@@ -94,6 +96,30 @@ public final class MigrationEndpoint {
         if (typed == null) {
             return false;
         }
-        return confirmationToken.equals(typed.trim().replace('\\', '/'));
+        String normalized = normalizeConfirmation(typed);
+        if (confirmationToken.equals(normalized)) {
+            return true;
+        }
+        // Accept legacy MySQL tokens that used host:port/db.
+        return confirmationToken.equals(legacyMysqlColonToSlash(normalized));
+    }
+
+    private static String normalizeConfirmation(String typed) {
+        return typed.trim().replace('\\', '/');
+    }
+
+    /** Maps {@code host:port/db} → {@code host/port/db}; leaves other strings unchanged. */
+    private static String legacyMysqlColonToSlash(String token) {
+        int colon = token.indexOf(':');
+        int slash = token.indexOf('/');
+        if (colon <= 0 || slash <= colon + 1) {
+            return token;
+        }
+        String host = token.substring(0, colon);
+        String portAndDb = token.substring(colon + 1);
+        if (!portAndDb.matches("\\d+/.*")) {
+            return token;
+        }
+        return host + "/" + portAndDb;
     }
 }

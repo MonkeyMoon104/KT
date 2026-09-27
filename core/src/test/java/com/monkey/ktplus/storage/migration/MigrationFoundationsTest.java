@@ -39,16 +39,19 @@ class MigrationFoundationsTest {
                 .includeTempBlocks(true)
                 .forcePendingInventory(true)
                 .allowNonemptyTarget(true)
-                .typedTargetConfirmation("localhost:3306/ktplus")
+                .typedTargetConfirmation("localhost/3306/ktplus")
                 .build();
         assertTrue(request.dryRun());
         assertTrue(request.includeTempBlocks());
         assertTrue(request.forcePendingInventory());
         assertTrue(request.allowNonemptyTarget());
-        assertEquals("localhost:3306/ktplus", request.typedTargetConfirmation());
+        assertEquals("localhost/3306/ktplus", request.typedTargetConfirmation());
         assertTrue(com.monkey.ktplus.storage.migration.connection.MigrationEndpoint.mysql(
                         "LocalHost", 3306, "KTPlus")
                 .matchesConfirmation(request.typedTargetConfirmation()));
+        assertTrue(com.monkey.ktplus.storage.migration.connection.MigrationEndpoint.mysql(
+                        "LocalHost", 3306, "KTPlus")
+                .matchesConfirmation("localhost:3306/ktplus"));
         assertFalse(com.monkey.ktplus.storage.migration.connection.MigrationEndpoint.mysql(
                         "localhost", 3306, "ktplus")
                 .matchesConfirmation("mysql"));
