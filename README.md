@@ -344,10 +344,10 @@ database:
 |--------|:-------:|:------:|:-------------:|
 | SQLite | yes (default) | yes | ↔ MySQL |
 | MySQL 8.0+ | yes | yes | ↔ SQLite |
-| MariaDB | yes | yes | — |
+| MariaDB | yes | yes | via `/kt migrate mysql` (10.5+) |
 | PostgreSQL | yes | yes | — |
 
-Schema is applied with Flyway Java migrations on startup. MariaDB / PostgreSQL need external tools for data moves.
+Schema is applied with Flyway Java migrations on startup. `/kt migrate` supports SQLite ↔ MySQL/MariaDB (10.5+). PostgreSQL still needs an external data move.
 
 ---
 

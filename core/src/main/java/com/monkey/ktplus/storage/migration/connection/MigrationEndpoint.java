@@ -43,9 +43,12 @@ public final class MigrationEndpoint {
         Path normalized = absoluteFile.toAbsolutePath().normalize();
         String pathToken = normalized.toString().replace('\\', '/');
         String material = "sqlite|" + pathToken.toLowerCase(Locale.ROOT);
+        String fileName = normalized.getFileName() == null
+                ? pathToken
+                : normalized.getFileName().toString();
         return new MigrationEndpoint(
                 MigrationDialect.SQLITE,
-                "SQLite file: " + pathToken,
+                fileName,
                 shortToken(material),
                 material,
                 normalized,
@@ -59,17 +62,26 @@ public final class MigrationEndpoint {
         Objects.requireNonNull(databaseName, "databaseName");
         String normalizedHost = host.trim().toLowerCase(Locale.ROOT);
         String normalizedDatabase = databaseName.trim().toLowerCase(Locale.ROOT);
-        String display = normalizedHost + ":" + port + "/" + normalizedDatabase;
+        String display = normalizedHost + ":" + port + " · " + normalizedDatabase;
         String material = "mysql|" + normalizedHost + "|" + port + "|" + normalizedDatabase;
         return new MigrationEndpoint(
                 MigrationDialect.MYSQL,
-                "MySQL " + display,
+                display,
                 shortToken(material),
                 material,
                 null,
                 normalizedHost,
                 port,
                 normalizedDatabase);
+    }
+
+    /** Short label for chat (file name / host·db). */
+    public String chatLabel() {
+        return displaySummary;
+    }
+
+    public String engineLabel() {
+        return dialect == MigrationDialect.SQLITE ? "SQLite" : "MySQL/MariaDB";
     }
 
     public MigrationDialect dialect() {

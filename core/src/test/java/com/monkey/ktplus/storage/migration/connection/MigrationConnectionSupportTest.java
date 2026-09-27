@@ -2,7 +2,6 @@ package com.monkey.ktplus.storage.migration.connection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
@@ -18,7 +17,8 @@ class MigrationConnectionSupportTest {
         assertTrue(endpoint.matchesConfirmation(path.toString()));
         assertTrue(endpoint.matchesConfirmation(path.toString().replace('\\', '/')));
         assertFalse(endpoint.matchesConfirmation("sqlite"));
-        assertTrue(endpoint.displaySummary().contains("SQLite file:"));
+        assertEquals("ktplus.db", endpoint.chatLabel());
+        assertEquals("SQLite", endpoint.engineLabel());
     }
 
     @Test
@@ -32,7 +32,7 @@ class MigrationConnectionSupportTest {
         assertTrue(endpoint.matchesConfirmation("db.example.com/3307/ktplus"));
         assertTrue(endpoint.matchesConfirmation("db.example.com:3307/ktplus"));
         assertFalse(endpoint.matchesConfirmation("mysql"));
-        assertTrue(endpoint.displaySummary().contains("db.example.com:3307/ktplus"));
+        assertEquals("db.example.com:3307 · ktplus", endpoint.chatLabel());
     }
 
     @Test
@@ -44,13 +44,9 @@ class MigrationConnectionSupportTest {
     }
 
     @Test
-    void mariaDbVersionStringIsRejectedByInspectorMessageContract() {
-        IllegalStateException error = assertThrows(IllegalStateException.class, () -> {
-            if ("10.11.6-MariaDB".toLowerCase().contains("mariadb")) {
-                throw new IllegalStateException(
-                        "the target responds as MariaDB, not supported by this migrator, verify database.type");
-            }
-        });
-        assertTrue(error.getMessage().contains("MariaDB"));
+    void mariaDbTenFivePlusPassesVersionGate() {
+        assertTrue(TargetMySqlInspector.isAtLeast("10.11.6-MariaDB", TargetMySqlInspector.MINIMUM_MARIADB_VERSION));
+        assertTrue(TargetMySqlInspector.isAtLeast("10.5.0-MariaDB", TargetMySqlInspector.MINIMUM_MARIADB_VERSION));
+        assertFalse(TargetMySqlInspector.isAtLeast("10.4.9-MariaDB", TargetMySqlInspector.MINIMUM_MARIADB_VERSION));
     }
 }

@@ -37,6 +37,9 @@ public final class ConfigSwapPhase implements MigrationPhase {
         }
         try {
             String targetType = context.request().targetDialect().configValue();
+            if (context.targetMariaDb() && "mysql".equals(targetType)) {
+                targetType = "mariadb";
+            }
             typeSwapper.saveDatabaseType(targetType);
             context.markConfigSwapped(true);
             context.addOperatorMessage(

@@ -96,33 +96,34 @@ public final class PreflightPhase implements MigrationPhase {
             context.setTargetDataSource(targetDataSource, true);
             if (request.targetDialect() == MigrationDialect.MYSQL) {
                 TargetMySqlInspector.MySqlInspection inspection = TargetMySqlInspector.inspect(targetDataSource);
+                context.markTargetMariaDb(inspection.mariaDb());
+                String engine = inspection.mariaDb() ? "MariaDB" : "MySQL";
                 context.addOperatorMessage(
-                        "Target MySQL version="
+                        "Target "
+                                + engine
+                                + " version="
                                 + inspection.version()
                                 + " charset="
                                 + inspection.charset()
                                 + " collation="
                                 + inspection.collation());
                 if (inspection.nonemptyApplicationData() && !request.allowNonemptyTarget()) {
-                    return PhaseResult.failed(
-                            "target already contains kt_* application rows; re-run with --allow-nonempty-target to continue (skip-existing policy)");
+                    return PhaseResult.failed("target-nonempty");
                 }
                 if (inspection.nonemptyApplicationData()) {
-                    context.addWarning("target is non-empty; import will skip existing primary keys");
+                    context.addWarning("Target already has data — existing rows will be skipped.");
                 }
             } else if (countApplicationRows(targetDataSource) > 0L && !request.allowNonemptyTarget()) {
-                return PhaseResult.failed(
-                        "target SQLite already contains kt_* application rows; re-run with --allow-nonempty-target");
+                return PhaseResult.failed("target-nonempty");
             }
 
             long pendingInventory = countPendingInventory(context.sourceDataSource());
             context.addOperatorMessage("Pending inventory rows on source: " + pendingInventory);
             if (pendingInventory > 0L && !request.forcePendingInventory()) {
-                return PhaseResult.failed(
-                        "source has pending inventory rows; close GUI sessions or re-run with --force-pending-inventory");
+                return PhaseResult.failed("pending-inventory");
             }
             if (pendingInventory > 0L) {
-                context.addWarning("migrating pending inventory because --force-pending-inventory was set");
+                context.addWarning("Migrating pending inventory (--force-pending-inventory).");
             }
 
             logger.info("[Migrate] Preflight OK source="

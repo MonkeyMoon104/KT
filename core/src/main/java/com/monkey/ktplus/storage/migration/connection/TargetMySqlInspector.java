@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 
 public final class TargetMySqlInspector {
     public static final String MINIMUM_MYSQL_VERSION = "8.0.0";
+    public static final String MINIMUM_MARIADB_VERSION = "10.5.0";
 
     private TargetMySqlInspector() {}
 
@@ -24,11 +25,13 @@ public final class TargetMySqlInspector {
                 }
                 version = resultSet.getString(1);
             }
-            if (version != null && version.toLowerCase(Locale.ROOT).contains("mariadb")) {
-                throw new IllegalStateException(
-                        "the target responds as MariaDB, not supported by this migrator, verify database.type");
-            }
-            if (!isAtLeast(version, MINIMUM_MYSQL_VERSION)) {
+            boolean mariaDb = version != null && version.toLowerCase(Locale.ROOT).contains("mariadb");
+            if (mariaDb) {
+                if (!isAtLeast(version, MINIMUM_MARIADB_VERSION)) {
+                    throw new IllegalStateException(
+                            "MariaDB " + MINIMUM_MARIADB_VERSION + "+ required, found: " + version);
+                }
+            } else if (!isAtLeast(version, MINIMUM_MYSQL_VERSION)) {
                 throw new IllegalStateException(
                         "MySQL " + MINIMUM_MYSQL_VERSION + "+ required, found: " + version);
             }
@@ -39,7 +42,7 @@ public final class TargetMySqlInspector {
                         "target database charset must be utf8mb4, found: " + charset);
             }
             boolean nonempty = hasNonemptyKtTables(connection);
-            return new MySqlInspection(version, charset, collation, nonempty);
+            return new MySqlInspection(version, charset, collation, nonempty, mariaDb);
         }
     }
 
@@ -115,5 +118,10 @@ public final class TargetMySqlInspector {
         return Integer.parseInt(digits.toString());
     }
 
-    public record MySqlInspection(String version, String charset, String collation, boolean nonemptyApplicationData) {}
+    public record MySqlInspection(
+            String version,
+            String charset,
+            String collation,
+            boolean nonemptyApplicationData,
+            boolean mariaDb) {}
 }

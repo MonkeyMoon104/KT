@@ -42,6 +42,7 @@ public final class MigrationContext {
     private boolean economicValidationHardFailed;
     private boolean configSwapped;
     private boolean targetWritesAttempted;
+    private boolean targetMariaDb;
 
     public MigrationContext(MigrationRequest request, StorageWriteGate writeGate, Path backupsDirectory) {
         this.request = Objects.requireNonNull(request, "request");
@@ -192,6 +193,14 @@ public final class MigrationContext {
 
     public boolean targetWritesAttempted() {
         return targetWritesAttempted;
+    }
+
+    public void markTargetMariaDb(boolean mariaDb) {
+        this.targetMariaDb = mariaDb;
+    }
+
+    public boolean targetMariaDb() {
+        return targetMariaDb;
     }
 
     public void recordPhase(String phaseName, PhaseResult result) {
