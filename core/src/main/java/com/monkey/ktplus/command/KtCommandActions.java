@@ -5,6 +5,7 @@ import com.monkey.ktplus.effects.api.KillEffect;
 import com.monkey.ktplus.review.ReviewMessages;
 import com.monkey.ktplus.review.ReviewPlatform;
 import com.monkey.ktplus.review.ReviewRewardService;
+import com.monkey.ktplus.storage.migration.MigrateMessages;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -228,13 +229,11 @@ public final class KtCommandActions {
         Objects.requireNonNull(sender, "sender");
         Objects.requireNonNull(args, "args");
         if (!sender.hasPermission("ktplus.migrate") && !sender.hasPermission("ktplus.admin")) {
-            sender.sendMessage(bootstrap.lang().message(sender, "no-permission"));
+            MigrateMessages.noPermission(sender, bootstrap.lang().message(sender, "no-permission"));
             return;
         }
         if (args.length < 1) {
-            sender.sendMessage(
-                    "/ktplus migrate <sqlite|mysql> [--dry-run] [--include-temp-blocks] "
-                            + "[--force-pending-inventory] [--allow-nonempty-target] <confirmation-token>");
+            MigrateMessages.usage(sender);
             return;
         }
         try {
@@ -244,7 +243,7 @@ public final class KtCommandActions {
             com.monkey.ktplus.storage.migration.MigrationRequest request =
                     com.monkey.ktplus.storage.migration.DatabaseMigrator.parseArgs(args, live);
             if (request == null) {
-                sender.sendMessage("Invalid migrate args. Target must be sqlite or mysql.");
+                MigrateMessages.invalidArgs(sender);
                 return;
             }
             com.monkey.ktplus.storage.migration.DatabaseMigrator migrator =
@@ -257,21 +256,11 @@ public final class KtCommandActions {
                                     bootstrap.plugin()),
                             bootstrap.temporaryBlockRepository(),
                             bootstrap.plugin().getLogger());
-            sender.sendMessage("Starting migration…");
-            for (String message : java.util.List.of(
-                    "This may freeze writes. Follow on-screen confirmation token exactly.")) {
-                sender.sendMessage(message);
-            }
+            MigrateMessages.starting(sender, request.targetDialect(), request.dryRun());
             com.monkey.ktplus.storage.migration.MigrationOutcome outcome = migrator.migrate(request);
-            for (String line : outcome.context().operatorMessages()) {
-                sender.sendMessage(line);
-            }
-            if (outcome.reportPath() != null) {
-                sender.sendMessage("Report: " + outcome.reportPath());
-            }
-            sender.sendMessage(outcome.success() ? "Migration OK: " + outcome.message() : "Migration FAILED: " + outcome.message());
+            MigrateMessages.showOutcome(sender, outcome);
         } catch (Exception error) {
-            sender.sendMessage("Migration failed: " + error.getMessage());
+            MigrateMessages.failed(sender, error.getMessage() == null ? "unexpected error" : error.getMessage());
         }
     }
 

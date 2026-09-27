@@ -46,15 +46,14 @@ class MigrationFoundationsTest {
         assertTrue(request.forcePendingInventory());
         assertTrue(request.allowNonemptyTarget());
         assertEquals("localhost/3306/ktplus", request.typedTargetConfirmation());
-        assertTrue(com.monkey.ktplus.storage.migration.connection.MigrationEndpoint.mysql(
-                        "LocalHost", 3306, "KTPlus")
-                .matchesConfirmation(request.typedTargetConfirmation()));
-        assertTrue(com.monkey.ktplus.storage.migration.connection.MigrationEndpoint.mysql(
-                        "LocalHost", 3306, "KTPlus")
-                .matchesConfirmation("localhost:3306/ktplus"));
-        assertFalse(com.monkey.ktplus.storage.migration.connection.MigrationEndpoint.mysql(
-                        "localhost", 3306, "ktplus")
-                .matchesConfirmation("mysql"));
+        com.monkey.ktplus.storage.migration.connection.MigrationEndpoint mysql =
+                com.monkey.ktplus.storage.migration.connection.MigrationEndpoint.mysql(
+                        "LocalHost", 3306, "KTPlus");
+        assertEquals(8, mysql.confirmationToken().length());
+        assertTrue(mysql.matchesConfirmation(mysql.confirmationToken()));
+        assertTrue(mysql.matchesConfirmation(request.typedTargetConfirmation()));
+        assertTrue(mysql.matchesConfirmation("localhost:3306/ktplus"));
+        assertFalse(mysql.matchesConfirmation("mysql"));
     }
 
     @Test

@@ -85,9 +85,7 @@ public final class PreflightPhase implements MigrationPhase {
         publishSummary(context, sourceEndpoint, targetEndpoint);
 
         if (!targetEndpoint.matchesConfirmation(request.typedTargetConfirmation())) {
-            return PhaseResult.failed(
-                    "target confirmation mismatch: type exactly this token from the summary: "
-                            + targetEndpoint.confirmationToken());
+            return PhaseResult.failed("target confirmation mismatch");
         }
 
         try {
@@ -139,14 +137,12 @@ public final class PreflightPhase implements MigrationPhase {
 
     private void publishSummary(
             MigrationContext context, MigrationEndpoint sourceEndpoint, MigrationEndpoint targetEndpoint) {
-        context.addOperatorMessage("=== Migration endpoint summary (passwords never shown) ===");
         context.addOperatorMessage("SOURCE: " + sourceEndpoint.displaySummary());
         context.addOperatorMessage("TARGET: " + targetEndpoint.displaySummary());
-        context.addOperatorMessage(
-                "Confirm TARGET by typing exactly: " + targetEndpoint.confirmationToken());
+        context.addOperatorMessage("CONFIRM_TOKEN: " + targetEndpoint.confirmationToken());
         logger.info("[Migrate] SOURCE: " + sourceEndpoint.displaySummary());
         logger.info("[Migrate] TARGET: " + targetEndpoint.displaySummary());
-        logger.info("[Migrate] Confirm TARGET token: " + targetEndpoint.confirmationToken());
+        logger.info("[Migrate] CONFIRM_TOKEN: " + targetEndpoint.confirmationToken());
     }
 
     private static void probeSource(DataSource source) throws Exception {

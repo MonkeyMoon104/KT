@@ -10,9 +10,11 @@ import org.junit.jupiter.api.Test;
 
 class MigrationConnectionSupportTest {
     @Test
-    void sqliteConfirmationUsesNormalizedAbsolutePath() {
+    void sqliteConfirmationUsesShortTokenAndAcceptsLegacyPath() {
         Path path = Path.of("plugins", "KTPlus", "ktplus.db").toAbsolutePath().normalize();
         MigrationEndpoint endpoint = MigrationEndpoint.sqlite(path);
+        assertEquals(8, endpoint.confirmationToken().length());
+        assertTrue(endpoint.matchesConfirmation(endpoint.confirmationToken()));
         assertTrue(endpoint.matchesConfirmation(path.toString()));
         assertTrue(endpoint.matchesConfirmation(path.toString().replace('\\', '/')));
         assertFalse(endpoint.matchesConfirmation("sqlite"));
@@ -20,9 +22,13 @@ class MigrationConnectionSupportTest {
     }
 
     @Test
-    void mysqlConfirmationUsesHostPortDatabaseToken() {
+    void mysqlConfirmationUsesShortTokenAndAcceptsLegacyHostForms() {
         MigrationEndpoint endpoint = MigrationEndpoint.mysql("DB.Example.COM", 3307, "KtPlus");
-        assertEquals("db.example.com/3307/ktplus", endpoint.confirmationToken());
+        assertEquals(8, endpoint.confirmationToken().length());
+        assertEquals(
+                MigrationEndpoint.shortToken("mysql|db.example.com|3307|ktplus"),
+                endpoint.confirmationToken());
+        assertTrue(endpoint.matchesConfirmation(endpoint.confirmationToken()));
         assertTrue(endpoint.matchesConfirmation("db.example.com/3307/ktplus"));
         assertTrue(endpoint.matchesConfirmation("db.example.com:3307/ktplus"));
         assertFalse(endpoint.matchesConfirmation("mysql"));
