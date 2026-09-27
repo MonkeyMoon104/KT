@@ -28,6 +28,7 @@ lib-jspecify = "1.0.1"
 lib-lamp = "4.0.0-rc.18"
 lib-mariadb = "3.5.10"
 lib-mysql = "26.7.0"
+lib-particleplus-api = "1.3"
 lib-placeholderapi = "2.12.3"
 lib-postgresql = "42.7.13"
 lib-slf4j = "2.0.20"
@@ -63,6 +64,7 @@ lib-asm-commons = { module = "org.ow2.asm:asm-commons", version.ref = "lib-asm" 
 lib-asm-tree = { module = "org.ow2.asm:asm-tree", version.ref = "lib-asm" }
 lib-jar-relocator = { module = "me.lucko:jar-relocator", version.ref = "lib-jar-relocator" }
 lib-jspecify = { module = "org.jspecify:jspecify", version.ref = "lib-jspecify" }
+lib-particleplus-api = { module = "me.dominikhun250.dev:ParticlePlus-API", version.ref = "lib-particleplus-api" }
 lib-placeholderapi = { module = "me.clip:placeholderapi", version.ref = "lib-placeholderapi" }
 lib-packetevents-spigot = { module = "com.github.retrooper:packetevents-spigot", version.ref = "lib-packetevents" }
 lib-flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "lib-flyway" }

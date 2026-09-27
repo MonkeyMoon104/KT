@@ -161,6 +161,7 @@ dependencies {
     compileOnly(libs.platform.paper.api)
     compileOnly(libs.lib.jspecify)
     compileOnly(libs.lib.placeholderapi)
+    compileOnly(libs.lib.particleplus.api)
     compileOnly(libs.lib.inventory.framework)
     testImplementation(libs.platform.paper.api)
     implementation(libs.lib.jar.relocator)

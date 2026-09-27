@@ -247,7 +247,9 @@ public final class PluginBootstrap {
                             + " | WorldGuard="
                             + onOff(hooks.enabled("WorldGuard"))
                             + " | PlaceholderAPI="
-                            + onOff(hooks.enabled("PlaceholderAPI")));
+                            + onOff(hooks.enabled("PlaceholderAPI"))
+                            + " | ParticlePlus="
+                            + onOff(hooks.enabled("ParticlePlus")));
             boot.detail(
                     "Hooks",
                     "WorldGuard mode -> "

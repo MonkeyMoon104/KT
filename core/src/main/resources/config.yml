@@ -19,6 +19,13 @@ worldguard:
 luckperms:
   grant-permission-on-purchase: true
 
+particlePlus:
+  turn-off-radius: 20
+  turn-off-player-particles: true
+  turn-off-mob-particles: true
+  turn-off-block-particles: true
+  turn-off-item-particles: true
+
 schematics:
   default-fallback: STONE
   log-unresolved: true
