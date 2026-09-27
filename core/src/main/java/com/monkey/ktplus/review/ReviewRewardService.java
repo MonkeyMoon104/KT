@@ -140,12 +140,16 @@ public final class ReviewRewardService {
 
         sendPitch(player, platform, stats);
         ReviewMessages.verifying(player, account, platform);
-        
+
+        // Already starred/reviewed: pay now if eligible and not in DB yet (helps typo retries).
+        // Spigot reviews under 4★ fall through to a normal session so the player can update.
         if (presence.present()) {
-            claims.claimIfAbsent(playerId, platform.id(), accountKey);
-            sessionsByAccount.remove(accountLock, playerId);
-            ReviewMessages.alreadyPresentLocked(player, platformLabel(platform));
-            return;
+            int reward = rewardFor(platform, presence.stars());
+            if (reward > 0) {
+                sessionsByAccount.remove(accountLock, playerId);
+                grantReward(playerId, platform, accountKey, reward);
+                return;
+            }
         }
 
         long expiresAt = System.currentTimeMillis() + (ReviewConstants.SESSION_SECONDS * 1000L);
@@ -245,24 +249,37 @@ public final class ReviewRewardService {
         if (!removeSession(session)) {
             return;
         }
-        boolean claimed = claims.claimIfAbsent(session.playerId(), session.platform().id(), session.accountKey());
+        grantReward(session.playerId(), session.platform(), session.accountKey(), reward);
+    }
+
+    private void grantReward(UUID playerId, ReviewPlatform platform, String accountKey, int reward) {
+        boolean claimed = claims.claimIfAbsent(playerId, platform.id(), accountKey);
         if (claimed && reward > 0 && economy.enabled()) {
-            economy.addBalance(session.playerId(), reward);
+            economy.addBalance(playerId, reward);
         }
         final boolean rewarded = claimed;
         final int paid = claimed ? reward : 0;
         scheduler.runGlobal(() -> {
-            Player player = Bukkit.getPlayer(session.playerId());
+            Player player = Bukkit.getPlayer(playerId);
             if (player == null) {
                 return;
             }
             if (rewarded) {
-                ReviewMessages.success(player, platformLabel(session.platform()), paid);
-                ReviewMessages.broadcastRewardTeaser(player, session.platform(), paid);
-            } else {
+                ReviewMessages.success(player, platformLabel(platform), paid);
+                ReviewMessages.broadcastRewardTeaser(player, platform, paid);
+            } else if (claims.hasClaim(playerId, platform.id())) {
                 ReviewMessages.alreadyClaimed(player);
+            } else {
+                ReviewMessages.accountUsed(player);
             }
         });
+    }
+
+    private static int rewardFor(ReviewPlatform platform, int stars) {
+        if (platform == ReviewPlatform.GITHUB) {
+            return ReviewConstants.GITHUB_REWARD;
+        }
+        return ReviewConstants.spigotReward(stars);
     }
 
     private boolean removeSession(ReviewSession session) {

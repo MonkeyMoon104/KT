@@ -82,11 +82,6 @@ public final class ReviewMessages {
         send(player, "&7If this is wrong, wait for the timer to end — Minecraft names will &cnot &7verify.");
     }
 
-    public static void alreadyPresentLocked(Player player, String platformLabel) {
-        send(player, "&eThat " + platformLabel
-                + " account already has a star/review. Reward locked to stop duplicates.");
-    }
-
     public static void sessionStarted(Player player, ReviewPlatform platform, String account) {
         send(player, "&aTimer started! You have &f"
                 + ReviewConstants.SESSION_SECONDS
