@@ -23,7 +23,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -75,15 +74,6 @@ public final class EffectRuntime {
     }
 
     public boolean start(Player killer, Entity victim, Location location, KillEffect effect) {
-        return start(killer, victim, location, effect, null);
-    }
-
-    public boolean start(
-            Player killer,
-            Entity victim,
-            Location location,
-            KillEffect effect,
-            @org.jspecify.annotations.Nullable Runnable onSessionEnd) {
         Set<UUID> playerSessions =
                 sessionsByPlayer.computeIfAbsent(killer.getUniqueId(), ignored -> ConcurrentHashMap.newKeySet());
         if (playerSessions.size() >= config.maxSessionsPerPlayer()) {
@@ -111,24 +101,21 @@ public final class EffectRuntime {
         if (heavy) {
             heavySessions.incrementAndGet();
         }
-        boolean[] sessionEndRan = new boolean[1];
-        if (onSessionEnd != null) {
-            session.onCleanup(() -> {
-                sessionEndRan[0] = true;
-                onSessionEnd.run();
-            });
-        }
-        if (config.turnOffPlayerParticles()) {
-            particlePlusHook.suspendKillerParticle(killer);
-        }
+
+        ParticlePlusHook.Suspension particleSuspension = particlePlusHook.suspendNearby(
+                location,
+                config.particlePlusTurnOffRadius(),
+                config.turnOffPlayerParticles(),
+                config.turnOffMobParticles(),
+                config.turnOffBlockParticles(),
+                config.turnOffItemParticles());
+        session.onCleanup(() -> particlePlusHook.resume(particleSuspension));
+
         try {
             effect.execute(new EffectContext(killer, victim, location.clone(), config, lang), session);
             if (!session.active()) {
+                finish(session, CancellationReason.ERROR);
                 return false;
-                if (config.turnOffPlayerParticles()) {
-                    particlePlusHook.resumeKillerParticle(killer);
-                }
-                return sessionEndRan[0];
             }
             session.resetDeadline(effect.definition().maxDurationTicks());
             return true;
@@ -230,10 +217,6 @@ public final class EffectRuntime {
             if (playerSessions.isEmpty()) {
                 sessionsByPlayer.remove(session.playerId());
             }
-        }
-        Player killer = Bukkit.getPlayer(session.playerId());
-        if (killer != null && config.turnOffPlayerParticles()) {
-            particlePlusHook.resumeKillerParticle(killer);
         }
     }
 
