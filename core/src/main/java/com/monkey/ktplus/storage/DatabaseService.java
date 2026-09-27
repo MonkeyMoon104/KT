@@ -86,10 +86,14 @@ public final class DatabaseService {
             if (driverClass != null) {
                 config.setDriverClassName(driverClass);
             }
+        } catch (Exception error) {
+            throw new StorageException("Failed to install SQL driver for dialect " + dialect, error);
+        }
+        try {
             executor = databaseExecutor(poolSize);
             dataSource = new HikariDataSource(config);
         } catch (Exception error) {
-            throw new StorageException("Failed to install SQL driver for dialect " + dialect, error);
+            throw new StorageException("Failed to connect to " + dialect + " database", error);
         }
         ClassLoader classLoader = plugin.getClass().getClassLoader();
         return new SchemaInitializer(this, classLoader).initialize();
@@ -238,7 +242,15 @@ public final class DatabaseService {
             return "jdbc:postgresql://" + host + ":" + port + "/" + database;
         }
         if ("mariadb".equals(dialect)) {
-            return "jdbc:mariadb://" + host + ":" + port + "/" + database + "?sslMode=trust";
+            // Most game-host MariaDB instances have no TLS; sslMode=trust still requires server SSL.
+            return "jdbc:mariadb://"
+                    + host
+                    + ":"
+                    + port
+                    + "/"
+                    + database
+                    + "?sslMode=disable"
+                    + "&allowPublicKeyRetrieval=true";
         }
         return "jdbc:mysql://" + host + ":" + port + "/"
                 + database
