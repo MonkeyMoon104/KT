@@ -242,7 +242,6 @@ public final class DatabaseService {
             return "jdbc:postgresql://" + host + ":" + port + "/" + database;
         }
         if ("mariadb".equals(dialect)) {
-            // Most game-host MariaDB instances have no TLS; sslMode=trust still requires server SSL.
             return "jdbc:mariadb://"
                     + host
                     + ":"

@@ -75,7 +75,6 @@ public final class MigrationEndpoint {
                 normalizedDatabase);
     }
 
-    /** Short label for chat (file name / host·db). */
     public String chatLabel() {
         return displaySummary;
     }
@@ -143,7 +142,6 @@ public final class MigrationEndpoint {
         return typed.trim().replace('\\', '/');
     }
 
-    /** Maps {@code host:port/db} → {@code host/port/db}; leaves other strings unchanged. */
     private static String legacyMysqlColonToSlash(String token) {
         int colon = token.indexOf(':');
         int slash = token.indexOf('/');
@@ -158,7 +156,6 @@ public final class MigrationEndpoint {
         return hostPart + "/" + portAndDb;
     }
 
-    /** Stable 8-hex confirmation token (Brigadier-safe, short for chat). */
     static String shortToken(String material) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
