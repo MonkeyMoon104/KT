@@ -329,7 +329,6 @@ public final class KtCommandActions {
                 .collect(Collectors.toList());
     }
 
-    /** Migrate target dialect suggestions: only the storage we are not currently using. */
     public List<String> migrateTargetSuggestions() {
         try {
             com.monkey.ktplus.storage.migration.MigrationDialect live =
