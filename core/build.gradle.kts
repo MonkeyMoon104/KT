@@ -9,17 +9,6 @@ plugins {
     id("ktplus.relocate")
 }
 
-repositories {
-    maven {
-        name = "particleplusReleases"
-        url = uri("https://repo.particleplus.best/releases")
-    }
-}
-
-dependencies {
-    compileOnly("me.dominikhun250.dev:ParticlePlus-API:1.2")
-}
-
 fun libConfiguration(name: String) = configurations.create(name) {
     isCanBeConsumed = false
     isCanBeResolved = true
@@ -172,6 +161,7 @@ dependencies {
     compileOnly(libs.platform.paper.api)
     compileOnly(libs.lib.jspecify)
     compileOnly(libs.lib.placeholderapi)
+    compileOnly(libs.lib.particleplus.api)
     compileOnly(libs.lib.inventory.framework)
     testImplementation(libs.platform.paper.api)
     implementation(libs.lib.jar.relocator)

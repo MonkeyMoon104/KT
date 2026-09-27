@@ -14,6 +14,7 @@ repositories {
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://maven.elmakers.com/repository")
     maven("https://jitpack.io")
+    maven("https://repo.particleplus.best/releases")
 }
 
 val modulePath = path
