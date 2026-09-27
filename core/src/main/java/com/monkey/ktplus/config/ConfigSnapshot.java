@@ -450,6 +450,22 @@ public final class ConfigSnapshot {
     }
 
     public boolean turnOffPlayerParticles() {
-        return main.getBoolean("ParticlePlus.turn-off-player-particles", true);
+        return main.getBoolean("particlePlus.turn-off-player-particles", true);
+    }
+
+    public boolean turnOffMobParticles() {
+        return main.getBoolean("particlePlus.turn-off-mob-particles", true);
+    }
+
+    public boolean turnOffBlockParticles() {
+        return main.getBoolean("particlePlus.turn-off-block-particles", true);
+    }
+
+    public boolean turnOffItemParticles() {
+        return main.getBoolean("particlePlus.turn-off-item-particles", true);
+    }
+
+    public double particlePlusTurnOffRadius() {
+        return Math.max(0.0D, main.getDouble("particlePlus.turn-off-radius", 20.0D));
     }
 }
