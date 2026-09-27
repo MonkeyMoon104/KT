@@ -2,7 +2,9 @@
 
 # KTPlus
 
-**Kill effects for Paper** — shop GUI, persistent unlocks, real databases, Folia support.
+**Kill effects for Paper**
+
+Shop GUI, persistent unlocks, real databases, Folia support.
 
 Players pick an effect. When they get a kill, it plays.  
 Everything around that is built for a real server: economy, storage, permissions, limits, and optional hooks.
