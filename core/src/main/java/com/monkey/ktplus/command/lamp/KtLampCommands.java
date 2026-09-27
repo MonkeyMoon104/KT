@@ -190,7 +190,7 @@ public final class KtLampCommands {
     @Command("ktplus migrate")
     public void migrateKtPlus(
             BukkitCommandActor actor,
-            @Suggest({"sqlite", "mysql"}) String target,
+            @SuggestWith(MigrateTargetSuggestions.class) String target,
             @Optional String a,
             @Optional String b,
             @Optional String c,
@@ -202,7 +202,7 @@ public final class KtLampCommands {
     @Command("kt migrate")
     public void migrateKt(
             BukkitCommandActor actor,
-            @Suggest({"sqlite", "mysql"}) String target,
+            @SuggestWith(MigrateTargetSuggestions.class) String target,
             @Optional String a,
             @Optional String b,
             @Optional String c,
@@ -214,7 +214,7 @@ public final class KtLampCommands {
     @Command("killeffect migrate")
     public void migrateKillEffect(
             BukkitCommandActor actor,
-            @Suggest({"sqlite", "mysql"}) String target,
+            @SuggestWith(MigrateTargetSuggestions.class) String target,
             @Optional String a,
             @Optional String b,
             @Optional String c,

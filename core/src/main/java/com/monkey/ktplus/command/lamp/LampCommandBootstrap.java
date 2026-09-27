@@ -17,6 +17,7 @@ public final class LampCommandBootstrap {
             EffectIdSuggestions.bind(actions::enabledEffectIds);
             EnabledEffectIdSuggestions.bind(actions::enabledEffectIds);
             DisabledEffectIdSuggestions.bind(actions::disabledEffectIds);
+            MigrateTargetSuggestions.bind(actions::migrateTargetSuggestions);
             BukkitLampConfig<BukkitCommandActor> config = BukkitLampConfig.createDefault(plugin);
             BukkitLamp.builder(config).build().register(new KtLampCommands(actions));
             plugin.getLogger().info("[Commands] Lamp command tree registered");
@@ -25,6 +26,7 @@ public final class LampCommandBootstrap {
             EffectIdSuggestions.clear();
             EnabledEffectIdSuggestions.clear();
             DisabledEffectIdSuggestions.clear();
+            MigrateTargetSuggestions.clear();
             plugin.getLogger().warning("[Commands] Lamp unavailable, using Bukkit executor: " + error.getMessage());
             return false;
         }

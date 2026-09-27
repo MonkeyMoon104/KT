@@ -107,7 +107,7 @@ public final class KtCommand implements CommandExecutor, TabCompleter {
             return actions.filter(Arrays.asList("github", "spigotmc"), args[1]);
         }
         if (args.length == 2 && "migrate".equalsIgnoreCase(args[0])) {
-            return actions.filter(Arrays.asList("sqlite", "mysql"), args[1]);
+            return actions.filter(actions.migrateTargetSuggestions(), args[1]);
         }
         if (args.length >= 3 && "migrate".equalsIgnoreCase(args[0])) {
             return actions.filter(

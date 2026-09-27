@@ -340,6 +340,21 @@ public final class KtCommandActions {
                 .collect(Collectors.toList());
     }
 
+    /** Migrate target dialect suggestions: only the storage we are not currently using. */
+    public List<String> migrateTargetSuggestions() {
+        try {
+            com.monkey.ktplus.storage.migration.MigrationDialect live =
+                    com.monkey.ktplus.storage.migration.DatabaseMigrator.liveDialectFromConfig(
+                            bootstrap.config());
+            if (live == com.monkey.ktplus.storage.migration.MigrationDialect.SQLITE) {
+                return List.of("mysql");
+            }
+            return List.of("sqlite");
+        } catch (RuntimeException ignored) {
+            return List.of();
+        }
+    }
+
     public List<String> filter(List<String> options, String prefix) {
         String lower = prefix == null ? "" : prefix.toLowerCase(Locale.ROOT);
         List<String> result = new ArrayList<String>();
