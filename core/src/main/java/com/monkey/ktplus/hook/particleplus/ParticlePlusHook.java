@@ -1,8 +1,10 @@
 package com.monkey.ktplus.hook.particleplus;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 import me.dominikhun250.dev.particleplus.api.ParticleMix;
 import me.dominikhun250.dev.particleplus.api.ParticlePlusAPI;
@@ -13,7 +15,6 @@ import org.bukkit.entity.Player;
 
 public final class ParticlePlusHook {
     private static final String PLUGIN_NAME = "ParticlePlus";
-    private static final double PARTICLE_SUSPEND_RADIUS = 20.0;
 
     private final boolean pluginPresent;
     private final Logger logger;
@@ -35,46 +36,64 @@ public final class ParticlePlusHook {
         return pluginPresent;
     }
 
-    public void suspendKillerParticle(Player killer) {
-        if (!pluginPresent || killer == null) {
-            return;
-        }
-
-        suspendPlayerParticle(killer);
-    }
-
-    public Set<UUID> suspendNearbyPlayerParticles(Location location) {
-        Set<UUID> suspendedPlayers = new HashSet<>();
-
+    public Suspension suspendNearby(
+            Location location,
+            double radius,
+            boolean players,
+            boolean mobs,
+            boolean blocks,
+            boolean items) {
         if (!pluginPresent || location == null || location.getWorld() == null) {
-            return suspendedPlayers;
+            return Suspension.EMPTY;
+        }
+        if (!players && !mobs && !blocks && !items) {
+            return Suspension.EMPTY;
         }
 
-        double radiusSquared = PARTICLE_SUSPEND_RADIUS * PARTICLE_SUSPEND_RADIUS;
+        Set<UUID> suspendedPlayerParticles = new HashSet<>();
+        Set<UUID> suspendedMobParticles = new HashSet<>();
+        Set<UUID> suspendedBlockParticles = new HashSet<>();
+        Set<UUID> suspendedItemParticles = new HashSet<>();
 
-        for (Player player : location.getWorld().getPlayers()) {
-            if (player.getLocation().distanceSquared(location) > radiusSquared) {
+        double radiusSquared = Math.max(0.0D, radius) * Math.max(0.0D, radius);
+
+        for (Player nearby : location.getWorld().getPlayers()) {
+            if (nearby.getLocation().distanceSquared(location) > radiusSquared) {
                 continue;
             }
-
-            if (suspendPlayerParticle(player)) {
-                suspendedPlayers.add(player.getUniqueId());
+            if (players && suspendPlayerParticle(nearby)) {
+                suspendedPlayerParticles.add(nearby.getUniqueId());
+            }
+            if (mobs && suspendMobParticles(nearby)) {
+                suspendedMobParticles.add(nearby.getUniqueId());
+            }
+            if (blocks && suspendBlockParticles(nearby)) {
+                suspendedBlockParticles.add(nearby.getUniqueId());
+            }
+            if (items && suspendItemParticles(nearby)) {
+                suspendedItemParticles.add(nearby.getUniqueId());
             }
         }
 
-        return suspendedPlayers;
+        return new Suspension(
+                suspendedPlayerParticles, suspendedMobParticles, suspendedBlockParticles, suspendedItemParticles);
     }
 
-    public void resumeNearbyPlayerParticles(Set<UUID> players) {
-        if (!pluginPresent || players == null || players.isEmpty()) {
+    public void resume(Suspension suspension) {
+        if (!pluginPresent || suspension == null || suspension.isEmpty()) {
             return;
         }
+        resumeCategory(suspension.playerParticlePlayers, this::resumePlayerParticle);
+        resumeCategory(suspension.mobParticlePlayers, this::resumeMobParticles);
+        resumeCategory(suspension.blockParticlePlayers, this::resumeBlockParticles);
+        resumeCategory(suspension.itemParticlePlayers, this::resumeItemParticles);
+    }
 
-        for (UUID uuid : players) {
+    private void resumeCategory(Set<UUID> uuids, Consumer<Player> resumeFn) {
+        for (UUID uuid : uuids) {
             Player player = Bukkit.getPlayer(uuid);
-
             if (player != null && player.isOnline()) {
-                resumePlayerParticle(player);
+                resumeFn.accept(player);
             }
         }
     }
@@ -82,41 +101,96 @@ public final class ParticlePlusHook {
     private boolean suspendPlayerParticle(Player player) {
         try {
             ParticlePlusAPI api = ParticlePlusProvider.getAPI();
-
             if (api != null) {
                 api.suspendPlayerParticle(player);
                 return true;
             }
         } catch (Throwable error) {
-            logger.warning(
-                    "[Hooks] ParticlePlus suspendPlayerParticle failed: "
-                            + error.getMessage()
-            );
+            logger.warning("[Hooks] ParticlePlus suspendPlayerParticle failed: " + error.getMessage());
         }
-
         return false;
-    }
-
-    public void resumeKillerParticle(Player killer) {
-        if (!pluginPresent || killer == null) {
-            return;
-        }
-
-        resumePlayerParticle(killer);
     }
 
     private void resumePlayerParticle(Player player) {
         try {
             ParticlePlusAPI api = ParticlePlusProvider.getAPI();
-
             if (api != null) {
                 api.resumePlayerParticle(player);
             }
         } catch (Throwable error) {
-            logger.warning(
-                    "[Hooks] ParticlePlus resumePlayerParticle failed: "
-                            + error.getMessage()
-            );
+            logger.warning("[Hooks] ParticlePlus resumePlayerParticle failed: " + error.getMessage());
+        }
+    }
+
+    private boolean suspendMobParticles(Player player) {
+        try {
+            ParticlePlusAPI api = ParticlePlusProvider.getAPI();
+            if (api != null) {
+                api.suspendMobParticles(player);
+                return true;
+            }
+        } catch (Throwable error) {
+            logger.warning("[Hooks] ParticlePlus suspendMobParticles failed: " + error.getMessage());
+        }
+        return false;
+    }
+
+    private void resumeMobParticles(Player player) {
+        try {
+            ParticlePlusAPI api = ParticlePlusProvider.getAPI();
+            if (api != null) {
+                api.resumeMobParticles(player);
+            }
+        } catch (Throwable error) {
+            logger.warning("[Hooks] ParticlePlus resumeMobParticles failed: " + error.getMessage());
+        }
+    }
+
+    private boolean suspendBlockParticles(Player player) {
+        try {
+            ParticlePlusAPI api = ParticlePlusProvider.getAPI();
+            if (api != null) {
+                api.suspendBlockParticles(player);
+                return true;
+            }
+        } catch (Throwable error) {
+            logger.warning("[Hooks] ParticlePlus suspendBlockParticles failed: " + error.getMessage());
+        }
+        return false;
+    }
+
+    private void resumeBlockParticles(Player player) {
+        try {
+            ParticlePlusAPI api = ParticlePlusProvider.getAPI();
+            if (api != null) {
+                api.resumeBlockParticles(player);
+            }
+        } catch (Throwable error) {
+            logger.warning("[Hooks] ParticlePlus resumeBlockParticles failed: " + error.getMessage());
+        }
+    }
+
+    private boolean suspendItemParticles(Player player) {
+        try {
+            ParticlePlusAPI api = ParticlePlusProvider.getAPI();
+            if (api != null) {
+                api.suspendItemParticles(player);
+                return true;
+            }
+        } catch (Throwable error) {
+            logger.warning("[Hooks] ParticlePlus suspendItemParticles failed: " + error.getMessage());
+        }
+        return false;
+    }
+
+    private void resumeItemParticles(Player player) {
+        try {
+            ParticlePlusAPI api = ParticlePlusProvider.getAPI();
+            if (api != null) {
+                api.resumeItemParticles(player);
+            }
+        } catch (Throwable error) {
+            logger.warning("[Hooks] ParticlePlus resumeItemParticles failed: " + error.getMessage());
         }
     }
 
@@ -124,15 +198,11 @@ public final class ParticlePlusHook {
         if (!pluginPresent || killer == null) {
             return null;
         }
-
         try {
             ParticlePlusAPI api = ParticlePlusProvider.getAPI();
             return api != null ? api.getActiveParticleName(killer) : null;
         } catch (Throwable error) {
-            logger.warning(
-                    "[Hooks] ParticlePlus getActiveParticleName failed: "
-                            + error.getMessage()
-            );
+            logger.warning("[Hooks] ParticlePlus getActiveParticleName failed: " + error.getMessage());
             return null;
         }
     }
@@ -141,16 +211,40 @@ public final class ParticlePlusHook {
         if (!pluginPresent || killer == null) {
             return null;
         }
-
         try {
             ParticlePlusAPI api = ParticlePlusProvider.getAPI();
             return api != null ? api.getActiveParticleMix(killer) : null;
         } catch (Throwable error) {
-            logger.warning(
-                    "[Hooks] ParticlePlus getActiveParticleMix failed: "
-                            + error.getMessage()
-            );
+            logger.warning("[Hooks] ParticlePlus getActiveParticleMix failed: " + error.getMessage());
             return null;
+        }
+    }
+
+    public static final class Suspension {
+        static final Suspension EMPTY = new Suspension(
+                Collections.emptySet(), Collections.emptySet(), Collections.emptySet(), Collections.emptySet());
+
+        private final Set<UUID> playerParticlePlayers;
+        private final Set<UUID> mobParticlePlayers;
+        private final Set<UUID> blockParticlePlayers;
+        private final Set<UUID> itemParticlePlayers;
+
+        private Suspension(
+                Set<UUID> playerParticlePlayers,
+                Set<UUID> mobParticlePlayers,
+                Set<UUID> blockParticlePlayers,
+                Set<UUID> itemParticlePlayers) {
+            this.playerParticlePlayers = Collections.unmodifiableSet(playerParticlePlayers);
+            this.mobParticlePlayers = Collections.unmodifiableSet(mobParticlePlayers);
+            this.blockParticlePlayers = Collections.unmodifiableSet(blockParticlePlayers);
+            this.itemParticlePlayers = Collections.unmodifiableSet(itemParticlePlayers);
+        }
+
+        public boolean isEmpty() {
+            return playerParticlePlayers.isEmpty()
+                    && mobParticlePlayers.isEmpty()
+                    && blockParticlePlayers.isEmpty()
+                    && itemParticlePlayers.isEmpty();
         }
     }
 }
