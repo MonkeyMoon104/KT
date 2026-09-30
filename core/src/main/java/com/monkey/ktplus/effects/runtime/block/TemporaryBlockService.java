@@ -1,8 +1,11 @@
 package com.monkey.ktplus.effects.runtime.block;
 
+import com.monkey.ktplus.scheduler.PlatformScheduler;
 import com.monkey.ktplus.storage.repository.TemporaryBlockRepository;
 import com.monkey.ktplus.storage.repository.TemporaryBlockRepository.StoredTemporaryBlock;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,12 +59,13 @@ public final class TemporaryBlockService {
         String key = key(block);
         TemporaryBlockChange existing = active.get(key);
         if (existing != null) {
+            existing.setExpectedMaterial(material);
             block.setType(material, applyPhysics);
             return existing;
         }
         Material original = block.getType();
         String payload = PersistedBlockPayload.capture(block);
-        TemporaryBlockChange change = new TemporaryBlockChange(key, block, block.getState());
+        TemporaryBlockChange change = new TemporaryBlockChange(key, block, block.getState(), material);
         active.put(key, change);
         if (repository != null) {
             repository.saveAsync(block.getLocation(), original.name(), payload);
@@ -95,9 +99,51 @@ public final class TemporaryBlockService {
         active.clear();
     }
 
+    public void reassert(Block block) {
+        Objects.requireNonNull(block, "block");
+        TemporaryBlockChange change = active.get(key(block));
+        if (change == null) {
+            return;
+        }
+        reassert(change, change.expectedMaterial());
+    }
+
+    public void reconcileLoaded(@Nullable PlatformScheduler scheduler) {
+        if (active.isEmpty()) {
+            return;
+        }
+        List<TemporaryBlockChange> snapshot = new ArrayList<TemporaryBlockChange>(active.values());
+        for (TemporaryBlockChange change : snapshot) {
+            Block block = change.block();
+            World world = block.getWorld();
+            if (!world.isChunkLoaded(block.getX() >> 4, block.getZ() >> 4)) {
+                continue;
+            }
+            Material expected = change.expectedMaterial();
+            if (block.getType() == expected) {
+                continue;
+            }
+            if (scheduler != null) {
+                scheduler.run(block.getLocation(), () -> reassert(change, expected));
+            } else {
+                reassert(change, expected);
+            }
+        }
+    }
+
     public void shutdown() {
         if (repository != null) {
             repository.drainAndShutdown();
+        }
+    }
+
+    private void reassert(TemporaryBlockChange change, Material expected) {
+        if (active.get(change.key()) != change) {
+            return;
+        }
+        Block block = change.block();
+        if (block.getType() != expected) {
+            block.setType(expected, false);
         }
     }
 

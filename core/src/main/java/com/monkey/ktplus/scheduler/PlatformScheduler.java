@@ -23,4 +23,6 @@ public interface PlatformScheduler {
     ScheduledHandle runGlobal(Runnable action);
 
     ScheduledHandle runGlobalLater(Runnable action, long delayTicks);
+
+    ScheduledHandle runGlobalTimer(Runnable action, long delayTicks, long periodTicks);
 }

@@ -51,6 +51,7 @@ import com.monkey.ktplus.review.ReviewRewardService;
 import com.monkey.ktplus.scheduler.BukkitPlatformScheduler;
 import com.monkey.ktplus.scheduler.FoliaPlatformScheduler;
 import com.monkey.ktplus.scheduler.PlatformScheduler;
+import com.monkey.ktplus.scheduler.ScheduledHandle;
 import com.monkey.ktplus.schematic.SchematicLibrary;
 import com.monkey.ktplus.storage.DatabaseService;
 import com.monkey.ktplus.storage.repository.KillCoinsRepository;
@@ -77,6 +78,7 @@ public final class PluginBootstrap {
     private TaskRegistry taskRegistry;
     private TemporaryBlockService temporaryBlocks;
     private TemporaryBlockRepository temporaryBlockRepository;
+    private @Nullable ScheduledHandle temporaryBlockReconcileTask;
     private VisualEffectService visuals;
     private DatabaseService database;
     private final com.monkey.ktplus.storage.migration.MigrationLock migrationLock =
@@ -174,6 +176,8 @@ public final class PluginBootstrap {
             temporaryBlockRepository = new TemporaryBlockRepository(database);
             temporaryBlocks = new TemporaryBlockService(temporaryBlockRepository);
             temporaryBlocks.restorePersisted();
+            temporaryBlockReconcileTask = scheduler.runGlobalTimer(
+                    () -> temporaryBlocks.reconcileLoaded(scheduler), 5L, 5L);
             PlayerEffectRepository playerEffects = new PlayerEffectRepository(database);
             PurchaseRepository purchases = new PurchaseRepository(database);
             killCoins = new KillCoinsRepository(database, purchases, config.startingBalance());
@@ -337,6 +341,10 @@ public final class PluginBootstrap {
         }
         if (hooks != null) {
             hooks.placeholders().unregister();
+        }
+        if (temporaryBlockReconcileTask != null) {
+            temporaryBlockReconcileTask.cancel();
+            temporaryBlockReconcileTask = null;
         }
         if (temporaryBlocks != null) {
             temporaryBlocks.shutdown();

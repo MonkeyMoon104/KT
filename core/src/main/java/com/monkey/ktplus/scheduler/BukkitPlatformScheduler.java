@@ -65,4 +65,10 @@ public final class BukkitPlatformScheduler implements PlatformScheduler {
     public ScheduledHandle runGlobalLater(Runnable action, long delayTicks) {
         return new BukkitScheduledHandle(Bukkit.getScheduler().runTaskLater(plugin, action, Math.max(0L, delayTicks)));
     }
+
+    @Override
+    public ScheduledHandle runGlobalTimer(Runnable action, long delayTicks, long periodTicks) {
+        return new BukkitScheduledHandle(Bukkit.getScheduler()
+                .runTaskTimer(plugin, action, Math.max(0L, delayTicks), Math.max(1L, periodTicks)));
+    }
 }

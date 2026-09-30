@@ -91,6 +91,28 @@ public final class FoliaPlatformScheduler implements PlatformScheduler {
         return invokeGlobal("runDelayed", action, Math.max(1L, delayTicks));
     }
 
+    @Override
+    public ScheduledHandle runGlobalTimer(Runnable action, long delayTicks, long periodTicks) {
+        try {
+            Object scheduler = Bukkit.class.getMethod("getGlobalRegionScheduler").invoke(null);
+            Method method = scheduler.getClass().getMethod(
+                    "runAtFixedRate",
+                    org.bukkit.plugin.Plugin.class,
+                    Consumer.class,
+                    long.class,
+                    long.class);
+            Object task = method.invoke(
+                    scheduler,
+                    plugin,
+                    (Consumer<Object>) ignored -> action.run(),
+                    Math.max(1L, delayTicks),
+                    Math.max(1L, periodTicks));
+            return new ReflectiveScheduledHandle(task);
+        } catch (ReflectiveOperationException ex) {
+            return fallback.runGlobalTimer(action, delayTicks, periodTicks);
+        }
+    }
+
     private ScheduledHandle invokeGlobal(String methodName, Runnable action, long delayTicks) {
         try {
             Object scheduler = Bukkit.class.getMethod("getGlobalRegionScheduler").invoke(null);
