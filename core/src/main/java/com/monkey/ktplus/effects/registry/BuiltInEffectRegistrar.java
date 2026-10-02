@@ -48,10 +48,10 @@ public final class BuiltInEffectRegistrar {
         EffectDefinitionFactory definitions = new EffectDefinitionFactory(config, visuals);
         CommonEffectsRegistration.register(registry, definitions, visuals);
         NonCommonEffectsRegistration.register(registry, definitions, visuals);
-        RareEffectsRegistration.register(registry, definitions, visuals, headCollector);
+        RareEffectsRegistration.register(registry, definitions, visuals);
         VeryRareEffectsRegistration.register(registry, definitions, visuals);
         EpicEffectsRegistration.register(registry, definitions, visuals);
         LegendaryEffectsRegistration.register(registry, definitions, visuals);
-        UltraEffectsRegistration.register(registry, definitions, visuals);
+        UltraEffectsRegistration.register(registry, definitions, visuals, headCollector);
     }
 }

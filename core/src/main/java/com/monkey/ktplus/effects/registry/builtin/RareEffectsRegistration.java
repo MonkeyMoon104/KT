@@ -6,9 +6,6 @@ import com.monkey.ktplus.effects.list.cactusbarrage.CactusBarrageKillEffect;
 import com.monkey.ktplus.effects.list.chainsaw.ChainsawKillEffect;
 import com.monkey.ktplus.effects.list.explosion.ExplosionKillEffect;
 import com.monkey.ktplus.effects.list.geyser.GeyserKillEffect;
-import com.monkey.ktplus.effects.list.headcollector.HeadCollectorKillEffect;
-import com.monkey.ktplus.effects.list.headcollector.HeadCollectorService;
-import com.monkey.ktplus.effects.list.headcollector.HeadCollectorSettings;
 import com.monkey.ktplus.effects.list.hookshot.HookshotKillEffect;
 import com.monkey.ktplus.effects.list.icerink.IceRinkKillEffect;
 import com.monkey.ktplus.effects.list.lightningrod.LightningRodKillEffect;
@@ -16,44 +13,23 @@ import com.monkey.ktplus.effects.list.mace.MaceKillEffect;
 import com.monkey.ktplus.effects.list.meteorshower.MeteorShowerKillEffect;
 import com.monkey.ktplus.effects.list.mirrorclone.MirrorCloneKillEffect;
 import com.monkey.ktplus.effects.list.skeleton.SkeletonKillEffect;
-import com.monkey.ktplus.effects.list.tornado.TornadoKillEffect;
 import com.monkey.ktplus.effects.registry.EffectDefinitionFactory;
 import com.monkey.ktplus.effects.registry.EffectRegistry;
 import com.monkey.ktplus.effects.visual.VisualEffectService;
 import java.util.Objects;
-import org.jspecify.annotations.Nullable;
 
 public final class RareEffectsRegistration {
     private RareEffectsRegistration() {}
 
     public static void register(
-            EffectRegistry registry,
-            EffectDefinitionFactory definitions,
-            VisualEffectService visuals,
-            @Nullable HeadCollectorService headCollector) {
+            EffectRegistry registry, EffectDefinitionFactory definitions, VisualEffectService visuals) {
         Objects.requireNonNull(registry, "registry");
         Objects.requireNonNull(definitions, "definitions");
         Objects.requireNonNull(visuals, "visuals");
 
-        registry.register(new TornadoKillEffect(
-                definitions.definition("tornado", "Tornado", "WHITE_WOOL", EffectCategory.RARE, 3500, false, 260),
-                visuals));
         registry.register(new ExplosionKillEffect(
-                definitions.definition("explosion", "Explosion", "TNT", EffectCategory.RARE, 500, false, 70),
+                definitions.definition("explosion", "Explosion", "TNT", EffectCategory.RARE, 7000, false, 70),
                 visuals));
-        if (headCollector != null) {
-            registry.register(new HeadCollectorKillEffect(
-                    definitions.definition(
-                            "headcollector",
-                            "Head Collector",
-                            "PLAYER_HEAD",
-                            EffectCategory.RARE,
-                            2500,
-                            false,
-                            HeadCollectorSettings.INTRO_DURATION_TICKS + 10L),
-                    visuals,
-                    headCollector));
-        }
         registry.register(new MaceKillEffect(
                 definitions.definition("mace", "Mace", "IRON_AXE", EffectCategory.RARE, 1000, false, 90), visuals));
         registry.register(new SkeletonKillEffect(

@@ -23,7 +23,7 @@ categories:
 effects:
   cloud:
     category: common
-    price: 500
+    price: 1000
     perks:
       radius: 12
       open-ticks: 50
@@ -37,7 +37,7 @@ effects:
 
   smoke:
     category: common
-    price: 750
+    price: 11156
     perks:
       chain: true
       max-chain-depth: 2
@@ -51,7 +51,7 @@ effects:
 
   hearts:
     category: common
-    price: 500
+    price: 2762
     perks:
       count: 10
       seek-radius: 12
@@ -65,7 +65,7 @@ effects:
 
   notes:
     category: common
-    price: 1000
+    price: 15000
     perks:
       range: 12
       charge-ticks: 70
@@ -79,7 +79,7 @@ effects:
 
   earthquake:
     category: common
-    price: 800
+    price: 13733
     perks:
       radius: 14
       shake-ticks: 80
@@ -95,8 +95,8 @@ effects:
       radius: 14
 
   tornado:
-    category: rare
-    price: 3500
+    category: ultra
+    price: 1500000
     perks:
       hunt-ticks: 200
       max-hunt-ticks: 300
@@ -164,7 +164,7 @@ effects:
 
   end:
     category: non-common
-    price: 250
+    price: 10233
     perks:
       enderman-count: 5
       portal-duration-seconds: 5
@@ -176,8 +176,8 @@ effects:
       radius: 6
 
   headcollector:
-    category: rare
-    price: 2500
+    category: ultra
+    price: 700000
     head-collector-settings:
       collection:
         max-heads: 5
@@ -206,7 +206,7 @@ effects:
 
   totem:
     category: non-common
-    price: 500
+    price: 22441
     damage:
       enabled: true
       value: 4
@@ -214,7 +214,7 @@ effects:
 
   lightning:
     category: non-common
-    price: 200
+    price: 3000
     perks:
       chain: true
       max-chain-depth: 3
@@ -229,11 +229,11 @@ effects:
 
   grave:
     category: non-common
-    price: 500
+    price: 16497
 
   explosion:
     category: rare
-    price: 500
+    price: 7000
     damage:
       enabled: true
       value: 5
@@ -241,7 +241,7 @@ effects:
 
   mace:
     category: rare
-    price: 1000
+    price: 16012
     damage:
       enabled: true
       value: 5
@@ -249,11 +249,11 @@ effects:
 
   skeleton:
     category: rare
-    price: 2000
+    price: 45363
 
   sniper:
-    category: very-rare
-    price: 2000
+    category: ultra
+    price: 1300000
     perks:
       rise-ticks: 28
       tilt-ticks: 32
@@ -270,8 +270,8 @@ effects:
       radius: 8
 
   glowmissile:
-    category: very-rare
-    price: 3000
+    category: ultra
+    price: 1100000
     perks:
       debris-damage: 3.0
       debris-radius: 1.4
@@ -282,15 +282,15 @@ effects:
 
   shockwave:
     category: very-rare
-    price: 4000
+    price: 45164
     damage:
       enabled: true
       value: 1
       radius: 7
 
   enchantcolumn:
-    category: very-rare
-    price: 5000
+    category: ultra
+    price: 900000
     perks:
       potion:
         type: REGENERATION
@@ -303,7 +303,7 @@ effects:
 
   fireworks:
     category: epic
-    price: 6000
+    price: 40000
     structure: true
     fireworks-settings:
       radar:
@@ -321,7 +321,7 @@ effects:
 
   aurafarming:
     category: epic
-    price: 7000
+    price: 65642
     perks:
       boost:
         damage:
@@ -341,7 +341,7 @@ effects:
 
   dimensionalrift:
     category: epic
-    price: 9000
+    price: 187753
     perks:
       max-rifts: 8
       duration-ticks: 160
@@ -359,7 +359,7 @@ effects:
 
   firephoenix:
     category: epic
-    price: 10000
+    price: 261923
     perks:
       projectiles:
         enabled: true
@@ -374,7 +374,7 @@ effects:
 
   prismaticnova:
     category: epic
-    price: 12000
+    price: 280000
     damage:
       enabled: true
       value: 6
@@ -382,7 +382,7 @@ effects:
 
   stellarcollapse:
     category: legendary
-    price: 15000
+    price: 216257
     damage:
       enabled: true
       value: 2
@@ -390,7 +390,7 @@ effects:
 
   voidlotus:
     category: legendary
-    price: 10000
+    price: 60000
     damage:
       enabled: true
       value: 7
@@ -398,15 +398,15 @@ effects:
 
   wither:
     category: legendary
-    price: 25000
+    price: 440000
     damage:
       enabled: true
       value: 7
       radius: 4
 
   warden:
-    category: ultra
-    price: 50000
+    category: legendary
+    price: 490000
     damage:
       enabled: true
       value: 7
@@ -414,7 +414,7 @@ effects:
 
   magnet:
     category: common
-    price: 600
+    price: 5737
     perks:
       pull-radius: 14
       pull-strength: 0.18
@@ -428,7 +428,7 @@ effects:
 
   bubbletrap:
     category: non-common
-    price: 1200
+    price: 33789
     perks:
       bubble-count: 6
       trap-ticks: 45
@@ -444,7 +444,7 @@ effects:
 
   inksquid:
     category: common
-    price: 700
+    price: 8502
     perks:
       tentacle-count: 8
       slap-damage: 2.0
@@ -461,7 +461,7 @@ effects:
 
   beeswarm:
     category: common
-    price: 800
+    price: 12453
     perks:
       bee-count: 7
       sting-interval: 7
@@ -477,7 +477,7 @@ effects:
 
   sandstorm:
     category: non-common
-    price: 1100
+    price: 28187
     perks:
       wave-width: 8
       wave-length: 14
@@ -492,7 +492,7 @@ effects:
 
   lightningrod:
     category: rare
-    price: 2200
+    price: 58931
     perks:
       max-jumps: 5
       jump-range: 10
@@ -511,7 +511,7 @@ effects:
 
   boomerang:
     category: rare
-    price: 1800
+    price: 31224
     perks:
       count: 3
       range: 12
@@ -525,7 +525,7 @@ effects:
 
   mirrorclone:
     category: rare
-    price: 2500
+    price: 78588
     perks:
       clone-duration: 70
       explode-radius: 3.5
@@ -539,7 +539,7 @@ effects:
 
   geyser:
     category: rare
-    price: 2000
+    price: 38383
     perks:
       height: 7
       lift-ticks: 16
@@ -554,7 +554,7 @@ effects:
 
   cactusbarrage:
     category: rare
-    price: 1700
+    price: 23818
     perks:
       spine-count: 16
       spread: 0.45
@@ -568,7 +568,7 @@ effects:
 
   blackhole:
     category: very-rare
-    price: 4500
+    price: 87638
     perks:
       suck-radius: 8
       suck-strength: 0.2
@@ -589,7 +589,7 @@ effects:
 
   clockrewind:
     category: very-rare
-    price: 4200
+    price: 66958
     perks:
       rewind-ticks: 35
       freeze-ticks: 15
@@ -603,7 +603,7 @@ effects:
 
   railgun:
     category: epic
-    price: 8500
+    price: 129290
     perks:
       charge-ticks: 28
       beam-length: 28
@@ -617,7 +617,7 @@ effects:
 
   puppetstrings:
     category: epic
-    price: 9000
+    price: 225253
     perks:
       max-puppets: 3
       lift-height: 5
@@ -631,7 +631,7 @@ effects:
 
   alchemy:
     category: epic
-    price: 7500
+    price: 87849
     perks:
       brew-ticks: 40
       splash-count: 5
@@ -644,7 +644,7 @@ effects:
 
   crystalspire:
     category: epic
-    price: 9500
+    price: 243680
     perks:
       spire-count: 5
       grow-ticks: 35
@@ -659,7 +659,7 @@ effects:
 
   dragonnest:
     category: legendary
-    price: 14000
+    price: 143736
     perks:
       rings: 3
       orbit-speed: 0.2
@@ -675,7 +675,7 @@ effects:
 
   gravitywell:
     category: legendary
-    price: 16000
+    price: 318568
     perks:
       well-count: 3
       move-speed: 0.1
@@ -690,7 +690,7 @@ effects:
 
   arcade:
     category: legendary
-    price: 13000
+    price: 104873
     perks:
       enemy-count: 8
       wave-count: 3
@@ -704,7 +704,7 @@ effects:
 
   kaiju:
     category: legendary
-    price: 18000
+    price: 351586
     perks:
       shadow-ticks: 16
       stomp-damage: 8
@@ -718,7 +718,7 @@ effects:
 
   sparkler:
     category: common
-    price: 550
+    price: 4289
     perks:
       spark-count: 12
       bounce-ticks: 80
@@ -732,7 +732,7 @@ effects:
 
   snowballstorm:
     category: common
-    price: 650
+    price: 7137
     perks:
       count: 18
       spread: 0.5
@@ -746,7 +746,7 @@ effects:
 
   lanternrise:
     category: common
-    price: 700
+    price: 9840
     perks:
       lantern-count: 8
       rise-ticks: 35
@@ -760,7 +760,7 @@ effects:
 
   vinegrasp:
     category: non-common
-    price: 1300
+    price: 44678
     perks:
       vine-count: 7
       hold-ticks: 45
@@ -774,7 +774,7 @@ effects:
 
   echobat:
     category: non-common
-    price: 1400
+    price: 50000
     perks:
       bat-count: 10
       screech-radius: 6
@@ -788,7 +788,7 @@ effects:
 
   paintbomb:
     category: non-common
-    price: 1250
+    price: 39279
     perks:
       blast-radius: 5
       blind-ticks: 35
@@ -801,7 +801,7 @@ effects:
 
   chainsaw:
     category: rare
-    price: 2400
+    price: 72112
     perks:
       length: 4
       spin-speed: 0.45
@@ -814,7 +814,7 @@ effects:
 
   meteorshower:
     category: rare
-    price: 2600
+    price: 85000
     perks:
       meteor-count: 7
       spread: 8
@@ -827,7 +827,7 @@ effects:
 
   icerink:
     category: rare
-    price: 2300
+    price: 65563
     perks:
       radius: 6
       duration-ticks: 90
@@ -840,7 +840,7 @@ effects:
 
   hookshot:
     category: rare
-    price: 2100
+    price: 52204
     perks:
       range: 16
       pull-speed: 0.55
@@ -853,7 +853,7 @@ effects:
 
   solarflare:
     category: very-rare
-    price: 4800
+    price: 127116
     perks:
       charge-ticks: 25
       ring-speed: 0.35
@@ -866,7 +866,7 @@ effects:
 
   quillstorm:
     category: very-rare
-    price: 4600
+    price: 107626
     perks:
       quill-count: 24
       speed: 0.7
@@ -879,7 +879,7 @@ effects:
 
   bloodmoon:
     category: very-rare
-    price: 5200
+    price: 165000
     perks:
       ray-count: 6
       interval-ticks: 18
@@ -892,7 +892,7 @@ effects:
 
   serpentcoil:
     category: epic
-    price: 8800
+    price: 168613
     perks:
       segments: 14
       coil-ticks: 60
@@ -905,7 +905,7 @@ effects:
 
   forgeanvil:
     category: epic
-    price: 8200
+    price: 108922
     perks:
       shadow-ticks: 30
       slam-damage: 7
@@ -918,7 +918,7 @@ effects:
 
   prismbeam:
     category: epic
-    price: 9000
+    price: 206621
     perks:
       charge-ticks: 28
       beam-count: 3
@@ -931,7 +931,7 @@ effects:
 
   hauntedchoir:
     category: epic
-    price: 8600
+    price: 149149
     perks:
       singer-count: 6
       pulse-interval: 12
@@ -944,7 +944,7 @@ effects:
 
   origami:
     category: legendary
-    price: 14000
+    price: 180613
     perks:
       sheet-count: 16
       fold-ticks: 30
@@ -957,7 +957,7 @@ effects:
 
   abyssgate:
     category: legendary
-    price: 16000
+    price: 285072
     perks:
       gate-height: 6
       tentacle-count: 8
@@ -970,7 +970,7 @@ effects:
 
   crownofash:
     category: legendary
-    price: 15500
+    price: 251011
     perks:
       ember-count: 14
       orbit-then-seek: true
@@ -982,8 +982,8 @@ effects:
       radius: 5
 
   chronosphere:
-    category: ultra
-    price: 52000
+    category: legendary
+    price: 384194
     perks:
       freeze-radius: 9
       freeze-ticks: 50
@@ -995,8 +995,8 @@ effects:
       radius: 9
 
   realityglitch:
-    category: ultra
-    price: 56000
+    category: legendary
+    price: 416440
     perks:
       glitch-count: 20
       jitter-amp: 0.6
@@ -1010,8 +1010,8 @@ effects:
       radius: 8
 
   judgment:
-    category: ultra
-    price: 62000
+    category: legendary
+    price: 448365
     perks:
       weigh-ticks: 50
       max-targets: 4
@@ -1023,8 +1023,8 @@ effects:
       radius: 5
 
   cosmicfinale:
-    category: ultra
-    price: 75000
+    category: legendary
+    price: 480000
     perks:
       stars: 12
       phase-count: 3

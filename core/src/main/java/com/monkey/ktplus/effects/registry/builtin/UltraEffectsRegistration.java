@@ -1,41 +1,70 @@
 package com.monkey.ktplus.effects.registry.builtin;
 
 import com.monkey.ktplus.effects.api.EffectCategory;
-import com.monkey.ktplus.effects.list.chronosphere.ChronosphereKillEffect;
-import com.monkey.ktplus.effects.list.cosmicfinale.CosmicFinaleKillEffect;
-import com.monkey.ktplus.effects.list.judgment.JudgmentKillEffect;
-import com.monkey.ktplus.effects.list.realityglitch.RealityGlitchKillEffect;
-import com.monkey.ktplus.effects.list.warden.WardenKillEffect;
+import com.monkey.ktplus.effects.list.enchantcolumn.EnchantColumnKillEffect;
+import com.monkey.ktplus.effects.list.glowmissile.GlowMissileKillEffect;
+import com.monkey.ktplus.effects.list.glowmissile.animation.GlowMissileLauncher;
+import com.monkey.ktplus.effects.list.headcollector.HeadCollectorKillEffect;
+import com.monkey.ktplus.effects.list.headcollector.HeadCollectorService;
+import com.monkey.ktplus.effects.list.headcollector.HeadCollectorSettings;
+import com.monkey.ktplus.effects.list.sniper.SniperKillEffect;
+import com.monkey.ktplus.effects.list.tornado.TornadoKillEffect;
 import com.monkey.ktplus.effects.registry.EffectDefinitionFactory;
 import com.monkey.ktplus.effects.registry.EffectRegistry;
 import com.monkey.ktplus.effects.visual.VisualEffectService;
 import java.util.Objects;
+import org.jspecify.annotations.Nullable;
 
 public final class UltraEffectsRegistration {
     private UltraEffectsRegistration() {}
 
     public static void register(
-            EffectRegistry registry, EffectDefinitionFactory definitions, VisualEffectService visuals) {
+            EffectRegistry registry,
+            EffectDefinitionFactory definitions,
+            VisualEffectService visuals,
+            @Nullable HeadCollectorService headCollector) {
         Objects.requireNonNull(registry, "registry");
         Objects.requireNonNull(definitions, "definitions");
         Objects.requireNonNull(visuals, "visuals");
 
-        registry.register(new WardenKillEffect(
-                definitions.definition("warden", "Warden", "SCULK_SHRIEKER", EffectCategory.ULTRA, 50000, true, 120),
-                visuals));
-        registry.register(new ChronosphereKillEffect(
-                definitions.definition("chronosphere", "Chronosphere", "CLOCK", EffectCategory.ULTRA, 52000, true, 300),
-                visuals));
-        registry.register(new RealityGlitchKillEffect(
+        if (headCollector != null) {
+            registry.register(new HeadCollectorKillEffect(
+                    definitions.definition(
+                            "headcollector",
+                            "Head Collector",
+                            "PLAYER_HEAD",
+                            EffectCategory.ULTRA,
+                            700000,
+                            false,
+                            HeadCollectorSettings.INTRO_DURATION_TICKS + 10L),
+                    visuals,
+                    headCollector));
+        }
+        registry.register(new EnchantColumnKillEffect(
                 definitions.definition(
-                        "realityglitch", "Reality Glitch", "STRUCTURE_BLOCK", EffectCategory.ULTRA, 56000, true, 70),
+                        "enchantcolumn",
+                        "Enchant Column",
+                        "ENCHANTING_TABLE",
+                        EffectCategory.ULTRA,
+                        900000,
+                        true,
+                        280),
                 visuals));
-        registry.register(new JudgmentKillEffect(
-                definitions.definition("judgment", "Judgment", "GOLD_BLOCK", EffectCategory.ULTRA, 62000, true, 300),
-                visuals));
-        registry.register(new CosmicFinaleKillEffect(
+        registry.register(new GlowMissileKillEffect(
                 definitions.definition(
-                        "cosmicfinale", "Cosmic Finale", "NETHER_STAR", EffectCategory.ULTRA, 75000, true, 280),
+                        "glowmissile",
+                        "Glow Missile",
+                        "GLOWSTONE_DUST",
+                        EffectCategory.ULTRA,
+                        1100000,
+                        false,
+                        GlowMissileLauncher.EFFECT_DURATION_TICKS),
+                visuals));
+        registry.register(new SniperKillEffect(
+                definitions.definition("sniper", "Sniper", "BOW", EffectCategory.ULTRA, 1300000, false, 220),
+                visuals));
+        registry.register(new TornadoKillEffect(
+                definitions.definition("tornado", "Tornado", "WHITE_WOOL", EffectCategory.ULTRA, 1500000, false, 260),
                 visuals));
     }
 }

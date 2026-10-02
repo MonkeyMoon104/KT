@@ -56,7 +56,7 @@ public final class EpicEffectsRegistration {
                         "prismaticnova", "Prismatic Nova", "PRISMARINE_SHARD", EffectCategory.EPIC, 12000, true, 100),
                 visuals));
         registry.register(new RailgunKillEffect(
-                definitions.definition("railgun", "Railgun", "LIGHTNING_ROD", EffectCategory.EPIC, 8500, true, 100),
+                definitions.definition("railgun", "Railgun", "COPPER_BLOCK", EffectCategory.EPIC, 8500, true, 100),
                 visuals));
         registry.register(new PuppetStringsKillEffect(
                 definitions.definition("puppetstrings", "Puppet Strings", "STRING", EffectCategory.EPIC, 9000, true, 200),
@@ -76,11 +76,11 @@ public final class EpicEffectsRegistration {
                 definitions.definition("forgeanvil", "Forge Anvil", "ANVIL", EffectCategory.EPIC, 8200, true, 160),
                 visuals));
         registry.register(new PrismBeamKillEffect(
-                definitions.definition("prismbeam", "Prism Beam", "AMETHYST_SHARD", EffectCategory.EPIC, 9000, true, 120),
+                definitions.definition("prismbeam", "Prism Beam", "SPYGLASS", EffectCategory.EPIC, 9000, true, 120),
                 visuals));
         registry.register(new HauntedChoirKillEffect(
                 definitions.definition(
-                        "hauntedchoir", "Haunted Choir", "SKELETON_SKULL", EffectCategory.EPIC, 8600, true, 200),
+                        "hauntedchoir", "Haunted Choir", "GOAT_HORN", EffectCategory.EPIC, 8600, true, 200),
                 visuals));
     }
 }

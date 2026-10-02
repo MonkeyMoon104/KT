@@ -51,7 +51,7 @@ public final class CommonEffectsRegistration {
                 definitions.definition("beeswarm", "Bee Swarm", "HONEYCOMB", EffectCategory.COMMON, 800, false, 200),
                 visuals));
         registry.register(new SparklerKillEffect(
-                definitions.definition("sparkler", "Sparkler", "BLAZE_POWDER", EffectCategory.COMMON, 550, false, 140),
+                definitions.definition("sparkler", "Sparkler", "FIREWORK_STAR", EffectCategory.COMMON, 550, false, 140),
                 visuals));
         registry.register(new SnowballStormKillEffect(
                 definitions.definition(

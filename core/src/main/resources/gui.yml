@@ -180,7 +180,7 @@ effects:
     material: GLOWSTONE_DUST
   shockwave:
     name: "Shockwave"
-    material: ECHO_SHARD
+    material: RESPAWN_ANCHOR
   enchantcolumn:
     name: "Enchant Column"
     material: ENCHANTING_TABLE
@@ -249,7 +249,7 @@ effects:
     material: CLOCK
   railgun:
     name: "Railgun"
-    material: LIGHTNING_ROD
+    material: COPPER_BLOCK
   puppetstrings:
     name: "Puppet Strings"
     material: STRING
@@ -264,16 +264,16 @@ effects:
     material: DRAGON_EGG
   gravitywell:
     name: "Gravity Well"
-    material: ENDER_PEARL
+    material: CRYING_OBSIDIAN
   arcade:
     name: "Arcade"
     material: JUKEBOX
   kaiju:
     name: "Kaiju"
-    material: DIRT
+    material: COARSE_DIRT
   sparkler:
     name: "Sparkler"
-    material: BLAZE_POWDER
+    material: FIREWORK_STAR
   snowballstorm:
     name: "Snowball Storm"
     material: SNOWBALL
@@ -318,10 +318,10 @@ effects:
     material: ANVIL
   prismbeam:
     name: "Prism Beam"
-    material: AMETHYST_SHARD
+    material: SPYGLASS
   hauntedchoir:
     name: "Haunted Choir"
-    material: SKELETON_SKULL
+    material: GOAT_HORN
   origami:
     name: "Origami"
     material: PAPER
@@ -330,10 +330,10 @@ effects:
     material: OBSIDIAN
   crownofash:
     name: "Crown of Ash"
-    material: BLAZE_POWDER
+    material: FIRE_CHARGE
   chronosphere:
     name: "Chronosphere"
-    material: CLOCK
+    material: RECOVERY_COMPASS
   realityglitch:
     name: "Reality Glitch"
     material: STRUCTURE_BLOCK
@@ -342,4 +342,4 @@ effects:
     material: GOLD_BLOCK
   cosmicfinale:
     name: "Cosmic Finale"
-    material: NETHER_STAR
+    material: BEACON
