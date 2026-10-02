@@ -31,6 +31,12 @@ public final class ReviewClaimRepository {
                 accountCacheKey(platform, accountKey), ignored -> loadAccountClaim(platform, accountKey));
     }
 
+    /** True if this player claimed a review reward on any platform. */
+    public boolean hasAnyClaim(UUID uuid) {
+        Objects.requireNonNull(uuid, "uuid");
+        return claimCache.computeIfAbsent(anyClaimKey(uuid), ignored -> loadAnyClaim(uuid));
+    }
+
     public boolean claimIfAbsent(UUID uuid, String platform, String accountKey) {
         Objects.requireNonNull(uuid, "uuid");
         Objects.requireNonNull(platform, "platform");
@@ -47,10 +53,12 @@ public final class ReviewClaimRepository {
         if (claimed[0]) {
             claimCache.put(playerKey(uuid, normalizedPlatform), Boolean.TRUE);
             claimCache.put(accountCacheKey(normalizedPlatform, normalizedAccount), Boolean.TRUE);
+            claimCache.put(anyClaimKey(uuid), Boolean.TRUE);
             return true;
         }
         claimCache.invalidate(playerKey(uuid, normalizedPlatform));
         claimCache.invalidate(accountCacheKey(normalizedPlatform, normalizedAccount));
+        claimCache.invalidate(anyClaimKey(uuid));
         return false;
     }
 
@@ -115,6 +123,14 @@ public final class ReviewClaimRepository {
         return found.isPresent();
     }
 
+    private boolean loadAnyClaim(UUID uuid) {
+        Optional<Boolean> found = database.queryOne(
+                "SELECT 1 FROM kt_review_claims WHERE uuid = ? LIMIT 1",
+                statement -> statement.setString(1, uuid.toString()),
+                resultSet -> Boolean.TRUE);
+        return found.isPresent();
+    }
+
     private boolean sqlite() {
         return "sqlite".equalsIgnoreCase(database.dialect());
     }
@@ -125,6 +141,10 @@ public final class ReviewClaimRepository {
 
     private static String accountCacheKey(String platform, String accountKey) {
         return "a:" + normalize(platform) + ":" + normalize(accountKey);
+    }
+
+    private static String anyClaimKey(UUID uuid) {
+        return "any:" + uuid;
     }
 
     private static String normalize(String value) {

@@ -39,6 +39,21 @@ public final class ReviewMessages {
         send(player, "&eYou already claimed this reward. Thanks for supporting KT+!");
     }
 
+    public static void reminder(Player player) {
+        int maxCoins = ReviewConstants.BROADCAST_TEASER_COINS;
+        Component message = TextFormatter.component(PREFIX
+                        + "&eFree coins waiting! &7You still haven't claimed your &f/kt review &7reward "
+                        + "&7— up to &a"
+                        + maxCoins
+                        + " coins &7for a quick GitHub star or Spigot review. &aClick to start.")
+                .clickEvent(ClickEvent.suggestCommand("/kt review "))
+                .hoverEvent(HoverEvent.showText(Component.text(
+                                "Run /kt review github <GitHubUser> or /kt review spigotmc <SpigotUser>")
+                        .color(NamedTextColor.GRAY)));
+        player.sendMessage(message);
+        EntityCompat.playSound(player, player.getLocation(), SOUND_BROADCAST_EXP, 0.7f, 1.25f);
+    }
+
     public static void accountUsed(Player player) {
         send(player, "&cThat account was already used for a KT+ reward.");
     }

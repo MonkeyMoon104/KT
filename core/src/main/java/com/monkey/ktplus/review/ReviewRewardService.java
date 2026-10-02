@@ -31,7 +31,11 @@ public final class ReviewRewardService {
             new ConcurrentHashMap<UUID, ReviewSession>();
     private final ConcurrentHashMap<String, UUID> sessionsByAccount = new ConcurrentHashMap<String, UUID>();
     private final AtomicBoolean pollerRunning = new AtomicBoolean(false);
+    private final AtomicBoolean reminderBusy = new AtomicBoolean(false);
     private @Nullable ScheduledHandle pollHandle;
+    private @Nullable ScheduledHandle reminderHandle;
+    private volatile boolean reminderEnabled = true;
+    private volatile long reminderPeriodTicks = 45L * 60L * 20L;
 
     public ReviewRewardService(
             JavaPlugin plugin,
@@ -44,11 +48,14 @@ public final class ReviewRewardService {
         this.claims = Objects.requireNonNull(claims, "claims");
         this.economy = Objects.requireNonNull(economy, "economy");
         this.api = new ReviewApiClient(plugin.getPluginMeta().getVersion());
-        Objects.requireNonNull(config, "config");
+        reload(config);
     }
 
     public void reload(ConfigSnapshot config) {
         Objects.requireNonNull(config, "config");
+        reminderEnabled = config.reviewReminderEnabled();
+        reminderPeriodTicks = Math.max(5L * 60L * 20L, config.reviewReminderIntervalMinutes() * 60L * 20L);
+        rescheduleReminder();
     }
 
     public void shutdown() {
@@ -56,9 +63,70 @@ public final class ReviewRewardService {
             pollHandle.cancel();
             pollHandle = null;
         }
+        if (reminderHandle != null) {
+            reminderHandle.cancel();
+            reminderHandle = null;
+        }
         pollerRunning.set(false);
+        reminderBusy.set(false);
         sessionsByPlayer.clear();
         sessionsByAccount.clear();
+    }
+
+    private void rescheduleReminder() {
+        if (reminderHandle != null) {
+            reminderHandle.cancel();
+            reminderHandle = null;
+        }
+        if (!reminderEnabled) {
+            return;
+        }
+        // First sweep after one full interval so join spam is avoided on boot.
+        reminderHandle = scheduler.runGlobalTimer(this::reminderTick, reminderPeriodTicks, reminderPeriodTicks);
+    }
+
+    private void reminderTick() {
+        if (!reminderEnabled) {
+            return;
+        }
+        if (!reminderBusy.compareAndSet(false, true)) {
+            return;
+        }
+        List<Player> online = new ArrayList<>(Bukkit.getOnlinePlayers());
+        if (online.isEmpty()) {
+            reminderBusy.set(false);
+            return;
+        }
+        scheduler.runAsync(() -> {
+            try {
+                List<UUID> pending = new ArrayList<>();
+                for (Player player : online) {
+                    if (!player.isOnline()) {
+                        continue;
+                    }
+                    if (!claims.hasAnyClaim(player.getUniqueId())) {
+                        pending.add(player.getUniqueId());
+                    }
+                }
+                if (pending.isEmpty()) {
+                    return;
+                }
+                scheduler.runGlobal(() -> {
+                    for (UUID id : pending) {
+                        Player player = Bukkit.getPlayer(id);
+                        if (player != null && player.isOnline()) {
+                            ReviewMessages.reminder(player);
+                        }
+                    }
+                });
+            } catch (Exception ex) {
+                plugin.getLogger()
+                        .warning("[Review] reminder sweep failed: " + ex.getClass().getSimpleName() + " - "
+                                + ex.getMessage());
+            } finally {
+                reminderBusy.set(false);
+            }
+        });
     }
 
     public void start(Player player, ReviewPlatform platform, String rawAccount) {

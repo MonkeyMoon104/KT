@@ -29,3 +29,9 @@ particlePlus:
 schematics:
   default-fallback: STONE
   log-unresolved: true
+
+# Periodic chat nudge for online players who never claimed a /kt review reward.
+review-reminder:
+  enabled: true
+  # Minutes between reminder sweeps (clamped 5–720). Default 45.
+  interval-minutes: 45
