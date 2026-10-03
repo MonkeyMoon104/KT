@@ -82,8 +82,24 @@ public final class KtCommand implements CommandExecutor, TabCompleter {
             case "import-kt":
                 actions.importKt(sender, Arrays.copyOfRange(args, 1, args.length));
                 break;
+            case "grant":
+                if (args.length < 3) {
+                    sender.sendMessage("/" + label + " grant <effect> <player>");
+                    break;
+                }
+                actions.grant(sender, args[1], args[2]);
+                break;
+            case "revoke":
+                if (args.length < 3) {
+                    sender.sendMessage("/" + label + " revoke <effect> <player>");
+                    break;
+                }
+                actions.revoke(sender, args[1], args[2]);
+                break;
             default:
-                sender.sendMessage("/" + label + " [reload|set|clear|test|killcoins|review|migrate|import-kt]");
+                sender.sendMessage(
+                        "/" + label
+                                + " [reload|set|clear|test|grant|revoke|killcoins|review|migrate|import-kt]");
                 break;
         }
         return true;
@@ -94,11 +110,28 @@ public final class KtCommand implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             return actions.filter(
                     Arrays.asList(
-                            "reload", "set", "clear", "test", "killcoins", "review", "migrate", "import-kt"),
+                            "reload",
+                            "set",
+                            "clear",
+                            "test",
+                            "grant",
+                            "revoke",
+                            "killcoins",
+                            "review",
+                            "migrate",
+                            "import-kt"),
                     args[0]);
         }
-        if (args.length == 2 && ("set".equalsIgnoreCase(args[0]) || "test".equalsIgnoreCase(args[0]))) {
+        if (args.length == 2
+                && ("set".equalsIgnoreCase(args[0])
+                        || "test".equalsIgnoreCase(args[0])
+                        || "grant".equalsIgnoreCase(args[0])
+                        || "revoke".equalsIgnoreCase(args[0]))) {
             return actions.filter(actions.effectIds(), args[1]);
+        }
+        if (args.length == 3
+                && ("grant".equalsIgnoreCase(args[0]) || "revoke".equalsIgnoreCase(args[0]))) {
+            return null;
         }
         if (args.length == 2 && "killcoins".equalsIgnoreCase(args[0])) {
             return actions.filter(Arrays.asList("bal", "add", "take", "set", "reset"), args[1]);

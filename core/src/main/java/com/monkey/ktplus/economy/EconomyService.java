@@ -110,6 +110,42 @@ public final class EconomyService implements com.monkey.ktplus.access.effect.Eff
         return PurchaseResult.ok();
     }
 
+    /**
+     * Grants ownership without withdrawing coins. Returns {@code true} when a new purchase row was
+     * created (or the effect is free / economy disabled).
+     */
+    public boolean grantOwnership(Player player, EffectDefinition definition) {
+        Objects.requireNonNull(player, "player");
+        Objects.requireNonNull(definition, "definition");
+        if (!enabled() || definition.price() <= 0) {
+            return true;
+        }
+        if (hasPurchase(player, definition)) {
+            return false;
+        }
+        if (!purchases.claimPurchaseIfAbsent(player.getUniqueId(), definition.id())) {
+            return false;
+        }
+        if (luckPermsHook != null) {
+            luckPermsHook.grantEffectPermission(player.getUniqueId(), definition.permissionNode());
+        }
+        return true;
+    }
+
+    /** Removes ownership without refunding coins. Returns {@code true} if a purchase row was removed. */
+    public boolean revokeOwnership(Player player, EffectDefinition definition) {
+        Objects.requireNonNull(player, "player");
+        Objects.requireNonNull(definition, "definition");
+        if (!hasPurchase(player, definition)) {
+            return false;
+        }
+        purchases.removePurchase(player.getUniqueId(), definition.id());
+        if (luckPermsHook != null) {
+            luckPermsHook.revokeEffectPermission(player.getUniqueId(), definition.permissionNode());
+        }
+        return true;
+    }
+
     public void reward(Player killer, boolean playerKill) {
         int reward = config.killReward(playerKill);
         if (enabled() && reward > 0) {

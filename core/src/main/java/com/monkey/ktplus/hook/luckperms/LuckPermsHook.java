@@ -18,6 +18,7 @@ public final class LuckPermsHook {
     private final @Nullable Method nodeBuild;
     private final @Nullable Method userData;
     private final @Nullable Method dataAdd;
+    private final @Nullable Method dataRemove;
 
     private LuckPermsHook(
             boolean available,
@@ -27,7 +28,8 @@ public final class LuckPermsHook {
             @Nullable Method nodeBuilder,
             @Nullable Method nodeBuild,
             @Nullable Method userData,
-            @Nullable Method dataAdd) {
+            @Nullable Method dataAdd,
+            @Nullable Method dataRemove) {
         this.available = available;
         this.grantOnPurchase = grantOnPurchase;
         this.api = api;
@@ -36,6 +38,7 @@ public final class LuckPermsHook {
         this.nodeBuild = nodeBuild;
         this.userData = userData;
         this.dataAdd = dataAdd;
+        this.dataRemove = dataRemove;
     }
 
     public static LuckPermsHook create(boolean grantOnPurchase, Logger logger) {
@@ -56,12 +59,22 @@ public final class LuckPermsHook {
 
             Class<?> userClass = Class.forName("net.luckperms.api.model.user.User");
             Method userData = userClass.getMethod("data");
-            Method dataAdd = Class.forName("net.luckperms.api.model.data.NodeMap")
-                    .getMethod("add", Class.forName("net.luckperms.api.node.Node"));
+            Class<?> nodeMapClass = Class.forName("net.luckperms.api.model.data.NodeMap");
+            Class<?> nodeType = Class.forName("net.luckperms.api.node.Node");
+            Method dataAdd = nodeMapClass.getMethod("add", nodeType);
+            Method dataRemove = nodeMapClass.getMethod("remove", nodeType);
 
             logger.info("[Hooks] LuckPerms hooked (grant-on-purchase=" + grantOnPurchase + ").");
             return new LuckPermsHook(
-                    true, grantOnPurchase, api, modifyUser, nodeBuilder, nodeBuild, userData, dataAdd);
+                    true,
+                    grantOnPurchase,
+                    api,
+                    modifyUser,
+                    nodeBuilder,
+                    nodeBuild,
+                    userData,
+                    dataAdd,
+                    dataRemove);
         } catch (ReflectiveOperationException | RuntimeException error) {
             logger.warning("[Hooks] LuckPerms hook failed: " + error.getMessage());
             return disabled(grantOnPurchase);
@@ -69,7 +82,7 @@ public final class LuckPermsHook {
     }
 
     private static LuckPermsHook disabled(boolean grantOnPurchase) {
-        return new LuckPermsHook(false, grantOnPurchase, null, null, null, null, null, null);
+        return new LuckPermsHook(false, grantOnPurchase, null, null, null, null, null, null, null);
     }
 
     public boolean available() {
@@ -82,6 +95,19 @@ public final class LuckPermsHook {
         if (!available || !grantOnPurchase) {
             return;
         }
+        modifyPermission(uuid, permissionNode, true);
+    }
+
+    public void revokeEffectPermission(UUID uuid, String permissionNode) {
+        Objects.requireNonNull(uuid, "uuid");
+        Objects.requireNonNull(permissionNode, "permissionNode");
+        if (!available || !grantOnPurchase) {
+            return;
+        }
+        modifyPermission(uuid, permissionNode, false);
+    }
+
+    private void modifyPermission(UUID uuid, String permissionNode, boolean grant) {
         try {
             Object userManager = api.getClass().getMethod("getUserManager").invoke(api);
             Consumer<Object> consumer = user -> {
@@ -89,7 +115,11 @@ public final class LuckPermsHook {
                     Object builder = nodeBuilder.invoke(null, permissionNode);
                     Object node = nodeBuild.invoke(builder);
                     Object data = userData.invoke(user);
-                    dataAdd.invoke(data, node);
+                    if (grant) {
+                        dataAdd.invoke(data, node);
+                    } else {
+                        dataRemove.invoke(data, node);
+                    }
                 } catch (ReflectiveOperationException ignored) {
                 }
             };

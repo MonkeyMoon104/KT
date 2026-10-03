@@ -31,7 +31,7 @@ libraries:
 commands:
   ktplus:
     description: Open and manage kill effects.
-    usage: /<command> [reload|set|clear|test|disable|enable|killcoins|review|migrate|import-kt]
+    usage: /<command> [reload|set|clear|test|grant|revoke|disable|enable|killcoins|review|migrate|import-kt]
     aliases:
       - kt
       - killeffect
@@ -57,6 +57,10 @@ permissions:
   ktplus.clear.others:
     default: op
   ktplus.test:
+    default: op
+  ktplus.grant:
+    default: op
+  ktplus.revoke:
     default: op
   ktplus.killcoins:
     default: true

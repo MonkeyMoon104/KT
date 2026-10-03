@@ -381,4 +381,94 @@ public final class KtCommandActions {
     public void clear(org.bukkit.command.CommandSender sender, org.bukkit.entity.Player target) {
         clear(target);
     }
+
+    public void grant(CommandSender sender, String effectId, String playerName) {
+        Objects.requireNonNull(sender, "sender");
+        Objects.requireNonNull(effectId, "effectId");
+        Objects.requireNonNull(playerName, "playerName");
+        if (!sender.hasPermission("ktplus.grant") && !sender.hasPermission("ktplus.admin")) {
+            sender.sendMessage(bootstrap.lang().message(sender, "no-permission"));
+            return;
+        }
+        Player target = Bukkit.getPlayerExact(playerName);
+        if (target == null || !target.isOnline()) {
+            sender.sendMessage(playerNotFoundMessage());
+            return;
+        }
+        KillEffect effect = bootstrap.registry().find(effectId).orElse(null);
+        if (effect == null || !bootstrap.availability().isEnabled(effect.definition().id())) {
+            sender.sendMessage(bootstrap.lang().message(sender, "unknown-effect").replace("%effect%", effectId));
+            return;
+        }
+        String id = effect.definition().id();
+        String displayAdmin =
+                bootstrap.lang().effectName(sender instanceof Player p ? p : null, id, effect.definition().displayName());
+        String displayTarget = bootstrap.lang().effectName(target, id, effect.definition().displayName());
+        boolean newlyGranted = bootstrap.economy().grantOwnership(target, effect.definition());
+        bootstrap.users().selectEffect(target, id);
+        if (bootstrap.gui() != null) {
+            bootstrap.gui().refreshOpenSessions();
+        }
+        String adminKey = newlyGranted ? "effect-granted-admin" : "effect-grant-already-owned-admin";
+        String targetKey = newlyGranted ? "effect-granted-player" : "effect-grant-already-owned-player";
+        sender.sendMessage(bootstrap.lang()
+                .message(sender, adminKey)
+                .replace("%effect%", displayAdmin)
+                .replace("%player%", target.getName()));
+        if (!sender.equals(target)) {
+            target.sendMessage(bootstrap.lang()
+                    .message(target, targetKey)
+                    .replace("%effect%", displayTarget)
+                    .replace("%player%", sender.getName()));
+        }
+    }
+
+    public void revoke(CommandSender sender, String effectId, String playerName) {
+        Objects.requireNonNull(sender, "sender");
+        Objects.requireNonNull(effectId, "effectId");
+        Objects.requireNonNull(playerName, "playerName");
+        if (!sender.hasPermission("ktplus.revoke") && !sender.hasPermission("ktplus.admin")) {
+            sender.sendMessage(bootstrap.lang().message(sender, "no-permission"));
+            return;
+        }
+        Player target = Bukkit.getPlayerExact(playerName);
+        if (target == null || !target.isOnline()) {
+            sender.sendMessage(playerNotFoundMessage());
+            return;
+        }
+        KillEffect effect = bootstrap.registry().find(effectId).orElse(null);
+        if (effect == null) {
+            sender.sendMessage(bootstrap.lang().message(sender, "unknown-effect").replace("%effect%", effectId));
+            return;
+        }
+        String id = effect.definition().id();
+        String displayAdmin =
+                bootstrap.lang().effectName(sender instanceof Player p ? p : null, id, effect.definition().displayName());
+        String displayTarget = bootstrap.lang().effectName(target, id, effect.definition().displayName());
+        boolean removed = bootstrap.economy().revokeOwnership(target, effect.definition());
+        if (!removed) {
+            sender.sendMessage(bootstrap.lang()
+                    .message(sender, "effect-revoke-not-owned-admin")
+                    .replace("%effect%", displayAdmin)
+                    .replace("%player%", target.getName()));
+            return;
+        }
+        String selected = bootstrap.users().selectedEffect(target).orElse(null);
+        if (selected != null && selected.equalsIgnoreCase(id)) {
+            bootstrap.users().clearEffect(target);
+        }
+        if (bootstrap.gui() != null) {
+            bootstrap.gui().refreshOpenSessions();
+        }
+        sender.sendMessage(bootstrap.lang()
+                .message(sender, "effect-revoked-admin")
+                .replace("%effect%", displayAdmin)
+                .replace("%player%", target.getName()));
+        if (!sender.equals(target)) {
+            target.sendMessage(bootstrap.lang()
+                    .message(target, "effect-revoked-player")
+                    .replace("%effect%", displayTarget)
+                    .replace("%player%", sender.getName()));
+        }
+    }
 }

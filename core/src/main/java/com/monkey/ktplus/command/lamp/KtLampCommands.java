@@ -136,6 +136,54 @@ public final class KtLampCommands {
         actions.enable(actor.sender(), effectId);
     }
 
+    @Command("ktplus grant")
+    public void grantKtPlus(
+            BukkitCommandActor actor,
+            @SuggestWith(EffectIdSuggestions.class) String effectId,
+            String playerName) {
+        actions.grant(actor.sender(), effectId, playerName);
+    }
+
+    @Command("kt grant")
+    public void grantKt(
+            BukkitCommandActor actor,
+            @SuggestWith(EffectIdSuggestions.class) String effectId,
+            String playerName) {
+        actions.grant(actor.sender(), effectId, playerName);
+    }
+
+    @Command("killeffect grant")
+    public void grantKillEffect(
+            BukkitCommandActor actor,
+            @SuggestWith(EffectIdSuggestions.class) String effectId,
+            String playerName) {
+        actions.grant(actor.sender(), effectId, playerName);
+    }
+
+    @Command("ktplus revoke")
+    public void revokeKtPlus(
+            BukkitCommandActor actor,
+            @SuggestWith(EffectIdSuggestions.class) String effectId,
+            String playerName) {
+        actions.revoke(actor.sender(), effectId, playerName);
+    }
+
+    @Command("kt revoke")
+    public void revokeKt(
+            BukkitCommandActor actor,
+            @SuggestWith(EffectIdSuggestions.class) String effectId,
+            String playerName) {
+        actions.revoke(actor.sender(), effectId, playerName);
+    }
+
+    @Command("killeffect revoke")
+    public void revokeKillEffect(
+            BukkitCommandActor actor,
+            @SuggestWith(EffectIdSuggestions.class) String effectId,
+            String playerName) {
+        actions.revoke(actor.sender(), effectId, playerName);
+    }
+
     @Command("ktplus killcoins")
     public void killCoinsKtPlus(
             BukkitCommandActor actor,
