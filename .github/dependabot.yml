@@ -35,8 +35,6 @@ updates:
           - "com.gradleup.shadow*"
           - "org.gradle.toolchains*"
     ignore:
-      # Vendored patched IF in build-logic/repo until upstream 0.12.2+.
-      - dependency-name: "com.github.stefvanschie.inventoryframework:IF"
       # Paper version lines are pinned per NMS module / dynamic ranges.
       - dependency-name: "io.papermc.paper:paper-api"
       - dependency-name: "io.papermc.paper:dev-bundle"

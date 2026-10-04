@@ -474,7 +474,7 @@ gradlew.bat build      # Windows
 
 Main/core compiles with **Java 21**. Paper **26.x** NMS modules use a **Java 25** toolchain.
 
-> Temporary patched **Inventory Framework** build lives under `build-logic/repo` until upstream releases the AIOOBE fix. **paperweight** uses upstream `2.0.0-beta.24`. Details: [`build-logic/repo/README.md`](build-logic/repo/README.md).
+> **paperweight** uses upstream `2.0.0-beta.24`. Inventory Framework uses upstream `0.12.2-SNAPSHOT` from PaperMC.
 
 ---
 
@@ -504,12 +504,12 @@ KTPlus/
 ## Development
 
 - Default branch: **`enhanced`** (force-push and deletion disabled)
-- Dependabot: daily (08:00 Europe/Rome) on the Gradle catalog; vendored / Paper pins ignored — [`.github/dependabot.yml`](.github/dependabot.yml)
+- Dependabot: daily (08:00 Europe/Rome) on the Gradle catalog; Paper API pins ignored — [`.github/dependabot.yml`](.github/dependabot.yml)
 
 | Library | Issue | Status |
 |---------|-------|--------|
 | paperweight-userdev | Gradle 10 `by registering` deprecation | Upstream `2.0.0-beta.24` |
-| Inventory Framework 0.12.1 | AIOOBE in `processMethodAnnotations` | Vendored · fix in [PR #2549](https://github.com/stefvanschie/IF/pull/2549) (awaiting release) |
+| Inventory Framework | AIOOBE in `processMethodAnnotations` | Upstream `0.12.2-SNAPSHOT` (fix in [PR #2549](https://github.com/stefvanschie/IF/pull/2549)) |
 
 ---
 
